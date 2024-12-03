@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
     Box,
-    BoxProps,
     Container,
     Typography,
     Select,
@@ -16,10 +15,10 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    IconButton,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { FaUtensils, FaChevronRight, FaTrash } from "react-icons/fa";
+import OrderSummary from "./OrderSummary";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(2),
@@ -32,10 +31,6 @@ interface StyledButtonProps extends ButtonProps {
     selected?: boolean;
 }
 
-interface StyledBoxProps extends BoxProps {
-    selected?: boolean;
-}
-
 const CategoryButton = styled(Button, {
     shouldForwardProp: (prop) => prop !== 'selected',
 })<StyledButtonProps>(({ theme, selected }) => ({
@@ -45,18 +40,6 @@ const CategoryButton = styled(Button, {
     "&:hover": {
         backgroundColor: selected ? theme.palette.primary.dark : "#f5f5f5",
     },
-}));
-
-const OrderItem = styled(Box, {
-    shouldForwardProp: (prop) => prop !== 'selected',
-})<StyledBoxProps>(({ theme, selected }) => ({
-    padding: theme.spacing(2),
-    marginBottom: theme.spacing(1),
-    backgroundColor: selected ? "#f5f5f5" : "#fff",
-    borderRadius: theme.shape.borderRadius,
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    border: `1px solid ${selected ? theme.palette.primary.main : "#ddd"}`,
 }));
 
 type Pho = {
@@ -76,24 +59,18 @@ const WaiterInterface = () => {
     const [selectedTable, setSelectedTable] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("Beef");
     const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
-    const [selectedOrderItem, setSelectedOrderItem] = useState<SelectedItem>({} as SelectedItem);
     const [customizations, setCustomizations] = useState<Pho>({} as Pho);
     const [notes, setNotes] = useState("");
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
     const categories = ["Beef", "Chicken", "Drinks", "Side Orders", "Dessert"];
     const meatOptions = {
-        Beef: ["Rare Beef", "Well Done Beef", "Beef Balls", "Tendon", "Tripe"],
-        Chicken: ["Grilled Chicken", "Steamed Chicken", "Chicken Breast", "Dark Meat"],
+        Beef: ["DB", "Tái", "Chín", "Gầu", "Gân", "Sách", "Bò viên", "XiQ"],
+        Chicken: ["Ức", "Đùi", "Cánh"],
     };
-    const noodleTypes = ["Thin rice noodles", "Thick rice noodles"];
-    const preferences = [
-        "Less noodles",
-        "No onions",
-        "Extra broth",
-        "Spicy",
-        "No cilantro",
-    ];
+    const noodleTypes = ["BC", "BT", "BS", "BTS", "Bún", "Miến"];
+    const preferences = ["Togo", "Hành lá", "Hành tây", "Ngò", "Nước trong", "Ít bánh", "HD", "HT", "Thêm béo", "Khô", "Mang"];
+    ;
 
     const handleAddItem = () => {
         const newItem = {
@@ -105,10 +82,6 @@ const WaiterInterface = () => {
         setSelectedItems([...selectedItems, newItem]);
         setCustomizations({} as Pho);
         setNotes("");
-    };
-
-    const handleRemoveItem = (itemId: number) => {
-        setSelectedItems(selectedItems.filter((item) => item.id !== itemId));
     };
 
     const handlePlaceOrder = () => {
@@ -123,7 +96,7 @@ const WaiterInterface = () => {
     };
 
     return (
-        <Container maxWidth="lg">
+        <Container>
             <Box sx={{ py: 3 }}>
                 <StyledPaper>
                     <Grid container spacing={2} alignItems="center">
@@ -164,6 +137,7 @@ const WaiterInterface = () => {
                 </Box>
 
                 <StyledPaper>
+
                     <Typography variant="h6" gutterBottom>
                         Customizations
                     </Typography>
@@ -256,51 +230,8 @@ const WaiterInterface = () => {
                 </StyledPaper>
 
                 <StyledPaper>
-                    <Typography variant="h6" gutterBottom>
-                        Order Summary
-                    </Typography>
-                    {selectedItems.map((item) => (
-                        <OrderItem
-                            key={item.id}
-                            selected={selectedOrderItem?.id === item.id}
-                            onClick={() => setSelectedOrderItem(item)}
-                        >
-                            <Grid container alignItems="center" spacing={2}>
-                                <Grid item xs>
-                                    <Typography variant="subtitle1">{item.category}</Typography>
-                                    {item.pho.meat && (
-                                        <Typography variant="body2">
-                                            Meat: {item.pho.meat}
-                                        </Typography>
-                                    )}
-                                    {item.pho.noodle && (
-                                        <Typography variant="body2">
-                                            Noodle: {item.pho.noodle}
-                                        </Typography>
-                                    )}
-                                    {item.pho.preferences && item.pho.preferences.length > 0 && (
-                                        <Typography variant="body2">
-                                            Preferences: {item.pho.preferences.join(", ")}
-                                        </Typography>
-                                    )}
-                                    {item.pho.notes && (
-                                        <Typography variant="body2">Notes: {item.pho.notes}</Typography>
-                                    )}
-                                </Grid>
-                                <Grid item>
-                                    <IconButton
-                                        color="error"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleRemoveItem(item.id);
-                                        }}
-                                    >
-                                        <FaTrash />
-                                    </IconButton>
-                                </Grid>
-                            </Grid>
-                        </OrderItem>
-                    ))}
+
+                    <OrderSummary selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
 
                     <Button
                         variant="contained"
