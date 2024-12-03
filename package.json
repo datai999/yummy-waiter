@@ -10,6 +10,7 @@
     "@types/react-dom": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "react-icons": "^5.4.0",
     "react-scripts": "latest",
     "typescript": "latest"
   },
