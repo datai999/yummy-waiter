@@ -1,0 +1,250 @@
+{
+    "table-number": {
+        "ui-type": "drop-down",
+        "position": "sticky at top left of screen",
+        "items": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20
+        ]
+    },
+    "take-order": {
+        "ui-type": "horizontal-tab",
+        "position": "right of table-number",
+        "onclick": "scroll up to top",
+        "items": [
+            {
+                "tab-label": "Beef",
+                "ui-type": "three column",
+                "color": "brown",
+                "items": {
+                    "meat": {
+                        "ui-type": "checkbox",
+                        "detail": "when check DB, check all item except Beef rib",
+                        "options": [
+                            "DB",
+                            "Rare",
+                            "Well Done",
+                            "Lean Brisket",
+                            "Fatty Brisket",
+                            "Tendon",
+                            "Beef ball",
+                            "Beef rib"
+                        ]
+                    },
+                    "noodle": {
+                        "ui-type": "radio button",
+                        "default-option": "Regular",
+                        "options": [
+                            "Regular",
+                            "Thick",
+                            "Regular-uncock",
+                            "Thick-uncock"
+                        ]
+                    },
+                    "custom": {
+                        "ui-type": "checkbox",
+                        "options": {
+                            "Togo": false,
+                            "Green onion": true,
+                            "White onion": true,
+                            "Cilantro": true,
+                            "Fat": true,
+                            "Less noodle": false
+                        }
+                    }
+                }
+            },
+            {
+                "tab-label": "Chicken",
+                "ui-type": "three column",
+                "color": "yellow",
+                "items": {
+                    "meat": {
+                        "ui-type": "radio button",
+                        "default-option": "White meat (U)",
+                        "options": [
+                            "White meat (U)",
+                            "Wing (C)",
+                            "Dark meat (D)"
+                        ]
+                    },
+                    "noodle": {
+                        "ui-type": "radio button",
+                        "options": [
+                            "Pho",
+                            "Pho-BT",
+                            "Bun",
+                            "Mien"
+                        ]
+                    },
+                    "custom": {
+                        "ui-type": "checkbox",
+                        "options": {
+                            "Togo": false,
+                            "Green onion": true,
+                            "White onion": true,
+                            "Cilantro": true,
+                            "Fat": true,
+                            "Mang": false,
+                            "Dry": false
+                        }
+                    }
+                }
+            },
+            {
+                "tab-label": "Side order",
+                "ui-type": "grib button",
+                "onclick": "add item to list view beef in order-summary",
+                "items": [
+                    "Extra meat",
+                    "Beef rib bone",
+                    "Extra bowl noodle",
+                    "Egg york",
+                    "Noodle soup",
+                    "Bread",
+                    "Bamboo shoots",
+                    "Whole chicken"
+                ]
+            },
+            {
+                "tab-label": "Drink",
+                "ui-type": "grib button",
+                "color": "baby blue",
+                "onclick": "add item to list view drink in order-summary",
+                "items": [
+                    "Water",
+                    "Ice water",
+                    "Hot water",
+                    "Ice tea",
+                    "Hot tea",
+                    "Coke",
+                    "Vietnamese coffee",
+                    "Black coffee"
+                ]
+            },
+            {
+                "tab-label": "Dessert",
+                "ui-type": "grib button",
+                "onclick": "add item to list view dessert in order-summary",
+                "items": [
+                    "Three color dessert",
+                    "Tofu regular",
+                    "Tofu matcha",
+                    "Tofu ging"
+                ]
+            }
+        ]
+    },
+    "note": {
+        "ui-type": "text input"
+    },
+    "actions": {
+        "ui-type": "grib button",
+        "position": "right of note",
+        "clear": {
+            "ui-type": "button",
+            "onclick": "reset form take-order"
+        },
+        "add": {
+            "ui-type": "button",
+            "onclick": "submit form take-order by tab to one row and view to order-summary"
+        },
+        "sent kitchen": {
+            "ui-type": "button",
+            "onclick": "open popup with order-summary and confirm"
+        }
+    },
+    "order-summary": {
+        "ui-type": "grid two row, two column in first row, three column in second row",
+        "beef": {
+            "location": "first row, first column",
+            "ui-type": "list view no padding between element",
+            "detail": "display items added in beef tab",
+            "element-onclick": "move to tab beef, reflection all option in beef tab",
+            "right-side-element": {
+                "plus": {
+                    "ui-type": "IconButton",
+                    "icon": "FaPlus",
+                    "onclick": "add same item to list view"
+                },
+                "minus": {
+                    "ui-type": "IconButton",
+                    "icon": "FaMinus",
+                    "onclick": "remove item from list view"
+                }
+            }
+        },
+        "chicken": {
+            "location": "first row, second column",
+            "ui-type": "list view no padding between element",
+            "detail": "display items added in chicken tab",
+            "element-onclick": "move to tab chicken, reflection all option in chicken tab",
+            "right-side-element": {
+                "plus": {
+                    "ui-type": "IconButton",
+                    "icon": "FaPlus",
+                    "onclick": "add same item to list view"
+                },
+                "minus": {
+                    "ui-type": "IconButton",
+                    "icon": "FaMinus",
+                    "onclick": "remove item from list view"
+                }
+            }
+        },
+        "drink": {
+            "location": "second row, first column",
+            "ui-type": "list view no padding between element",
+            "detail": "display items added in drink tab",
+            "element-onclick": "move to tab drink, reflection all option in drink tab",
+            "right-side-element": {
+                "plus": {
+                    "ui-type": "IconButton",
+                    "icon": "FaPlus",
+                    "onclick": "add same item to list view"
+                },
+                "minus": {
+                    "ui-type": "IconButton",
+                    "icon": "FaMinus",
+                    "onclick": "remove item from list view"
+                }
+            }
+        },
+        "dessert": {
+            "location": "second row, second column",
+            "ui-type": "list view no padding between element",
+            "detail": "display items added in dessert tab",
+            "element-onclick": "move to tab dessert, reflection all option in dessert tab",
+            "right-side-element": {
+                "plus": {
+                    "ui-type": "IconButton",
+                    "icon": "FaPlus",
+                    "onclick": "add same item to list view"
+                },
+                "minus": {
+                    "ui-type": "IconButton",
+                    "icon": "FaMinus",
+                    "onclick": "remove item from list view"
+                }
+            }
+        }
+    }
+}

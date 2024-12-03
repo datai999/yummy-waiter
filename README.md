@@ -1,40 +1,34 @@
-# Material UI - Create React App example in TypeScript
+**User Interface Design for Waiters at a Pho Restaurant**
 
-## How to use
+Design a modern mobile website interface for waiters at a pho restaurant to streamline the order-taking process. 
 
-Download the example [or clone the repo](https://github.com/mui/material-ui):
+**Features:**
 
-<!-- #default-branch-switch -->
+1. **Table Selection**: Text: "Yummy Pho 2". The waiter can select the table number from a dropdown menu.
+  
+2. **Menu Categories**: The main menu will be fixed at the top and will include the following categories:
+   - Beef
+   - Chicken
+   - Drinks (e.g., water, ice water, hot water)
+   - Side Orders (e.g., Egg york, rib bone, extra noodle)
+   - Dessert (e.g., tofu regular, tofu matcha, tofu)
 
-```bash
-curl https://codeload.github.com/mui/material-ui/tar.gz/master | tar -xz --strip=2 material-ui-master/examples/material-ui-cra-ts
-cd material-ui-cra-ts
-```
+3. **Scrolling and Swiping**: When a category is clicked, the window will scroll to the top. The waiter can also swipe left or right to navigate between categories.
 
-Install it and run:
+4. **Customization for Main Dishes**:  
+All options must be displayed in the base UI; do not use pop-ups.  
+- When selecting either beef or chicken, the waiter must choose:  
+  - Types of meat: a grid of buttons will be displayed, highlighted when selected; multiple selections are allowed.  
+  - Types of noodles: (e.g., Thin rice noodles, Thick rice noodles) 
+  - Custom preferences (e.g., less-noodle, onion): a grid of buttons will be displayed, highlighted when selected; multiple selections are allowed. 
+   - The waiter can also note any specials for the dish.
 
-```bash
-npm install
-npm start
-```
+5. **Select Drinks, Side Orders, and Desserts**: A grid of buttons will be displayed for your selections.
 
-or:
+6. **Order List View**: After making your selections, items will be added to a list view displayed at the bottom of the screen. The items in the list are sorted by category, with clear dividers between categories. There are two separate list views: one for Food, which includes categories such as Beef, Chicken, and Side Orders, and another for Drinks & Dessert, which shows only the items added from those specific categories.
 
-<!-- #default-branch-switch -->
+7. **Highlighting Selected Items**: When an item in the list view is clicked, it will be highlighted, and the specific category and attributes of that selected item will be opened.
 
-[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/sandbox/github/mui/material-ui/tree/master/examples/material-ui-cra-ts)
+8. **Placing Orders**: At the bottom of the interface, there will be a "Place Order" button. Clicking this button will open a confirmation popup to finalize the order.
 
-[![Edit on StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/mui/material-ui/tree/master/examples/material-ui-cra-ts)
-
-## The idea behind the example
-
-This example demonstrates how you can use Material UI with [Create React App](https://github.com/facebookincubator/create-react-app) in [TypeScript](https://github.com/Microsoft/TypeScript).
-It includes `@mui/material` and its peer dependencies, including [Emotion](https://emotion.sh/docs/introduction), the default style engine in Material UI v6.
-If you prefer, you can [use styled-components instead](https://mui.com/material-ui/integrations/interoperability/#styled-components).
-
-## What's next?
-
-<!-- #default-branch-switch -->
-
-You now have a working example project.
-You can head back to the documentation and continue by browsing the [templates](https://mui.com/material-ui/getting-started/templates/) section.
+This design aims to enhance the efficiency of order-taking while providing a user-friendly experience for the waiter.
