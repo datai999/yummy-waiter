@@ -1,6 +1,6 @@
 declare module 'myTypes' {
     type Pho = {
-        meat: string,
+        meats: string[],
         noodle: string,
         preferences?: string[],
         notes?: string,

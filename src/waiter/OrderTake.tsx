@@ -1,73 +1,60 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+
 import {
-    Box,
-    Container,
-    Typography,
-    Grid,
-    Button,
-    TextField,
-    Chip,
-    Paper,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-} from "@mui/material";
-import { styled } from "@mui/system";
-import { FaChevronRight } from "react-icons/fa";
-import OrderSummary from "./OrderSummary";
-import { Categories } from ".././constants";
-import { CategoryButton } from "../Common";
+  Pho,
+  SelectedItem,
+} from 'myTypes';
+import { FaChevronRight } from 'react-icons/fa';
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
-    padding: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-    backgroundColor: "#fff",
-    borderRadius: theme.shape.borderRadius,
-}));
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  TextField,
+  Typography,
+} from '@mui/material';
 
-type Pho = {
-    meat: string,
-    noodle: string,
-    preferences?: string[],
-    notes?: string,
-}
-
-type SelectedItem = {
-    id: number,
-    category: string,
-    pho: Pho
-};
+import { CheckButton } from '../my-component';
+import {
+  BeefMeats,
+  BeefPreferences,
+  Categories,
+  ChickenMeats,
+  ChikenPreferences,
+  Noodles,
+} from '../my-constants';
+import {
+  CategoryButton,
+  StyledPaper,
+} from '../my-styled';
+import OrderSummary from './OrderSummary';
 
 type Props = {
+    selectedTable: string,
+    setSelectedTable(selectedTable: string): void,
     selectedCategory: Categories,
     setSelectedCategory(selectedItems: Categories): void;
 };
 
-const OrderTake = ({ selectedCategory, setSelectedCategory }: Props) => {
-    const [selectedTable, setSelectedTable] = useState("");
+const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelectedCategory }: Props) => {
     const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
-    const [customizations, setCustomizations] = useState<Pho>({} as Pho);
+    const [pho, setPho] = useState<Pho>({} as Pho);
     const [notes, setNotes] = useState("");
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-
-    const meatOptions = {
-        BEEF: ["DB", "Tái", "Chín", "Gầu", "Gân", "Sách", "Bò viên", "XiQ"],
-        CHICKEN: ["Ức", "Đùi", "Cánh"],
-    };
-    const noodleTypes = ["BC", "BT", "BS", "BTS", "Bún", "Miến"];
-    const preferences = ["Togo", "Hành lá", "Hành tây", "Ngò", "Nước trong", "Ít bánh", "HD", "HT", "Thêm béo", "Khô", "Măng"];
-    ;
 
     const handleAddItem = () => {
         const newItem = {
             id: Date.now(),
             category: selectedCategory,
-            pho: customizations,
+            pho: pho,
             notes: notes,
         };
         setSelectedItems([...selectedItems, newItem]);
-        setCustomizations({} as Pho);
+        setPho({} as Pho);
         setNotes("");
     };
 
@@ -99,69 +86,59 @@ const OrderTake = ({ selectedCategory, setSelectedCategory }: Props) => {
             </Box>
 
             <StyledPaper>
-                {(selectedCategory === Categories.BEEF || selectedCategory === Categories.CHICKEN) && (
+
+                {selectedCategory === Categories.BEEF && (
+                    <CheckButton
+                        multi={true}
+                        allOptions={Object.keys(BeefMeats)}
+                        options={pho.meats}
+                        createLabel={(key) => BeefMeats[key as keyof typeof BeefMeats]}
+                        callback={(meats) => setPho({ ...pho, meats })}
+                    />
+                )}
+
+                {selectedCategory === Categories.CHICKEN && (
+                    <CheckButton
+                        multi={false}
+                        allOptions={Object.keys(ChickenMeats)}
+                        options={pho.meats}
+                        createLabel={(key) => ChickenMeats[key as keyof typeof ChickenMeats]}
+                        callback={(meats) => setPho({ ...pho, meats })}
+                    />
+                )}
+
+                {[Categories.BEEF, Categories.CHICKEN].includes(selectedCategory) && (
                     <>
-                        <Grid container spacing={1} sx={{ mb: 2 }}>
-                            {meatOptions[selectedCategory].map((option) => (
-                                <Grid item key={option}>
-                                    <Chip
-                                        label={option}
-                                        onClick={() =>
-                                            setCustomizations({
-                                                ...customizations,
-                                                meat: option,
-                                            })
-                                        }
-                                        color={customizations.meat === option ? "primary" : "default"}
-                                    />
-                                </Grid>
-                            ))}
-                        </Grid>
-
-                        <Grid container spacing={1} sx={{ mb: 2 }}>
-                            {noodleTypes.map((type) => (
-                                <Grid item key={type}>
-                                    <Chip
-                                        label={type}
-                                        onClick={() =>
-                                            setCustomizations({
-                                                ...customizations,
-                                                noodle: type,
-                                            })
-                                        }
-                                        color={
-                                            customizations.noodle === type ? "primary" : "default"
-                                        }
-                                    />
-                                </Grid>
-                            ))}
-                        </Grid>
-
-                        <Grid container spacing={1} sx={{ mb: 2 }}>
-                            {preferences.map((pref) => (
-                                <Grid item key={pref}>
-                                    <Chip
-                                        label={pref}
-                                        onClick={() => {
-                                            const currentPrefs = customizations.preferences || [];
-                                            const newPrefs = currentPrefs.includes(pref)
-                                                ? currentPrefs.filter((p) => p !== pref)
-                                                : [...currentPrefs, pref];
-                                            setCustomizations({
-                                                ...customizations,
-                                                preferences: newPrefs,
-                                            });
-                                        }}
-                                        color={
-                                            customizations.preferences?.includes(pref)
-                                                ? "primary"
-                                                : "default"
-                                        }
-                                    />
-                                </Grid>
-                            ))}
-                        </Grid>
+                        <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
+                        <CheckButton
+                            multi={false}
+                            allOptions={Object.keys(Noodles)}
+                            options={[pho.noodle]}
+                            createLabel={(key) => Noodles[key as keyof typeof Noodles]}
+                            callback={(noodles) => setPho({ ...pho, noodle: noodles[0] })}
+                        />
+                        <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
                     </>
+                )}
+
+                {selectedCategory === Categories.BEEF && (
+                    <CheckButton
+                        multi={true}
+                        allOptions={Object.keys(BeefPreferences)}
+                        options={pho.preferences}
+                        createLabel={(key) => BeefPreferences[key as keyof typeof BeefPreferences]}
+                        callback={(preferences) => setPho({ ...pho, preferences })}
+                    />
+                )}
+
+                {selectedCategory === Categories.CHICKEN && (
+                    <CheckButton
+                        multi={true}
+                        allOptions={Object.keys(ChikenPreferences)}
+                        options={pho.preferences}
+                        createLabel={(key) => ChikenPreferences[key as keyof typeof ChikenPreferences]}
+                        callback={(preferences) => setPho({ ...pho, preferences })}
+                    />
                 )}
 
                 <TextField

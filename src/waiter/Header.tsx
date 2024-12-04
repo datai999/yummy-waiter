@@ -1,8 +1,8 @@
 import { Paper, styled, Grid2, Typography, Select, MenuItem, Box } from "@mui/material";
 import React, { useState } from "react";
-import YummyLogo from "./assets/yummy.png";
-import { Categories } from "./constants";
-import { CategoryButton } from "./Common";
+import YummyLogo from "./../assets/yummy.png";
+import { Categories } from "../my-constants";
+import { CategoryButton } from "../my-styled";
 
 const LogoImage = styled("img")({
     width: "60px",
@@ -19,13 +19,13 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 type Props = {
+    selectedTable: string,
+    setSelectedTable(selectedTable: string): void,
     selectedCategory: Categories,
     setSelectedCategory(selectedItems: Categories): void;
 };
 
-const Header = ({ selectedCategory, setSelectedCategory }: Props) => {
-    const [selectedTable, setSelectedTable] = useState("");
-
+const Header = ({ selectedTable, setSelectedTable, selectedCategory, setSelectedCategory }: Props) => {
     return (
         <StyledPaper>
             <Grid2 container spacing={2} alignItems="center">

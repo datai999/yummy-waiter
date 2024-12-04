@@ -1,7 +1,16 @@
-import React, { useState } from "react";
-import { Box, BoxProps, Container, Grid, IconButton, Typography, styled } from "@mui/material";
-import { SelectedItem } from "myTypes";
-import { FaTrash } from "react-icons/fa";
+import React, { useState } from 'react';
+
+import { SelectedItem } from 'myTypes';
+import { FaTrash } from 'react-icons/fa';
+
+import {
+  Box,
+  BoxProps,
+  Grid,
+  IconButton,
+  styled,
+  Typography,
+} from '@mui/material';
 
 interface StyledBoxProps extends BoxProps {
     selected?: boolean;
@@ -45,9 +54,9 @@ const OrderSummary = ({ selectedItems, setSelectedItems }: Props) => {
                     <Grid container alignItems="center" spacing={2}>
                         <Grid item xs>
                             <Typography variant="subtitle1">{item.category}</Typography>
-                            {item.pho.meat && (
+                            {item.pho.meats && item.pho.meats.length > 0 && (
                                 <Typography variant="body2">
-                                    Meat: {item.pho.meat}
+                                    Meat: {item.pho.meats}
                                 </Typography>
                             )}
                             {item.pho.noodle && (
