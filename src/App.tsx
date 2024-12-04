@@ -4,9 +4,15 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import WaiterInterface from './waiter/OrderTake';
+import Header from './Header';
 
 export default function App() {
   return (
-    <WaiterInterface />
+    <Container>
+      <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
+        <Header />
+      </Box>
+      <WaiterInterface />
+    </Container>
   );
 }

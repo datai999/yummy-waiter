@@ -3,8 +3,6 @@ import {
     Box,
     Container,
     Typography,
-    Select,
-    MenuItem,
     Grid,
     Button,
     ButtonProps,
@@ -17,7 +15,7 @@ import {
     DialogActions,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import { FaUtensils, FaChevronRight, FaTrash } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
 import OrderSummary from "./OrderSummary";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -98,30 +96,6 @@ const WaiterInterface = () => {
     return (
         <Container>
             <Box sx={{ py: 3 }}>
-                <StyledPaper>
-                    <Grid container spacing={2} alignItems="center">
-                        <Grid item xs={12} sm={6}>
-                            <Typography variant="h5" gutterBottom>
-                                <FaUtensils style={{ marginRight: 8 }} /> Pho Restaurant Orders
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <Select
-                                fullWidth
-                                value={selectedTable}
-                                onChange={(e) => setSelectedTable(e.target.value)}
-                                displayEmpty
-                            >
-                                <MenuItem value="">Select Table</MenuItem>
-                                {Array.from({ length: 20 }, (_, i) => (
-                                    <MenuItem key={i + 1} value={i + 1}>
-                                        Table {i + 1}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </Grid>
-                    </Grid>
-                </StyledPaper>
 
                 <Box sx={{ mb: 3, display: "flex", flexWrap: "wrap" }}>
                     {categories.map((category) => (
@@ -137,13 +111,8 @@ const WaiterInterface = () => {
                 </Box>
 
                 <StyledPaper>
-
-                    <Typography variant="h6" gutterBottom>
-                        Customizations
-                    </Typography>
                     {(selectedCategory === "Beef" || selectedCategory === "Chicken") && (
                         <>
-                            <Typography variant="subtitle1">Meat Options</Typography>
                             <Grid container spacing={1} sx={{ mb: 2 }}>
                                 {meatOptions[selectedCategory].map((option) => (
                                     <Grid item key={option}>
@@ -161,7 +130,6 @@ const WaiterInterface = () => {
                                 ))}
                             </Grid>
 
-                            <Typography variant="subtitle1">Noodle Type</Typography>
                             <Grid container spacing={1} sx={{ mb: 2 }}>
                                 {noodleTypes.map((type) => (
                                     <Grid item key={type}>
@@ -181,7 +149,6 @@ const WaiterInterface = () => {
                                 ))}
                             </Grid>
 
-                            <Typography variant="subtitle1">Preferences</Typography>
                             <Grid container spacing={1} sx={{ mb: 2 }}>
                                 {preferences.map((pref) => (
                                     <Grid item key={pref}>
