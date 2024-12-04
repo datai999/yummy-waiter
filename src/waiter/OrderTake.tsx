@@ -5,7 +5,6 @@ import {
     Typography,
     Grid,
     Button,
-    ButtonProps,
     TextField,
     Chip,
     Paper,
@@ -17,27 +16,14 @@ import {
 import { styled } from "@mui/system";
 import { FaChevronRight } from "react-icons/fa";
 import OrderSummary from "./OrderSummary";
+import { Categories } from ".././constants";
+import { CategoryButton } from "../Common";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(2),
     marginBottom: theme.spacing(2),
     backgroundColor: "#fff",
     borderRadius: theme.shape.borderRadius,
-}));
-
-interface StyledButtonProps extends ButtonProps {
-    selected?: boolean;
-}
-
-const CategoryButton = styled(Button, {
-    shouldForwardProp: (prop) => prop !== 'selected',
-})<StyledButtonProps>(({ theme, selected }) => ({
-    margin: theme.spacing(1),
-    backgroundColor: selected ? theme.palette.primary.main : "#fff",
-    color: selected ? "#fff" : theme.palette.text.primary,
-    "&:hover": {
-        backgroundColor: selected ? theme.palette.primary.dark : "#f5f5f5",
-    },
 }));
 
 type Pho = {
@@ -53,21 +39,24 @@ type SelectedItem = {
     pho: Pho
 };
 
-const WaiterInterface = () => {
+type Props = {
+    selectedCategory: Categories,
+    setSelectedCategory(selectedItems: Categories): void;
+};
+
+const OrderTake = ({ selectedCategory, setSelectedCategory }: Props) => {
     const [selectedTable, setSelectedTable] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("Beef");
     const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
     const [customizations, setCustomizations] = useState<Pho>({} as Pho);
     const [notes, setNotes] = useState("");
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
-    const categories = ["Beef", "Chicken", "Drinks", "Side Orders", "Dessert"];
     const meatOptions = {
-        Beef: ["DB", "Tái", "Chín", "Gầu", "Gân", "Sách", "Bò viên", "XiQ"],
-        Chicken: ["Ức", "Đùi", "Cánh"],
+        BEEF: ["DB", "Tái", "Chín", "Gầu", "Gân", "Sách", "Bò viên", "XiQ"],
+        CHICKEN: ["Ức", "Đùi", "Cánh"],
     };
     const noodleTypes = ["BC", "BT", "BS", "BTS", "Bún", "Miến"];
-    const preferences = ["Togo", "Hành lá", "Hành tây", "Ngò", "Nước trong", "Ít bánh", "HD", "HT", "Thêm béo", "Khô", "Mang"];
+    const preferences = ["Togo", "Hành lá", "Hành tây", "Ngò", "Nước trong", "Ít bánh", "HD", "HT", "Thêm béo", "Khô", "Măng"];
     ;
 
     const handleAddItem = () => {
@@ -94,141 +83,139 @@ const WaiterInterface = () => {
     };
 
     return (
-        <Container>
-            <Box sx={{ py: 3 }}>
-
-                <Box sx={{ mb: 3, display: "flex", flexWrap: "wrap" }}>
-                    {categories.map((category) => (
-                        <CategoryButton
-                            key={category}
-                            selected={selectedCategory === category}
-                            onClick={() => setSelectedCategory(category)}
-                            variant="contained"
-                        >
-                            {category}
-                        </CategoryButton>
-                    ))}
-                </Box>
-
-                <StyledPaper>
-                    {(selectedCategory === "Beef" || selectedCategory === "Chicken") && (
-                        <>
-                            <Grid container spacing={1} sx={{ mb: 2 }}>
-                                {meatOptions[selectedCategory].map((option) => (
-                                    <Grid item key={option}>
-                                        <Chip
-                                            label={option}
-                                            onClick={() =>
-                                                setCustomizations({
-                                                    ...customizations,
-                                                    meat: option,
-                                                })
-                                            }
-                                            color={customizations.meat === option ? "primary" : "default"}
-                                        />
-                                    </Grid>
-                                ))}
-                            </Grid>
-
-                            <Grid container spacing={1} sx={{ mb: 2 }}>
-                                {noodleTypes.map((type) => (
-                                    <Grid item key={type}>
-                                        <Chip
-                                            label={type}
-                                            onClick={() =>
-                                                setCustomizations({
-                                                    ...customizations,
-                                                    noodle: type,
-                                                })
-                                            }
-                                            color={
-                                                customizations.noodle === type ? "primary" : "default"
-                                            }
-                                        />
-                                    </Grid>
-                                ))}
-                            </Grid>
-
-                            <Grid container spacing={1} sx={{ mb: 2 }}>
-                                {preferences.map((pref) => (
-                                    <Grid item key={pref}>
-                                        <Chip
-                                            label={pref}
-                                            onClick={() => {
-                                                const currentPrefs = customizations.preferences || [];
-                                                const newPrefs = currentPrefs.includes(pref)
-                                                    ? currentPrefs.filter((p) => p !== pref)
-                                                    : [...currentPrefs, pref];
-                                                setCustomizations({
-                                                    ...customizations,
-                                                    preferences: newPrefs,
-                                                });
-                                            }}
-                                            color={
-                                                customizations.preferences?.includes(pref)
-                                                    ? "primary"
-                                                    : "default"
-                                            }
-                                        />
-                                    </Grid>
-                                ))}
-                            </Grid>
-                        </>
-                    )}
-
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={2}
-                        label="Special Notes"
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        sx={{ mb: 2 }}
-                    />
-
-                    <Button
+        <>
+            <Box sx={{ display: { sm: 'block', md: 'none' }, flexWrap: "wrap" }}>
+                {Object.values(Categories).map((category) => (
+                    <CategoryButton
+                        key={category}
+                        selected={selectedCategory === Categories[category as keyof typeof Categories]}
+                        onClick={() => setSelectedCategory(Categories[category as keyof typeof Categories])}
                         variant="contained"
-                        color="primary"
-                        onClick={handleAddItem}
-                        fullWidth
+                        size="small"
                     >
-                        Add to Order
-                    </Button>
-                </StyledPaper>
-
-                <StyledPaper>
-
-                    <OrderSummary selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
-
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        onClick={handlePlaceOrder}
-                        disabled={!selectedTable || selectedItems.length === 0}
-                        sx={{ mt: 2 }}
-                    >
-                        Place Order <FaChevronRight style={{ marginLeft: 8 }} />
-                    </Button>
-                </StyledPaper>
-
-                <Dialog open={openConfirmDialog} onClose={() => setOpenConfirmDialog(false)}>
-                    <DialogTitle>Confirm Order</DialogTitle>
-                    <DialogContent>
-                        <Typography>
-                            Are you sure you want to place the order for Table {selectedTable}?
-                        </Typography>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setOpenConfirmDialog(false)}>Cancel</Button>
-                        <Button onClick={confirmOrder} variant="contained" color="primary">
-                            Confirm
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                        {category}
+                    </CategoryButton>
+                ))}
             </Box>
-        </Container>
+
+            <StyledPaper>
+                {(selectedCategory === Categories.BEEF || selectedCategory === Categories.CHICKEN) && (
+                    <>
+                        <Grid container spacing={1} sx={{ mb: 2 }}>
+                            {meatOptions[selectedCategory].map((option) => (
+                                <Grid item key={option}>
+                                    <Chip
+                                        label={option}
+                                        onClick={() =>
+                                            setCustomizations({
+                                                ...customizations,
+                                                meat: option,
+                                            })
+                                        }
+                                        color={customizations.meat === option ? "primary" : "default"}
+                                    />
+                                </Grid>
+                            ))}
+                        </Grid>
+
+                        <Grid container spacing={1} sx={{ mb: 2 }}>
+                            {noodleTypes.map((type) => (
+                                <Grid item key={type}>
+                                    <Chip
+                                        label={type}
+                                        onClick={() =>
+                                            setCustomizations({
+                                                ...customizations,
+                                                noodle: type,
+                                            })
+                                        }
+                                        color={
+                                            customizations.noodle === type ? "primary" : "default"
+                                        }
+                                    />
+                                </Grid>
+                            ))}
+                        </Grid>
+
+                        <Grid container spacing={1} sx={{ mb: 2 }}>
+                            {preferences.map((pref) => (
+                                <Grid item key={pref}>
+                                    <Chip
+                                        label={pref}
+                                        onClick={() => {
+                                            const currentPrefs = customizations.preferences || [];
+                                            const newPrefs = currentPrefs.includes(pref)
+                                                ? currentPrefs.filter((p) => p !== pref)
+                                                : [...currentPrefs, pref];
+                                            setCustomizations({
+                                                ...customizations,
+                                                preferences: newPrefs,
+                                            });
+                                        }}
+                                        color={
+                                            customizations.preferences?.includes(pref)
+                                                ? "primary"
+                                                : "default"
+                                        }
+                                    />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </>
+                )}
+
+                <TextField
+                    fullWidth
+                    multiline
+                    rows={1}
+                    label="Special Notes"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    sx={{ mb: 2 }}
+                />
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleAddItem}
+                    fullWidth
+                >
+                    Add to Order
+                </Button>
+            </StyledPaper>
+
+            <StyledPaper>
+
+                <OrderSummary selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={handlePlaceOrder}
+                    disabled={!selectedTable || selectedItems.length === 0}
+                    sx={{ mt: 2 }}
+                >
+                    Place Order <FaChevronRight style={{ marginLeft: 8 }} />
+                </Button>
+            </StyledPaper>
+
+            <Dialog open={openConfirmDialog} onClose={() => setOpenConfirmDialog(false)}>
+                <DialogTitle>Confirm Order</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        Are you sure you want to place the order for Table {selectedTable}?
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenConfirmDialog(false)}>Cancel</Button>
+                    <Button onClick={confirmOrder} variant="contained" color="primary">
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 };
 
-export default WaiterInterface;
+export default OrderTake;

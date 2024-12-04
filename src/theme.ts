@@ -6,14 +6,14 @@ const theme = createTheme({
   cssVariables: true,
   palette: {
     primary: {
-      main: '#D42E44',
-    },
-    secondary: {
-      main: '#9E675B',
+      main: red[700],
     },
     error: {
       main: red.A400,
     },
+    text: {
+      primary: red[700],
+    }
   },
 });
 
