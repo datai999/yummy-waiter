@@ -1,13 +1,32 @@
-import { Paper, styled, Grid2, Typography, Select, MenuItem, Box } from "@mui/material";
-import React, { useState } from "react";
-import YummyLogo from "./../assets/yummy.png";
-import { Categories } from "../my-constants";
-import { CategoryButton } from "../my-styled";
+import React from 'react';
+
+import {
+  Box,
+  Divider,
+  Grid2,
+  MenuItem,
+  Paper,
+  Select,
+  styled,
+  Typography,
+} from '@mui/material';
+
+import YummyLogo from '../assets/yummy.png';
+import { Categories } from '../my-constants';
+import { CategoryButton } from '../my-styled';
 
 const LogoImage = styled("img")({
     width: "60px",
     height: "60px",
-    marginRight: "16px",
+    marginLeft: "16px",
+    objectFit: "contain"
+});
+
+const LogoImageXS = styled("img")({
+    width: "40px",
+    height: "40px",
+    marginLeft: "10px",
+    marginRight: "10px",
     objectFit: "contain"
 });
 
@@ -30,20 +49,23 @@ const Header = ({ selectedTable, setSelectedTable, selectedCategory, setSelected
         <StyledPaper>
             <Grid2 container spacing={2} alignItems="center">
                 <Grid2 size={{ xs: 2, sm: 1, md: 1 }}>
-                    <LogoImage src={YummyLogo} alt="Yummy Logo" />
+                    <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} />
+                    <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} />
                 </Grid2>
-                <Grid2 size={{ xs: 4, sm: 6, md: 2 }}  >
-                    <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ display: { xs: 'none', sm: 'block' } }}>
+                <Grid2 size={{ xs: 6, sm: 6, md: 2 }}  >
+                    <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ textAlign: "center", display: { xs: 'flex', sm: 'block', md: 'none', lg: 'none' } }}>
                         Yummy Phở 2
                     </Typography>
-                    <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ display: { xs: 'flex', sm: 'none', md: 'none', lg: 'none' } }}>
+                    <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ display: { xs: 'none', sm: 'none', md: 'block', lg: 'block' } }}>                        Yummy Phở 2
+                    </Typography>
+                    <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'none' } }}>
                         Yummy
                     </Typography>
-                    <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ display: { xs: 'flex', sm: 'none', md: 'none', lg: 'none' } }}>
+                    <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'none' } }}>
                         Phở 2
                     </Typography>
                 </Grid2>
-                <Grid2 size={{ md: 7 }} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
+                <Grid2 size={{ md: 6 }} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
                     {Object.values(Categories).map((category) => (
                         <CategoryButton
                             key={category}
@@ -55,12 +77,13 @@ const Header = ({ selectedTable, setSelectedTable, selectedCategory, setSelected
                         </CategoryButton>
                     ))}
                 </Grid2>
-                <Grid2 size={{ xs: 6, sm: 5, md: 2 }}>
+                <Grid2 size={{ xs: 4, sm: 5, md: 2 }}>
                     <Select
                         fullWidth
                         value={selectedTable}
                         onChange={(e) => setSelectedTable(e.target.value)}
                         displayEmpty
+                        size='small'
                     >
                         <MenuItem value="">Table selection</MenuItem>
                         {Array.from({ length: 20 }, (_, i) => (
@@ -71,6 +94,21 @@ const Header = ({ selectedTable, setSelectedTable, selectedCategory, setSelected
                     </Select>
                 </Grid2>
             </Grid2>
+
+            <Box sx={{ display: { sm: 'block', md: 'none' }, flexWrap: "wrap" }}>
+                <Divider textAlign="left" sx={{ mb: 0 }}></Divider>
+                {Object.values(Categories).map((category) => (
+                    <CategoryButton
+                        key={category}
+                        selected={selectedCategory === Categories[category as keyof typeof Categories]}
+                        onClick={() => setSelectedCategory(Categories[category as keyof typeof Categories])}
+                        variant="contained"
+                        size="small"
+                    >
+                        {category}
+                    </CategoryButton>
+                ))}
+            </Box>
         </StyledPaper>);
 }
 

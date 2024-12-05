@@ -7,13 +7,13 @@ import {
 import { FaChevronRight } from 'react-icons/fa';
 
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
+  Grid2,
   TextField,
   Typography,
 } from '@mui/material';
@@ -27,10 +27,7 @@ import {
   ChikenPreferences,
   Noodles,
 } from '../my-constants';
-import {
-  CategoryButton,
-  StyledPaper,
-} from '../my-styled';
+import { StyledPaper } from '../my-styled';
 import OrderSummary from './OrderSummary';
 
 type Props = {
@@ -71,20 +68,6 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
 
     return (
         <>
-            <Box sx={{ display: { sm: 'block', md: 'none' }, flexWrap: "wrap" }}>
-                {Object.values(Categories).map((category) => (
-                    <CategoryButton
-                        key={category}
-                        selected={selectedCategory === Categories[category as keyof typeof Categories]}
-                        onClick={() => setSelectedCategory(Categories[category as keyof typeof Categories])}
-                        variant="contained"
-                        size="small"
-                    >
-                        {category}
-                    </CategoryButton>
-                ))}
-            </Box>
-
             <StyledPaper>
 
                 {selectedCategory === Categories.BEEF && (
@@ -141,24 +124,28 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                     />
                 )}
 
-                <TextField
-                    fullWidth
-                    multiline
-                    rows={1}
-                    label="Special Notes"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    sx={{ mb: 2 }}
-                />
+                <Grid2 container spacing={2} alignItems="center">
+                    <Grid2 size={{ xs: 7, sm: 6, md: 3 }}  >
+                        <TextField
+                            fullWidth
+                            label="Special Notes"
+                            size='small'
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                        />
+                    </Grid2>
+                    <Grid2 size={{ xs: 5, sm: 3, md: 2 }}  >
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleAddItem}
+                            fullWidth
+                        >
+                            Add to Order
+                        </Button>
+                    </Grid2>
+                </Grid2>
 
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleAddItem}
-                    fullWidth
-                >
-                    Add to Order
-                </Button>
             </StyledPaper>
 
             <StyledPaper>

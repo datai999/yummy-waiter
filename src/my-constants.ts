@@ -39,9 +39,9 @@ export enum BeefPreferences {
     CILANTRO = "Ngò",
     NO_FAT = "Không béo",
     LESS_NOODLE = "Ít bánh",
-    VINEGAR_ONION = "Hành dấm",
-    ROOT_ONION = "Đầu hành",
-    FAT = "Nước béo"
+    VINEGAR_ONION = "HD",
+    ROOT_ONION = "HT",
+    FAT = "Béo"
 }
 
 export enum ChikenPreferences {
