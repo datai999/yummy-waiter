@@ -1,3 +1,5 @@
+import { Pho } from 'myTypes';
+
 export enum Categories {
     BEEF = "BEEF",
     CHICKEN = "CHICKEN",
@@ -51,7 +53,12 @@ export enum ChikenPreferences {
     CILANTRO = "Ngò",
     NO_FAT = "Không béo",
     LESS_NOODLE = "Ít bánh",
+    BAMBOO_SHOOTS = "Măng",
     DRY = "Khô",
-    BAMBOO_SHOOTS = "Măng"
 }
 
+export const DefaultPho: Pho = {
+    meats: [],
+    noodle: "REGULAR",
+    preferences: ["GREEN_ONION", "WHITE_ONION", "CILANTRO"],
+}

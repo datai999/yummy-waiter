@@ -15,7 +15,7 @@ export default function Waiter() {
             <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
                 <Header selectedTable={selectedTable} setSelectedTable={setSelectedTable} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
             </Box>
-            <OrderTake selectedTable={selectedTable} setSelectedTable={setSelectedTable} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
+            <OrderTake selectedTable={selectedTable} setSelectedTable={setSelectedTable} selectedCategory={selectedCategory} />
         </>
     );
 }

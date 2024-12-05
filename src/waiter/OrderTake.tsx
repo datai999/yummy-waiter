@@ -25,6 +25,7 @@ import {
   Categories,
   ChickenMeats,
   ChikenPreferences,
+  DefaultPho,
   Noodles,
 } from '../my-constants';
 import { StyledPaper } from '../my-styled';
@@ -33,13 +34,12 @@ import OrderSummary from './OrderSummary';
 type Props = {
     selectedTable: string,
     setSelectedTable(selectedTable: string): void,
-    selectedCategory: Categories,
-    setSelectedCategory(selectedItems: Categories): void;
+    selectedCategory: Categories
 };
 
-const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelectedCategory }: Props) => {
+const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory }: Props) => {
     const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
-    const [pho, setPho] = useState<Pho>({} as Pho);
+    const [pho, setPho] = useState<Pho>(DefaultPho);
     const [notes, setNotes] = useState("");
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
@@ -51,7 +51,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
             notes: notes,
         };
         setSelectedItems([...selectedItems, newItem]);
-        setPho({} as Pho);
+        setPho(DefaultPho);
         setNotes("");
     };
 
@@ -95,7 +95,10 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                         <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
                         <CheckButton
                             multi={false}
-                            allOptions={Object.keys(Noodles)}
+                            allOptions={Object.keys(Noodles)
+                                .filter(e => Categories.BEEF === selectedCategory
+                                    ? ![Noodles.VERMICELL, Noodles.GLASS].includes(Noodles[e as keyof typeof Noodles])
+                                    : e)}
                             options={[pho.noodle]}
                             createLabel={(key) => Noodles[key as keyof typeof Noodles]}
                             callback={(noodles) => setPho({ ...pho, noodle: noodles[0] })}
