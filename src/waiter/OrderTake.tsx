@@ -31,6 +31,11 @@ import {
 import { StyledPaper } from '../my-styled';
 import OrderSummary from './OrderSummary';
 
+const defaultSelectedItems: SelectedItem = {
+    beef: [],
+    chicken: []
+};
+
 type Props = {
     selectedTable: string,
     setSelectedTable(selectedTable: string): void,
@@ -38,21 +43,18 @@ type Props = {
 };
 
 const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory }: Props) => {
-    const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
     const [pho, setPho] = useState<Pho>(DefaultPho);
-    const [notes, setNotes] = useState("");
+    const [selectedItems, setSelectedItems] = useState<SelectedItem>(defaultSelectedItems);
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
     const handleAddItem = () => {
-        const newItem = {
-            id: Date.now(),
-            category: selectedCategory,
-            pho: pho,
-            notes: notes,
-        };
-        setSelectedItems([...selectedItems, newItem]);
+        const newItem = { ...selectedItems };
+        if (Categories.BEEF === selectedCategory)
+            newItem.beef = [...newItem.beef, { ...pho, id: new Date().toTimeString() }];
+        else if (Categories.CHICKEN === selectedCategory)
+            newItem.chicken = [...newItem.chicken, { ...pho, id: new Date().toTimeString() }];
+        setSelectedItems(newItem);
         setPho(DefaultPho);
-        setNotes("");
     };
 
     const handlePlaceOrder = () => {
@@ -62,13 +64,13 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory }: Props)
     const confirmOrder = () => {
         console.log("Order placed:", { table: selectedTable, items: selectedItems });
         setOpenConfirmDialog(false);
-        setSelectedItems([]);
+        setSelectedItems(defaultSelectedItems);
         setSelectedTable("");
     };
 
     return (
         <>
-            <StyledPaper>
+            <StyledPaper sx={{ mb: 1, pb: 1 }}>
 
                 {selectedCategory === Categories.BEEF && (
                     <CheckButton
@@ -133,8 +135,8 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory }: Props)
                             fullWidth
                             label="Special Notes"
                             size='small'
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
+                            value={pho.note}
+                            onChange={(e) => setPho({ ...pho, note: e.target.value })}
                         />
                     </Grid2>
                     <Grid2 size={{ xs: 5, sm: 3, md: 2 }}  >
@@ -151,17 +153,15 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory }: Props)
 
             </StyledPaper>
 
-            <StyledPaper>
-
-                <OrderSummary selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
-
+            <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 1 }}>
+                <OrderSummary selectedItems={selectedItems} />
                 <Button
                     variant="contained"
                     color="primary"
                     fullWidth
                     onClick={handlePlaceOrder}
-                    disabled={!selectedTable || selectedItems.length === 0}
-                    sx={{ mt: 2 }}
+                    disabled={!selectedTable}
+                    sx={{ mt: 1 }}
                 >
                     Place Order <FaChevronRight style={{ marginLeft: 8 }} />
                 </Button>

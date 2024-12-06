@@ -16,7 +16,22 @@ export enum BeefMeats {
     TENDON = "Gân",
     TRIPE = "Sách",
     BEEF_BALL = "Bò viên",
-    RIBS = "XiQ"
+    RIBS = "XiQ",
+    BEEF_STEW = "Hủ tiếu BK",
+    BEEF_STEW_BREAD = "B.mì BK",
+}
+
+export enum BeefMeatCodes {
+    SPECIAL = "DB",
+    RARE = "T",
+    LEAN = "C",
+    FATTY = "G`",
+    TENDON = "g",
+    TRIPE = "S",
+    BEEF_BALL = "BV",
+    RIBS = "Xi",
+    BEEF_STEW = "Pho BK",
+    BEEF_STEW_BREAD = "B.mì BK",
 }
 
 export enum ChickenMeats {
@@ -36,11 +51,21 @@ export enum Noodles {
 
 export enum BeefPreferences {
     TOGO = "TOGO",
-    GREEN_ONION = "Hành lá",
-    WHITE_ONION = "Hành tây",
-    CILANTRO = "Ngò",
+    NO_ONION = "Không hành",
     NO_FAT = "Không béo",
     LESS_NOODLE = "Ít bánh",
+    RARE_OUTSIDE = "Tái Riêng",
+    VINEGAR_ONION = "HD",
+    ROOT_ONION = "HT",
+    FAT = "Béo"
+}
+
+export enum BeefPreferenceCodes {
+    TOGO = "TOGO",
+    NO_ONION = "No H",
+    NO_FAT = "No Béo",
+    LESS_NOODLE = "-b",
+    RARE_OUTSIDE = "R",
     VINEGAR_ONION = "HD",
     ROOT_ONION = "HT",
     FAT = "Béo"
@@ -48,9 +73,7 @@ export enum BeefPreferences {
 
 export enum ChikenPreferences {
     TOGO = "TOGO",
-    GREEN_ONION = "Hành lá",
-    WHITE_ONION = "Hành tây",
-    CILANTRO = "Ngò",
+    NO_ONION = "Không hành",
     NO_FAT = "Không béo",
     LESS_NOODLE = "Ít bánh",
     BAMBOO_SHOOTS = "Măng",
@@ -58,7 +81,9 @@ export enum ChikenPreferences {
 }
 
 export const DefaultPho: Pho = {
+    id: '',
     meats: [],
     noodle: "REGULAR",
-    preferences: ["GREEN_ONION", "WHITE_ONION", "CILANTRO"],
+    preferences: [],
+    note: ''
 }

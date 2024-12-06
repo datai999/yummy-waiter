@@ -1,19 +1,28 @@
 declare module 'myTypes' {
     type Pho = {
+        id?: string,
         meats: string[],
         noodle: string,
         preferences?: string[],
-        notes?: string,
+        note?: string,
+    };
+
+    type PhoCode = {
+        id?: string,
+        meats: string,
+        noodle: string,
+        preferences?: string,
+        note?: string,
     };
 
     type SelectedItem = {
-        id: number,
-        category: string,
-        pho: Pho
+        beef: Pho[],
+        chicken: Pho[]
     };
 }
 
 module.exports = {
     Pho,
+    PhoCode,
     SelectedItem,
 };
