@@ -19,7 +19,6 @@ import {
   BoxProps,
   Button,
   Divider,
-  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -84,8 +83,8 @@ const OrderSummary = ({ selectedItems }: Props) => {
 
     return (
         <Box>
-            {phoBeefs?.length >= 0 && (
-                <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0 }}>
+            {phoBeefs?.length > 0 && (
+                <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0, maxWidth: 360, }}>
                     <Typography variant="h6" >
                         <Badge badgeContent={phoBeefs.length} color="primary" anchorOrigin={{
                             vertical: 'top',
@@ -98,37 +97,38 @@ const OrderSummary = ({ selectedItems }: Props) => {
                     </Typography>
                     <Divider />
 
-                    <List dense sx={{ width: '100%', maxWidth: 450, pt: 0, pl: 0 }}>
-                        {phoBeefs.map((item) => {
+                    <List dense sx={{ width: '100%', p: 0 }}>
+                        {phoBeefs.map((item, index) => {
                             const labelId = `checkbox-list-secondary-label-${item}`;
                             return (
-                                <ListItem
-                                    key={item.toString()}
-                                    secondaryAction={
-                                        <Button variant='outlined' sx={{}}>
-                                            {/* <IconButton edge="end" aria-label="add" color="primary" size='small'> */}
-                                            <FaPlus />
-                                            {/* </IconButton> */}
-                                        </Button>
+                                <Box sx={{ display: 'flex' }} style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
+                                    <Button sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '30px', minHeight: '30px' }}>
+                                        <FaMinus style={{ fontSize: 12 }} />
+                                    </Button>
+                                    <ListItem
+                                        key={item.toString()}
+                                        dense
+                                        disablePadding
+                                        style={{ maxHeight: '30px' }}
+                                        sx={{ p: 2, m: 0, pl: 0, pr: 0 }}
 
-                                    }
-                                    dense
-                                    disablePadding
-                                >
-                                    <IconButton aria-label="delete" color="primary" size='small' >
-                                        <FaMinus style={{ fontSize: 16 }} />
-                                    </IconButton>
-                                    <ListItemButton dense sx={{ pl: 1, pr: 0 }}>
-                                        <ListItemText
-                                            id={labelId}
-                                            primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
-                                            secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
-                                            primary={
-                                                `${item.meats} (${item.noodle}) ${(item.preferences) ? `(${item.preferences})` : ''}`}
-                                            secondary={item.note ? item.note : null}
-                                        />
-                                    </ListItemButton>
-                                </ListItem>
+                                    >
+                                        <ListItemButton dense sx={{ p: 0, m: 0 }}>
+                                            <ListItemText
+                                                id={labelId}
+                                                primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
+                                                secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
+                                                sx={{ p: 0, m: 0 }}
+                                                primary={
+                                                    `${item.meats} (${item.noodle}) ${(item.preferences) ? `(${item.preferences})` : ''}`}
+                                                secondary={item.note ? item.note : null}
+                                            />
+                                        </ListItemButton>
+                                    </ListItem>
+                                    <Button variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '30px', maxHeight: '22px', minHeight: '23px' }}>
+                                        <FaPlus style={{ fontSize: 26 }} />
+                                    </Button>
+                                </Box>
                             );
                         })}
                     </List>
