@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import Box from '@mui/material/Box';
 
-import { Categories } from '../my-constants';
+import { Categories } from '../my/my-constants';
 import Header from './Header';
 import OrderTake from './OrderTake';
 

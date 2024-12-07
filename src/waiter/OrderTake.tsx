@@ -18,7 +18,7 @@ import {
   Typography,
 } from '@mui/material';
 
-import { CheckButton } from '../my-component';
+import { CheckButton } from '../my/my-component';
 import {
   BeefMeats,
   BeefPreferences,
@@ -27,12 +27,13 @@ import {
   ChikenPreferences,
   DefaultPho,
   Noodles,
-} from '../my-constants';
-import { StyledPaper } from '../my-styled';
+} from '../my/my-constants';
+import { generateId } from '../my/my-service';
+import { StyledPaper } from '../my/my-styled';
 import OrderSummary from './OrderSummary';
 
 const defaultSelectedItems: SelectedItem = {
-    beef: [],
+    beef: new Map(),
     chicken: []
 };
 
@@ -49,10 +50,14 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory }: Props)
 
     const handleAddItem = () => {
         const newItem = { ...selectedItems };
-        if (Categories.BEEF === selectedCategory)
-            newItem.beef = [...newItem.beef, { ...pho, id: new Date().toTimeString() }];
-        else if (Categories.CHICKEN === selectedCategory)
-            newItem.chicken = [...newItem.chicken, { ...pho, id: new Date().toTimeString() }];
+        const id = generateId();
+        const newPho = { ...pho, id: id };
+        if (Categories.BEEF === selectedCategory) {
+            if (newPho.meats.length === 0) newPho.meats = ["BPN"];
+            newItem.beef.set(id, newPho);
+        } else if (Categories.CHICKEN === selectedCategory)
+            newItem.chicken = [...newItem.chicken, newPho];
+        console.log("newItem", newItem);
         setSelectedItems(newItem);
         setPho(DefaultPho);
     };
@@ -154,7 +159,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory }: Props)
             </StyledPaper>
 
             <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 1 }}>
-                <OrderSummary selectedItems={selectedItems} />
+                <OrderSummary selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
                 <Button
                     variant="contained"
                     color="primary"

@@ -32,6 +32,7 @@ export enum BeefMeatCodes {
     RIBS = "Xi",
     BEEF_STEW = "Pho BK",
     BEEF_STEW_BREAD = "B.mì BK",
+    BPN = "BPN",
 }
 
 export enum ChickenMeats {

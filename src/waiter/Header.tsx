@@ -12,8 +12,8 @@ import {
 } from '@mui/material';
 
 import YummyLogo from '../assets/yummy.png';
-import { Categories } from '../my-constants';
-import { CategoryButton } from '../my-styled';
+import { Categories } from '../my/my-constants';
+import { CategoryButton } from '../my/my-styled';
 
 const LogoImage = styled("img")({
     width: "60px",
