@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, {
+  useEffect,
+  useState,
+} from 'react';
 
 import {
   Pho,
@@ -34,27 +37,35 @@ import OrderSummary from './OrderSummary';
 
 const defaultSelectedItems: SelectedItem = {
     beef: new Map(),
+    beefUpdated: '',
     chicken: []
 };
 
 type Props = {
     selectedTable: string,
     setSelectedTable(selectedTable: string): void,
-    selectedCategory: Categories
+    selectedCategory: Categories,
+    setSelectedCategory: (selectedCategory: Categories) => void,
+    refreshState: boolean
 };
 
-const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory }: Props) => {
+const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelectedCategory, refreshState }: Props) => {
     const [pho, setPho] = useState<Pho>(DefaultPho);
     const [selectedItems, setSelectedItems] = useState<SelectedItem>(defaultSelectedItems);
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
+    useEffect(() => {
+        setPho(DefaultPho);
+    }, [refreshState]);
+
     const handleAddItem = () => {
         const newItem = { ...selectedItems };
-        const id = generateId();
+        const id = pho.id.length ? pho.id : generateId();
         const newPho = { ...pho, id: id };
         if (Categories.BEEF === selectedCategory) {
             if (newPho.meats.length === 0) newPho.meats = ["BPN"];
             newItem.beef.set(id, newPho);
+            newItem.beefUpdated = new Date().toISOString();
         } else if (Categories.CHICKEN === selectedCategory)
             newItem.chicken = [...newItem.chicken, newPho];
         console.log("newItem", newItem);
@@ -62,9 +73,10 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory }: Props)
         setPho(DefaultPho);
     };
 
-    const handlePlaceOrder = () => {
-        setOpenConfirmDialog(true);
-    };
+    const showPho = (selectedItemId: string) => {
+        setSelectedCategory(Categories.BEEF);
+        setPho({ ...selectedItems.beef.get(selectedItemId)! });
+    }
 
     const confirmOrder = () => {
         console.log("Order placed:", { table: selectedTable, items: selectedItems });
@@ -151,7 +163,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory }: Props)
                             onClick={handleAddItem}
                             fullWidth
                         >
-                            Add to Order
+                            {`${pho.id.length > 0 ? 'Edit item' : 'Add to Order'}`}
                         </Button>
                     </Grid2>
                 </Grid2>
@@ -159,12 +171,15 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory }: Props)
             </StyledPaper>
 
             <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 1 }}>
-                <OrderSummary selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
+                <OrderSummary
+                    selectedItems={selectedItems} setSelectedItems={setSelectedItems}
+                    phoId={pho.id} showPho={showPho}
+                />
                 <Button
                     variant="contained"
                     color="primary"
                     fullWidth
-                    onClick={handlePlaceOrder}
+                    onClick={() => setOpenConfirmDialog(true)}
                     disabled={!selectedTable}
                     sx={{ mt: 1 }}
                 >

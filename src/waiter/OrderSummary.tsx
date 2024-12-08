@@ -45,20 +45,22 @@ const OrderItem = styled(Box, {
 })<StyledBoxProps>(({ theme, selected }) => ({
     padding: theme.spacing(0),
     marginBottom: theme.spacing(0),
-    backgroundColor: selected ? "#f5f5f5" : "#fff",
+    // backgroundColor: selected ? "primary" : "#fff",
     borderRadius: theme.shape.borderRadius,
     cursor: "pointer",
     transition: "all 0.3s ease",
-    // border: `1px solid ${selected ? theme.palette.primary.main : "#ddd"}`,
+    border: `${selected ? `3px solid ${theme.palette.primary.main}` : null}`,
 }));
 
 type Props = {
     selectedItems: SelectedItem,
     setSelectedItems(selectedItem: SelectedItem): void;
+    phoId: String;
+    showPho: (itemId: string) => void;
 };
 
-const OrderSummary = ({ selectedItems, setSelectedItems }: Props) => {
-    const [selectedOrderItem, setSelectedOrderItem] = useState<SelectedItem>({} as SelectedItem);
+const OrderSummary = ({ selectedItems, setSelectedItems, phoId, showPho }: Props) => {
+    const [targetItem, setTargetItem] = useState<String>('');
     const [phoBeefs, setPhoBeefs] = useState<Map<String, PhoCode>>(new Map<String, PhoCode>());
     const [phoChickens, setPhoChickens] = useState<PhoCode[]>([]);
 
@@ -77,7 +79,7 @@ const OrderSummary = ({ selectedItems, setSelectedItems }: Props) => {
         });
         console.log("beefs", beefs);
         setPhoBeefs(beefs);
-    }, [selectedItems.beef.size]);
+    }, [selectedItems.beefUpdated]);
 
     useEffect(() => {
         // setPhoChickens(selectedItems.chicken);
@@ -116,7 +118,8 @@ const OrderSummary = ({ selectedItems, setSelectedItems }: Props) => {
                     <List dense sx={{ width: '100%', p: 0 }}>
                         {Array.from(phoBeefs.entries()).map(([id, item], index) => {
                             return (
-                                <Box key={item.id} sx={{ display: 'flex' }} style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
+                                <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }}
+                                    style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
                                     <Button onClick={() => removeBeef(item.id)} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '30px', minHeight: '30px' }}>
                                         <FaMinus style={{ fontSize: 12 }} />
                                     </Button>
@@ -126,9 +129,10 @@ const OrderSummary = ({ selectedItems, setSelectedItems }: Props) => {
                                         disablePadding
                                         style={{ maxHeight: '30px' }}
                                         sx={{ p: 2, m: 0, pl: 0, pr: 0 }}
-
                                     >
-                                        <ListItemButton dense sx={{ p: 0, m: 0 }}>
+                                        <ListItemButton onClick={() => {
+                                            showPho(item.id);
+                                        }} dense sx={{ p: 0, m: 0 }}>
                                             <ListItemText
                                                 id={item.id}
                                                 primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
@@ -143,7 +147,7 @@ const OrderSummary = ({ selectedItems, setSelectedItems }: Props) => {
                                     <Button onClick={() => copyBeef(item.id)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '30px', maxHeight: '22px', minHeight: '23px' }}>
                                         <FaPlus style={{ fontSize: 26 }} />
                                     </Button>
-                                </Box>
+                                </OrderItem>
                             );
                         })}
                     </List>
