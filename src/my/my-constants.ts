@@ -3,9 +3,8 @@ import { Pho } from 'myTypes';
 export enum Categories {
     BEEF = "BEEF",
     CHICKEN = "CHICKEN",
-    SIDE_ORDERS = "SIDE ORDERS",
-    DRINKS = "DRINKS",
-    DESSERT = "DESSERT",
+    SIDE_ORDERS = "SIDE_ORDERS",
+    DRINKS = "DRINKS"
 }
 
 export enum BeefMeats {
@@ -55,10 +54,7 @@ export enum BeefPreferences {
     NO_ONION = "Không hành",
     NO_FAT = "Không béo",
     LESS_NOODLE = "Ít bánh",
-    RARE_OUTSIDE = "Tái Riêng",
-    VINEGAR_ONION = "HD",
-    ROOT_ONION = "HT",
-    FAT = "Béo"
+    RARE_OUTSIDE = "Tái Riêng"
 }
 
 export enum BeefPreferenceCodes {
@@ -78,6 +74,56 @@ export enum ChikenPreferences {
     NO_SKIN = "No skin",
     BAMBOO_SHOOTS = "Măng",
     DRY = "Khô",
+}
+
+export enum BeefSideOrder {
+    VINEGAR_ONION = "Hành dấm",
+    ROOT_ONION = "Hành trần",
+    FAT = "Nước béo",
+    XiQ = "Xí Quách",
+    SMALL_NOODLE = "Chén bánh",
+    EGG_YOLK = "Chén trứng",
+    BREAD = "Bánh mì"
+}
+
+export enum BeefMeatSideOrder {
+    RARE = "Dĩa Tái",
+    RARE_SOUP = "Chén Tái",
+    LEAN = "Chén Chín",
+    FATTY = "Chén Gầu",
+    TENDON = "Chén Gân",
+    TRIPE = "Chén Sách",
+    BEEF_BALL = "Chén Bò viên",
+}
+
+export enum ChickenSideOrder {
+    BAMBO_SHOOTS = "Măng",
+    WHOLE_CHICKEN = "Con gà",
+    EXTRA_WHITE = "Dĩa ức",
+    EXTRA_WING = "Dĩa cánh",
+    EXTRA_DARK = "Dĩa đùi"
+}
+
+export enum Drinks {
+    WATER = "Water",
+    ICE_WATER = "Ice-water",
+    HOT_WATER = "Hot-water",
+    ICE_TEA = "Ice-tea",
+    HOT_TEA = "Hot-tea",
+    COFFEE = "Coffee",
+    BLACK_COFEE = "Black-coffee",
+    COKE = "Coke",
+    DIET_COKE = "Diet-Coke",
+    SPRITE = "Sprite",
+}
+
+export enum Dessert {
+    TOFU = "Tofu regular",
+    TOFU_MATCHA = "Tofu matcha",
+    TOFU_GINGER = "Tofu ginger",
+    COCONUT_JELLY = "Coconut jelly",
+    MIXED_JELLY = "Mixed jelly",
+    THREE_COLOR = "3 màu"
 }
 
 export const DefaultPho: Pho = {

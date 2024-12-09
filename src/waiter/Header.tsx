@@ -73,7 +73,7 @@ const Header = ({ selectedTable, setSelectedTable, selectedCategory, setSelected
                             onClick={() => setSelectedCategory(Categories[category as keyof typeof Categories])}
                             variant="contained"
                         >
-                            {category}
+                            {category === Categories.SIDE_ORDERS ? "SIDE ORDER" : category}
                         </CategoryButton>
                     ))}
                 </Grid2>
@@ -105,7 +105,7 @@ const Header = ({ selectedTable, setSelectedTable, selectedCategory, setSelected
                         variant="contained"
                         size="small"
                     >
-                        {category}
+                        {category === Categories.SIDE_ORDERS ? "SIDE ORDER" : category}
                     </CategoryButton>
                 ))}
             </Box>

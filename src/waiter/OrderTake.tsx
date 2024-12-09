@@ -24,11 +24,16 @@ import {
 import { CheckButton } from '../my/my-component';
 import {
   BeefMeats,
+  BeefMeatSideOrder,
   BeefPreferences,
+  BeefSideOrder,
   Categories,
   ChickenMeats,
+  ChickenSideOrder,
   ChikenPreferences,
   DefaultPho,
+  Dessert,
+  Drinks,
   Noodles,
 } from '../my/my-constants';
 import { generateId } from '../my/my-service';
@@ -52,6 +57,7 @@ type Props = {
 
 const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelectedCategory, refreshState }: Props) => {
     const [pho, setPho] = useState<Pho>(DefaultPho);
+    const [sideOrder, setSideOrder] = useState<string[]>([]);
     const [selectedItems, setSelectedItems] = useState<SelectedItem>(defaultSelectedItems);
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
@@ -151,6 +157,55 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                         createLabel={(key) => ChikenPreferences[key as keyof typeof ChikenPreferences]}
                         callback={(preferences) => setPho({ ...pho, preferences })}
                     />
+                )}
+
+                {selectedCategory === Categories.SIDE_ORDERS && (
+                    <>
+                        <CheckButton
+                            multi={true}
+                            allOptions={Object.keys(BeefSideOrder)}
+                            options={sideOrder}
+                            createLabel={(key) => BeefSideOrder[key as keyof typeof BeefSideOrder]}
+                            callback={(newSideOrder) => setSideOrder(newSideOrder)}
+                        />
+                        <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
+                        <CheckButton
+                            multi={true}
+                            allOptions={Object.keys(BeefMeatSideOrder)}
+                            options={sideOrder}
+                            createLabel={(key) => BeefMeatSideOrder[key as keyof typeof BeefMeatSideOrder]}
+                            callback={(newSideOrder) => setSideOrder(newSideOrder)}
+                        />
+                        <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
+                        <CheckButton
+                            multi={true}
+                            allOptions={Object.keys(ChickenSideOrder)}
+                            options={sideOrder}
+                            createLabel={(key) => ChickenSideOrder[key as keyof typeof ChickenSideOrder]}
+                            callback={(newSideOrder) => setSideOrder(newSideOrder)}
+                        />
+                    </>
+
+                )}
+
+                {selectedCategory === Categories.DRINKS && (
+                    <>
+                        <CheckButton
+                            multi={true}
+                            allOptions={Object.keys(Drinks)}
+                            options={sideOrder}
+                            createLabel={(key) => Drinks[key as keyof typeof Drinks]}
+                            callback={(newSideOrder) => setSideOrder(newSideOrder)}
+                        />
+                        <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
+                        <CheckButton
+                            multi={true}
+                            allOptions={Object.keys(Dessert)}
+                            options={sideOrder}
+                            createLabel={(key) => Dessert[key as keyof typeof Dessert]}
+                            callback={(newSideOrder) => setSideOrder(newSideOrder)}
+                        />
+                    </>
                 )}
 
                 <Grid2 container spacing={2} alignItems="center">
