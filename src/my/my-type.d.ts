@@ -18,7 +18,8 @@ declare module 'myTypes' {
     type SelectedItem = {
         beef: Map<string, Pho>,
         beefUpdated: string,
-        chicken: Pho[]
+        chicken: Map<string, Pho>,
+        chickenUpdated: string,
     };
 }
 

@@ -38,7 +38,8 @@ import OrderSummary from './OrderSummary';
 const defaultSelectedItems: SelectedItem = {
     beef: new Map(),
     beefUpdated: '',
-    chicken: []
+    chicken: new Map(),
+    chickenUpdated: '',
 };
 
 type Props = {
@@ -67,16 +68,21 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
             else newPho.meats = newPho.meats.filter(meat => meat !== "BPN");
             newItem.beef.set(id, newPho);
             newItem.beefUpdated = new Date().toISOString();
-        } else if (Categories.CHICKEN === selectedCategory)
-            newItem.chicken = [...newItem.chicken, newPho];
+        } else if (Categories.CHICKEN === selectedCategory) {
+            newItem.chicken.set(id, newPho);
+            newItem.chickenUpdated = new Date().toISOString();
+        }
         console.log("newItem", newItem);
         setSelectedItems(newItem);
         setPho(DefaultPho);
     };
 
-    const showPho = (selectedItemId: string) => {
-        setSelectedCategory(Categories.BEEF);
-        setPho({ ...selectedItems.beef.get(selectedItemId)! });
+    const showPho = (category: Categories, selectedItemId: string) => {
+        setSelectedCategory(category);
+        if (Categories.BEEF === category)
+            setPho({ ...selectedItems.beef.get(selectedItemId)! });
+        else if (Categories.CHICKEN === category)
+            setPho({ ...selectedItems.chicken.get(selectedItemId)! });
     }
 
     const confirmOrder = () => {

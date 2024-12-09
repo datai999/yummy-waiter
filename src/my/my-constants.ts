@@ -16,7 +16,7 @@ export enum BeefMeats {
     TENDON = "Gân",
     TRIPE = "Sách",
     BEEF_BALL = "Bò viên",
-    RIBS = "XiQ",
+    RIBS = "Xi",
     BEEF_STEW = "Hủ tiếu BK",
     BEEF_STEW_BREAD = "B.mì BK",
 }
@@ -75,8 +75,7 @@ export enum BeefPreferenceCodes {
 export enum ChikenPreferences {
     TOGO = "TOGO",
     NO_ONION = "Không hành",
-    NO_FAT = "Không béo",
-    LESS_NOODLE = "Ít bánh",
+    NO_SKIN = "No skin",
     BAMBOO_SHOOTS = "Măng",
     DRY = "Khô",
 }
