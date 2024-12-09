@@ -79,7 +79,7 @@ const OrderSummary = ({ selectedItems, setSelectedItems, phoId, showPho }: Props
         });
         console.log("beefs", beefs);
         setPhoBeefs(beefs);
-    }, [selectedItems.beefUpdated]);
+    }, [selectedItems.beef.size, selectedItems.beefUpdated]);
 
     useEffect(() => {
         // setPhoChickens(selectedItems.chicken);

@@ -64,6 +64,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
         const newPho = { ...pho, id: id };
         if (Categories.BEEF === selectedCategory) {
             if (newPho.meats.length === 0) newPho.meats = ["BPN"];
+            else newPho.meats = newPho.meats.filter(meat => meat !== "BPN");
             newItem.beef.set(id, newPho);
             newItem.beefUpdated = new Date().toISOString();
         } else if (Categories.CHICKEN === selectedCategory)
