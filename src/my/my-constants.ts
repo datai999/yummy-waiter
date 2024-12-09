@@ -79,7 +79,7 @@ export enum ChikenPreferences {
 export enum BeefSideOrder {
     VINEGAR_ONION = "Hành dấm",
     ROOT_ONION = "Hành trần",
-    FAT = "Nước béo",
+    FAT = "Chén béo",
     XiQ = "Xí Quách",
     SMALL_NOODLE = "Chén bánh",
     EGG_YOLK = "Chén trứng",

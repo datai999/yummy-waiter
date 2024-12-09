@@ -4,6 +4,7 @@ import React, {
 } from 'react';
 
 import {
+  NonPho,
   Pho,
   SelectedItem,
 } from 'myTypes';
@@ -42,10 +43,24 @@ import OrderSummary from './OrderSummary';
 
 const defaultSelectedItems: SelectedItem = {
     beef: new Map(),
-    beefUpdated: '',
+    beefSide: new Map(),
+    beefUpdated: [],
+
     chicken: new Map(),
-    chickenUpdated: '',
+    chickenSide: new Map(),
+    chickenUpdated: [],
+
+    drink: new Map(),
+    dessert: new Map(),
 };
+
+const defaultNonPho: NonPho = {
+    beefSide: [],
+    beefMeatSide: [],
+    chickenSide: [],
+    dessert: [],
+    drink: [],
+}
 
 type Props = {
     selectedTable: string,
@@ -57,7 +72,7 @@ type Props = {
 
 const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelectedCategory, refreshState }: Props) => {
     const [pho, setPho] = useState<Pho>(DefaultPho);
-    const [sideOrder, setSideOrder] = useState<string[]>([]);
+    const [nonPho, setNonPho] = useState<NonPho>(defaultNonPho);
     const [selectedItems, setSelectedItems] = useState<SelectedItem>(defaultSelectedItems);
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
@@ -73,14 +88,46 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
             if (newPho.meats.length === 0) newPho.meats = ["BPN"];
             else newPho.meats = newPho.meats.filter(meat => meat !== "BPN");
             newItem.beef.set(id, newPho);
-            newItem.beefUpdated = new Date().toISOString();
+            newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':add beef'];
         } else if (Categories.CHICKEN === selectedCategory) {
             newItem.chicken.set(id, newPho);
-            newItem.chickenUpdated = new Date().toISOString();
+            newItem.chickenUpdated = [...newItem.chickenUpdated, new Date().toISOString() + ':add chicken'];
+        } else if (Categories.SIDE_ORDERS === selectedCategory) {
+            const beefSide = [...nonPho.beefSide, ...nonPho.beefMeatSide];
+            if (beefSide.length > 0) {
+                beefSide.forEach((sideOrder, index) => {
+                    newItem.beefSide.set(id + '_' + index, sideOrder);
+                });
+                newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':add beef side'];
+            }
+            if (nonPho.chickenSide.length > 0) {
+                nonPho.chickenSide.forEach((sideOrder, index) => {
+                    newItem.chickenSide.set(id + '_' + index, sideOrder);
+                });
+                newItem.chickenUpdated = [...newItem.chickenUpdated, new Date().toISOString() + ':add chicken side'];
+            }
+            if (pho.note && pho.note.length > 0) {
+                newItem.beefSide.set(id + '_note', pho.note);
+                newItem.chickenSide.set(id + '_note', pho.note);
+                newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':note'];
+                newItem.chickenUpdated = [...newItem.chickenUpdated, new Date().toISOString() + ':note'];
+            }
+        } else {
+            if (nonPho.drink.length > 0) {
+                nonPho.drink.forEach((drink, index) => {
+                    newItem.drink.set(id + '_' + index, drink);
+                });
+            }
+            if (nonPho.dessert.length > 0) {
+                nonPho.dessert.forEach((dessert, index) => {
+                    newItem.dessert.set(id + '_' + index, dessert);
+                });
+            }
         }
         console.log("newItem", newItem);
         setSelectedItems(newItem);
         setPho(DefaultPho);
+        setNonPho(defaultNonPho);
     };
 
     const showPho = (category: Categories, selectedItemId: string) => {
@@ -164,25 +211,25 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                         <CheckButton
                             multi={true}
                             allOptions={Object.keys(BeefSideOrder)}
-                            options={sideOrder}
+                            options={nonPho.beefSide}
                             createLabel={(key) => BeefSideOrder[key as keyof typeof BeefSideOrder]}
-                            callback={(newSideOrder) => setSideOrder(newSideOrder)}
+                            callback={(newSideOrder) => setNonPho({ ...nonPho, beefSide: newSideOrder })}
                         />
                         <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
                         <CheckButton
                             multi={true}
                             allOptions={Object.keys(BeefMeatSideOrder)}
-                            options={sideOrder}
+                            options={nonPho.beefMeatSide}
                             createLabel={(key) => BeefMeatSideOrder[key as keyof typeof BeefMeatSideOrder]}
-                            callback={(newSideOrder) => setSideOrder(newSideOrder)}
+                            callback={(newSideOrder) => setNonPho({ ...nonPho, beefMeatSide: newSideOrder })}
                         />
                         <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
                         <CheckButton
                             multi={true}
                             allOptions={Object.keys(ChickenSideOrder)}
-                            options={sideOrder}
+                            options={nonPho.chickenSide}
                             createLabel={(key) => ChickenSideOrder[key as keyof typeof ChickenSideOrder]}
-                            callback={(newSideOrder) => setSideOrder(newSideOrder)}
+                            callback={(newSideOrder) => setNonPho({ ...nonPho, chickenSide: newSideOrder })}
                         />
                     </>
 
@@ -193,17 +240,17 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                         <CheckButton
                             multi={true}
                             allOptions={Object.keys(Drinks)}
-                            options={sideOrder}
+                            options={nonPho.drink}
                             createLabel={(key) => Drinks[key as keyof typeof Drinks]}
-                            callback={(newSideOrder) => setSideOrder(newSideOrder)}
+                            callback={(newSideOrder) => setNonPho({ ...nonPho, drink: newSideOrder })}
                         />
                         <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
                         <CheckButton
                             multi={true}
                             allOptions={Object.keys(Dessert)}
-                            options={sideOrder}
+                            options={nonPho.dessert}
                             createLabel={(key) => Dessert[key as keyof typeof Dessert]}
-                            callback={(newSideOrder) => setSideOrder(newSideOrder)}
+                            callback={(newSideOrder) => setNonPho({ ...nonPho, dessert: newSideOrder })}
                         />
                     </>
                 )}
