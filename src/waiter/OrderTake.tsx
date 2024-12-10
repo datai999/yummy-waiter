@@ -93,22 +93,31 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
             newItem.chicken.set(id, newPho);
             newItem.chickenUpdated = [...newItem.chickenUpdated, new Date().toISOString() + ':add chicken'];
         } else if (Categories.SIDE_ORDERS === selectedCategory) {
-            const beefSide = [...nonPho.beefSide, ...nonPho.beefMeatSide];
-            if (beefSide.length > 0) {
-                beefSide.forEach((sideOrder, index) => {
-                    newItem.beefSide.set(id + '_' + index, sideOrder);
+            if (nonPho.beefSide.length > 0) {
+                nonPho.beefSide.forEach((item, index) => {
+                    const newSideItem = { id: id + "_" + index, code: item, name: BeefSideOrder[item as keyof typeof BeefSideOrder], count: 1 };
+                    newItem.beefSide.set(newSideItem.id, newSideItem);
                 });
                 newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':add beef side'];
             }
+            if (nonPho.beefMeatSide.length > 0) {
+                nonPho.beefMeatSide.forEach((item, index) => {
+                    const newSideItem = { id: id + "_" + index, code: item, name: BeefMeatSideOrder[item as keyof typeof BeefMeatSideOrder], count: 1 };
+                    newItem.beefSide.set(newSideItem.id, newSideItem);
+                });
+                newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':add beef meat side'];
+            }
             if (nonPho.chickenSide.length > 0) {
-                nonPho.chickenSide.forEach((sideOrder, index) => {
-                    newItem.chickenSide.set(id + '_' + index, sideOrder);
+                nonPho.chickenSide.forEach((item, index) => {
+                    const newSideItem = { id: id + "_" + index, code: item, name: ChickenSideOrder[item as keyof typeof ChickenSideOrder], count: 1 };
+                    newItem.chickenSide.set(newSideItem.id, newSideItem);
                 });
                 newItem.chickenUpdated = [...newItem.chickenUpdated, new Date().toISOString() + ':add chicken side'];
             }
             if (pho.note && pho.note.length > 0) {
-                newItem.beefSide.set(id + '_note', pho.note);
-                newItem.chickenSide.set(id + '_note', pho.note);
+                const newSideItem = { id: id + "_note", name: pho.note, count: 1 };
+                newItem.beefSide.set(newSideItem.id, newSideItem);
+                newItem.chickenSide.set(newSideItem.id, newSideItem);
                 newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':note'];
                 newItem.chickenUpdated = [...newItem.chickenUpdated, new Date().toISOString() + ':note'];
             }

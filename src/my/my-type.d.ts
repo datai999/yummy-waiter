@@ -32,11 +32,11 @@ declare module 'myTypes' {
 
     type SelectedItem = {
         beef: Map<string, Pho>,
-        beefSide: Map<string, string>,
+        beefSide: Map<string, SideItem>,
         beefUpdated: string[],
 
         chicken: Map<string, Pho>,
-        chickenSide: Map<string, string>,
+        chickenSide: Map<string, SideItem>,
         chickenUpdated: string[],
 
         drink: Map<string, SideItem>,
