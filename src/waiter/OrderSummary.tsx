@@ -14,6 +14,7 @@ import {
 } from 'react-icons/fa';
 import { GiChicken } from 'react-icons/gi';
 import { PiCow } from 'react-icons/pi';
+import { RiDrinks2Line } from 'react-icons/ri';
 
 import {
   Badge,
@@ -23,9 +24,9 @@ import {
   Divider,
   Grid2,
   List,
-  ListItem,
   ListItemButton,
   ListItemText,
+  TextField,
   Typography,
 } from '@mui/material';
 import { styled } from '@mui/system';
@@ -36,6 +37,7 @@ import {
   Categories,
   ChickenMeats,
   ChikenPreferences,
+  Drinks,
   Noodles,
 } from '../my/my-constants';
 import { generateId } from '../my/my-service';
@@ -137,6 +139,9 @@ const OrderSummary = ({ selectedItems, setSelectedItems, phoId, showPho }: Props
                     <PhoList category={Categories.CHICKEN} phoId={phoId} phos={phoChickens}
                         showPho={showPho} copy={copyItem} remove={removeItem} />
                 </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6, md: 4 }}  >
+                    <DrinkDessertList drinks={selectedItems.drink} desserts={selectedItems.dessert} />
+                </Grid2>
             </Grid2>
         </Box >
     )
@@ -156,15 +161,15 @@ const PhoList = ({ category, phoId, phos, showPho, copy, remove }: PhoListProps)
         <>
             {phos.size > 0 && (
                 <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0 }}>
-                    <Typography variant="h6" >
+                    <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} >
                         <Badge badgeContent={phos.size} color="primary" anchorOrigin={{
                             vertical: 'top',
                             horizontal: 'right',
                         }}
                             sx={{ mb: 0, pb: 0, ml: 1 }}>
                             {category}
-                            {category === Categories.BEEF && <PiCow style={{ fontSize: 30, marginLeft: 6 }} />}
-                            {category === Categories.CHICKEN && <GiChicken style={{ fontSize: 30, marginLeft: 6 }} />}
+                            {category === Categories.BEEF && <PiCow style={{ fontSize: 25, marginLeft: 6 }} />}
+                            {category === Categories.CHICKEN && <GiChicken style={{ fontSize: 25, marginLeft: 6 }} />}
                         </Badge>
                     </Typography>
                     <Divider />
@@ -177,27 +182,19 @@ const PhoList = ({ category, phoId, phos, showPho, copy, remove }: PhoListProps)
                                     <Button onClick={() => remove(category, item.id)} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
                                         <FaMinus style={{ fontSize: 12 }} />
                                     </Button>
-                                    <ListItem
-                                        key={item.toString()}
-                                        dense
-                                        disablePadding
-                                        style={{ maxHeight: '40px' }}
-                                        sx={{ p: 2, m: 0, pl: 0, pr: 0 }}
-                                    >
-                                        <ListItemButton onClick={() => {
-                                            showPho(category, item.id);
-                                        }} dense sx={{ p: 0, m: 0 }}>
-                                            <ListItemText
-                                                id={item.id}
-                                                primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
-                                                secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
-                                                sx={{ p: 0, m: 0 }}
-                                                primary={
-                                                    `${item.meats} (${item.noodle}) ${(item.preferences) ? `(${item.preferences})` : ''}`}
-                                                secondary={item.note ? item.note : null}
-                                            />
-                                        </ListItemButton>
-                                    </ListItem>
+                                    <ListItemButton onClick={() => {
+                                        showPho(category, item.id);
+                                    }} dense sx={{ p: 0, m: 0 }}>
+                                        <ListItemText
+                                            id={item.id}
+                                            primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
+                                            secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
+                                            sx={{ p: 0, m: 0 }}
+                                            primary={
+                                                `${item.meats} (${item.noodle}) ${(item.preferences) ? `(${item.preferences})` : ''}`}
+                                            secondary={item.note ? item.note : null}
+                                        />
+                                    </ListItemButton>
                                     <Button onClick={() => copy(category, item.id)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
                                         <FaPlus style={{ fontSize: 26 }} />
                                     </Button>
@@ -208,6 +205,60 @@ const PhoList = ({ category, phoId, phos, showPho, copy, remove }: PhoListProps)
                 </StyledPaper>)
             }
         </>);
+}
+
+type DrinkDessertListProps = {
+    drinks: Map<String, String>,
+    desserts: Map<String, String>,
+}
+
+const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
+
+    const phoId = "";
+    const remove = (category: String, itemId: String) => { };
+
+    if (drinks.size + desserts.size === 0) return null;
+
+    return (<StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0 }}>
+        <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} >
+            <Badge badgeContent={drinks.size + desserts.size} color="primary" anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+                sx={{ mb: 0, pb: 0, ml: 1 }}>
+                DRINK & DESSERTS
+                <RiDrinks2Line style={{ fontSize: 25, marginLeft: 6 }} />
+            </Badge>
+        </Typography>
+        <Divider />
+        <List dense sx={{ width: '100%', p: 0 }}>
+            {Array.from(drinks.entries()).map(([id, item], index) => {
+                return (
+                    <OrderItem key={id as string} selected={id === phoId} sx={{ display: 'flex' }}
+                        style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
+                        <Button onClick={() => remove("Drink", id)}
+                            sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }}
+                            style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
+                            <FaMinus style={{ fontSize: 12 }} />
+                        </Button>
+                        <ListItemText
+                            id={id as string}
+                            primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
+                            secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
+                            sx={{ p: 0, m: 0 }}
+                            primary={
+                                <TextField id={id as string} margin="none" size='small'
+                                    inputProps={{ inputMode: 'numeric', style: { paddingLeft: 0, fontSize: 16, fontWeight: 600 } }}
+                                    fullWidth={true} sx={{ p: 0, m: 0, "& fieldset": { border: 'none' }, }}
+                                    value={`${Number(drinks.get(item as keyof typeof Drinks)) || 1} ${Drinks[item as keyof typeof Drinks]}`}
+                                />
+                            }
+                        />
+                    </OrderItem>
+                );
+            })}
+        </List>
+    </StyledPaper>);
 }
 
 export default OrderSummary;
