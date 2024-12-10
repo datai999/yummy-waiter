@@ -81,9 +81,10 @@ export const CheckButton = ({ multi, allOptions, options = [], createLabel, call
 
 interface SideItemListProps {
     sideItems: Map<String, SideItem>,
+    doubleCol?: boolean,
 }
 
-export const SideItemList = ({ sideItems }: SideItemListProps) => {
+export const SideItemList = ({ sideItems, doubleCol = true }: SideItemListProps) => {
     const [refresh, setRefresh] = useState<Boolean>(false);
 
     const copy = (itemId: String) => {
@@ -99,67 +100,76 @@ export const SideItemList = ({ sideItems }: SideItemListProps) => {
 
     return (
         <List dense sx={{ width: '100%', p: 0 }}>
-            {Array.from(sideItems.entries()).map(([key, value], index) => {
-                return (
-                    <OrderItem key={key as string} sx={{ display: 'flex' }}
-                        style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
-                        <Button onClick={() => remove(key)}
-                            sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }}
-                            style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
-                            <FaMinus style={{ fontSize: 12 }} />
-                        </Button>
-                        <ListItemText
-                            id={key as string}
-                            primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
-                            secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
-                            sx={{ p: 0, m: 0 }}
-                            primary={
-                                <TextField id={key as string} margin="none" size='small'
-                                    type='number'
-                                    inputProps={{ inputMode: 'numeric', style: { paddingLeft: 0, fontSize: 16, fontWeight: 600 } }}
-                                    InputProps={{
-                                        type: "number",
-                                        sx: {
-                                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                                                display: 'none'
-                                            },
-                                            '& input[type=number]': {
-                                                MozAppearance: 'textfield'
-                                            },
-                                        }
-                                    }}
-                                    fullWidth={true}
-                                    sx={{
-                                        p: 0, m: 0,
-                                        input: {
-                                            color: 'primary',
-                                            "&::placeholder": {
-                                                opacity: 1,
-                                            },
-                                        },
-                                        "& fieldset": { border: 'none' },
-                                    }}
-                                    placeholder={`${value.count > 1 ? value.count : ''} ${value.name}`}
-                                    value={''}
-                                    onChange={(e) => {
-                                        const num = Number(e.target.value.slice(-1));
-                                        if (num === 0) {
-                                            remove(key);
-                                            return;
-                                        }
-                                        const sideItem = sideItems.get(key) || {} as SideItem;
-                                        sideItem.count = num;
-                                        setRefresh(!refresh);
-                                    }}
+            <Grid2 container columnSpacing={2}>
+                {Array.from(sideItems.entries()).map(([key, value], index) => {
+                    return (
+                        <Grid2 size={doubleCol ? 6 : 12}  >
+                            <OrderItem key={key as string} sx={{ display: 'flex' }}
+                                style={{
+                                    backgroundColor: `${(doubleCol
+                                        ? (index % 4 === 2 || index % 4 === 3)
+                                        : (index % 2 === 1))
+                                        ? '#f3f3f3' : null}`
+                                }}>
+                                <Button onClick={() => remove(key)}
+                                    sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }}
+                                    style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
+                                    <FaMinus style={{ fontSize: 12 }} />
+                                </Button>
+                                <ListItemText
+                                    id={key as string}
+                                    primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
+                                    secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
+                                    sx={{ p: 0, m: 0 }}
+                                    primary={
+                                        <TextField id={key as string} margin="none" size='small'
+                                            type='number'
+                                            inputProps={{ inputMode: 'numeric', style: { paddingLeft: 0, fontSize: 16, fontWeight: 600 } }}
+                                            InputProps={{
+                                                type: "number",
+                                                sx: {
+                                                    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                                        display: 'none'
+                                                    },
+                                                    '& input[type=number]': {
+                                                        MozAppearance: 'textfield'
+                                                    },
+                                                }
+                                            }}
+                                            fullWidth={true}
+                                            sx={{
+                                                p: 0, m: 0,
+                                                input: {
+                                                    color: 'primary',
+                                                    "&::placeholder": {
+                                                        opacity: 1,
+                                                    },
+                                                },
+                                                "& fieldset": { border: 'none' },
+                                            }}
+                                            placeholder={`${value.count > 1 ? value.count : ''} ${value.name}`}
+                                            value={''}
+                                            onChange={(e) => {
+                                                const num = Number(e.target.value.slice(-1));
+                                                if (num === 0) {
+                                                    remove(key);
+                                                    return;
+                                                }
+                                                const sideItem = sideItems.get(key) || {} as SideItem;
+                                                sideItem.count = num;
+                                                setRefresh(!refresh);
+                                            }}
+                                        />
+                                    }
                                 />
-                            }
-                        />
-                        <Button onClick={() => copy(key)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
-                            <FaPlus style={{ fontSize: 26 }} />
-                        </Button>
-                    </OrderItem>
-                );
-            })}
+                                <Button onClick={() => copy(key)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                                    <FaPlus style={{ fontSize: 26 }} />
+                                </Button>
+                            </OrderItem>
+                        </Grid2>
+                    );
+                })}
+            </Grid2 >
         </List>
     );
 }

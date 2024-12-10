@@ -216,9 +216,17 @@ const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
             </Typography>
             <Divider />
 
-            <SideItemList sideItems={drinks} />
-            {drinks.size > 0 && desserts.size > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
-            <SideItemList sideItems={desserts} />
+            <Grid2 container columnSpacing={2}>
+                {drinks.size > 0 &&
+                    <Grid2 size={desserts.size ? 6 : 12}  >
+                        <SideItemList sideItems={drinks} doubleCol={!desserts.size} />
+                    </Grid2>}
+                {desserts.size > 0 &&
+                    <Grid2 size={drinks.size ? 6 : 12}  >
+                        <SideItemList sideItems={desserts} doubleCol={!drinks.size} />
+                    </Grid2>}
+            </Grid2>
+
         </StyledPaper >);
 }
 
