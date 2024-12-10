@@ -115,13 +115,13 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
         } else {
             if (nonPho.drink.length > 0) {
                 nonPho.drink.forEach((item, index) => {
-                    const newSideItem = { id: id + "_" + index, name: item, count: 1 };
+                    const newSideItem = { id: id + "_" + index, code: item, name: Drinks[item as keyof typeof Drinks], count: 1 };
                     newItem.drink.set(newSideItem.id, newSideItem);
                 });
             }
             if (nonPho.dessert.length > 0) {
                 nonPho.dessert.forEach((item, index) => {
-                    const newSideItem = { id: id + "_" + index, name: item, count: 1 };
+                    const newSideItem = { id: id + "_" + index, code: item, name: Dessert[item as keyof typeof Dessert], count: 1 };
                     newItem.dessert.set(newSideItem.id, newSideItem);
                 });
             }

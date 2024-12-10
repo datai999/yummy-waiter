@@ -25,6 +25,7 @@ declare module 'myTypes' {
 
     type SideItem = {
         id: string,
+        code?: string,
         name: string,
         count: number,
     }

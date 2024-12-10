@@ -1,13 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+import { SideItem } from 'myTypes';
+import {
+  FaMinus,
+  FaPlus,
+} from 'react-icons/fa';
 
 import {
+  Button,
   Chip,
   Grid2,
+  List,
+  ListItemText,
+  TextField,
 } from '@mui/material';
 
-import { CategoryButton } from './my-styled';
+import { generateId } from './my-service';
+import {
+  CategoryButton,
+  OrderItem,
+} from './my-styled';
 
-interface Props {
+interface CheckButtonProps {
     multi: boolean,
     allOptions: string[],
     options?: string[],
@@ -15,7 +29,7 @@ interface Props {
     callback: ([]) => void,
 }
 
-export const CheckButton = ({ multi, allOptions, options = [], createLabel, callback }: Props) => {
+export const CheckButton = ({ multi, allOptions, options = [], createLabel, callback }: CheckButtonProps) => {
     return (
         <>
             <Grid2 container spacing={1} sx={{ display: { xs: 'none', sm: 'flex', md: 'flex', lg: 'flex' }, mb: 1 }}>
@@ -62,5 +76,90 @@ export const CheckButton = ({ multi, allOptions, options = [], createLabel, call
                 ))}
             </Grid2>
         </>
+    );
+}
+
+interface SideItemListProps {
+    sideItems: Map<String, SideItem>,
+}
+
+export const SideItemList = ({ sideItems }: SideItemListProps) => {
+    const [refresh, setRefresh] = useState<Boolean>(false);
+
+    const copy = (itemId: String) => {
+        const newItem = { ...sideItems.get(itemId), id: generateId() } as SideItem;
+        sideItems.set(newItem.id, newItem);
+        setRefresh(!refresh);
+    }
+
+    const remove = (itemId: String) => {
+        sideItems.delete(itemId);
+        setRefresh(!refresh);
+    };
+
+    return (
+        <List dense sx={{ width: '100%', p: 0 }}>
+            {Array.from(sideItems.entries()).map(([key, value], index) => {
+                return (
+                    <OrderItem key={key as string} sx={{ display: 'flex' }}
+                        style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
+                        <Button onClick={() => remove(key)}
+                            sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }}
+                            style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
+                            <FaMinus style={{ fontSize: 12 }} />
+                        </Button>
+                        <ListItemText
+                            id={key as string}
+                            primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
+                            secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
+                            sx={{ p: 0, m: 0 }}
+                            primary={
+                                <TextField id={key as string} margin="none" size='small'
+                                    type='number'
+                                    inputProps={{ inputMode: 'numeric', style: { paddingLeft: 0, fontSize: 16, fontWeight: 600 } }}
+                                    InputProps={{
+                                        type: "number",
+                                        sx: {
+                                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                                display: 'none'
+                                            },
+                                            '& input[type=number]': {
+                                                MozAppearance: 'textfield'
+                                            },
+                                        }
+                                    }}
+                                    fullWidth={true}
+                                    sx={{
+                                        p: 0, m: 0,
+                                        input: {
+                                            color: 'primary',
+                                            "&::placeholder": {
+                                                opacity: 1,
+                                            },
+                                        },
+                                        "& fieldset": { border: 'none' },
+                                    }}
+                                    placeholder={`${value.count > 1 ? value.count : ''} ${value.name}`}
+                                    value={''}
+                                    onChange={(e) => {
+                                        const num = Number(e.target.value.slice(-1));
+                                        if (num === 0) {
+                                            remove(key);
+                                            return;
+                                        }
+                                        const sideItem = sideItems.get(key) || {} as SideItem;
+                                        sideItem.count = num;
+                                        setRefresh(!refresh);
+                                    }}
+                                />
+                            }
+                        />
+                        <Button onClick={() => copy(key)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                            <FaPlus style={{ fontSize: 26 }} />
+                        </Button>
+                    </OrderItem>
+                );
+            })}
+        </List>
     );
 }
