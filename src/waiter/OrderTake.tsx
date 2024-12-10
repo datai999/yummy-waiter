@@ -125,6 +125,10 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                         newItem.dessert.set(dessert, 1);
                 });
             }
+            if (pho.note) {
+                if (!newItem.drink.has(pho.note))
+                    newItem.drink.set(pho.note, 1);
+            }
         }
         console.log("newItem", newItem);
         setSelectedItems(newItem);

@@ -264,7 +264,7 @@ const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
                                             },
                                             "& fieldset": { border: 'none' },
                                         }}
-                                        placeholder={`${value} ${Drinks[key as keyof typeof Drinks]}`}
+                                        placeholder={`${value} ${Drinks[key as keyof typeof Drinks] || key}`}
                                         value={''}
                                         onChange={(e) => {
                                             const num = Number(e.target.value.slice(-1));
