@@ -37,6 +37,7 @@ import {
   Categories,
   ChickenMeats,
   ChikenPreferences,
+  Dessert,
   Drinks,
   Noodles,
 } from '../my/my-constants';
@@ -281,7 +282,57 @@ const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
                     );
                 })}
             </List>
-        </StyledPaper>);
+            <Divider sx={{ p: 0.5, mb: 0.5 }} variant="middle">
+            </Divider>
+            <List dense sx={{ width: '100%', p: 0 }}>
+                {Array.from(desserts.entries()).map(([key, value], index) => {
+                    return (
+                        <OrderItem key={key as string} sx={{ display: 'flex' }}
+                            style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
+                            <Button onClick={() => remove("dessert", key)}
+                                sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }}
+                                style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
+                                <FaMinus style={{ fontSize: 12 }} />
+                            </Button>
+                            <ListItemText
+                                id={key as string}
+                                primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
+                                secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
+                                sx={{ p: 0, m: 0 }}
+                                primary={
+                                    <TextField id={key as string} margin="none" size='small'
+                                        type='number'
+                                        inputProps={{ inputMode: 'numeric', style: { paddingLeft: 0, fontSize: 16, fontWeight: 600 } }}
+                                        fullWidth={true}
+                                        sx={{
+                                            p: 0, m: 0,
+                                            input: {
+                                                color: 'primary',
+                                                "&::placeholder": {
+                                                    opacity: 1,
+                                                },
+                                            },
+                                            "& fieldset": { border: 'none' },
+                                        }}
+                                        placeholder={`${value} ${Dessert[key as keyof typeof Dessert]}`}
+                                        value={''}
+                                        onChange={(e) => {
+                                            const num = Number(e.target.value.slice(-1));
+                                            if (num === 0) {
+                                                remove("dessert", key);
+                                                return;
+                                            }
+                                            else desserts.set(key, Number(e.target.value.slice(-1)));
+                                            setRefresh(!refresh);
+                                        }}
+                                    />
+                                }
+                            />
+                        </OrderItem>
+                    );
+                })}
+            </List>
+        </StyledPaper >);
 }
 
 export default OrderSummary;
