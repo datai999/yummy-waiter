@@ -132,14 +132,14 @@ const OrderSummary = ({ selectedItems, setSelectedItems, phoId, showPho }: Props
     return (
         <Box>
             <Grid2 container spacing={2}>
-                {phoBeefs.size > 0 && (
+                {phoBeefs.size + selectedItems.beefSide.size > 0 && (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }}  >
-                        <PhoList category={Categories.BEEF} phoId={phoId} phos={phoBeefs}
+                        <PhoList category={Categories.BEEF} phoId={phoId} phos={phoBeefs} sideOrders={selectedItems.beefSide}
                             showPho={showPho} copy={copyItem} remove={removeItem} />
                     </Grid2>)}
-                {phoChickens.size > 0 && (
+                {phoChickens.size + selectedItems.chickenSide.size > 0 && (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }}  >
-                        <PhoList category={Categories.CHICKEN} phoId={phoId} phos={phoChickens}
+                        <PhoList category={Categories.CHICKEN} phoId={phoId} phos={phoChickens} sideOrders={selectedItems.chickenSide}
                             showPho={showPho} copy={copyItem} remove={removeItem} />
                     </Grid2>)}
                 {selectedItems.drink.size + selectedItems.dessert.size > 0 && (
@@ -155,12 +155,26 @@ type PhoListProps = {
     category: Categories,
     phoId: String,
     phos: Map<String, PhoCode>,
+    sideOrders: Map<String, String>;
     showPho: (category: Categories, itemId: string) => void;
     copy: (category: Categories, itemId: string) => void,
     remove: (category: Categories, itemId: string) => void,
 }
 
-const PhoList = ({ category, phoId, phos, showPho, copy, remove }: PhoListProps) => {
+const PhoList = ({ category, phoId, phos, sideOrders, showPho, copy, remove, }: PhoListProps) => {
+
+    const [refresh, setRefresh] = useState<Boolean>(false);
+
+    const copySideOrder = (itemId: String) => {
+        sideOrders.set(generateId(), sideOrders.get(itemId) as string);
+        setRefresh(!refresh);
+    }
+
+    const removeSideOrder = (itemId: String) => {
+        sideOrders.delete(itemId);
+        setRefresh(!refresh);
+    };
+
     return (
         <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0 }}>
             <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} >
@@ -198,6 +212,35 @@ const PhoList = ({ category, phoId, phos, showPho, copy, remove }: PhoListProps)
                                 />
                             </ListItemButton>
                             <Button onClick={() => copy(category, item.id)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                                <FaPlus style={{ fontSize: 26 }} />
+                            </Button>
+                        </OrderItem>
+                    );
+                })}
+            </List>
+            {phos.size > 0 && sideOrders.size > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
+            <List dense sx={{ width: '100%', p: 0 }}>
+                {Array.from(sideOrders.entries()).map(([key, value], index) => {
+                    return (
+                        <OrderItem key={key as string} sx={{ display: 'flex' }}
+                            style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
+                            <Button onClick={() => removeSideOrder(key)} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
+                                <FaMinus style={{ fontSize: 12 }} />
+                            </Button>
+                            <ListItemButton onClick={() => {
+                                // showPho(category, item.id);
+                            }} dense sx={{ p: 0, m: 0 }}>
+                                <ListItemText
+                                    id={key as string}
+                                    primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
+                                    secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
+                                    sx={{ p: 0, m: 0 }}
+                                    primary={
+                                        value
+                                    }
+                                />
+                            </ListItemButton>
+                            <Button onClick={() => copySideOrder(key)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
                                 <FaPlus style={{ fontSize: 26 }} />
                             </Button>
                         </OrderItem>
@@ -282,8 +325,7 @@ const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
                     );
                 })}
             </List>
-            <Divider sx={{ p: 0.5, mb: 0.5 }} variant="middle">
-            </Divider>
+            {drinks.size > 0 && desserts.size > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
             <List dense sx={{ width: '100%', p: 0 }}>
                 {Array.from(desserts.entries()).map(([key, value], index) => {
                     return (

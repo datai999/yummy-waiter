@@ -81,7 +81,8 @@ export enum BeefSideOrder {
     ROOT_ONION = "Hành trần",
     FAT = "Chén béo",
     XiQ = "Xí Quách",
-    SMALL_NOODLE = "Chén bánh",
+    EXTRA_NOODLE = "Chén bánh",
+    EXTRA_FRESH_NOODLE = "Chén BT",
     EGG_YOLK = "Chén trứng",
     BREAD = "Bánh mì"
 }
