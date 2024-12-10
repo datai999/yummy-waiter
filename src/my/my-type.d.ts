@@ -23,6 +23,12 @@ declare module 'myTypes' {
         note?: string,
     };
 
+    type SideItem = {
+        id: string,
+        name: string,
+        count: number,
+    }
+
     type SelectedItem = {
         beef: Map<string, Pho>,
         beefSide: Map<string, string>,
@@ -32,8 +38,8 @@ declare module 'myTypes' {
         chickenSide: Map<string, string>,
         chickenUpdated: string[],
 
-        drink: Map<string, number>,
-        dessert: Map<string, number>,
+        drink: Map<string, SideItem>,
+        dessert: Map<string, SideItem>,
     };
 }
 
@@ -41,5 +47,6 @@ module.exports = {
     Pho,
     NonPho,
     PhoCode,
+    SideItem,
     SelectedItem,
 };

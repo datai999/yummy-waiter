@@ -7,6 +7,7 @@ import {
   Pho,
   PhoCode,
   SelectedItem,
+  SideItem,
 } from 'myTypes';
 import {
   FaMinus,
@@ -251,12 +252,19 @@ const PhoList = ({ category, phoId, phos, sideOrders, showPho, copy, remove, }: 
 }
 
 type DrinkDessertListProps = {
-    drinks: Map<String, number>,
-    desserts: Map<String, number>,
+    drinks: Map<String, SideItem>,
+    desserts: Map<String, SideItem>,
 }
 
 const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
     const [refresh, setRefresh] = useState<Boolean>(false);
+
+    const copy = (category: string, itemId: String) => {
+        const sideOrders = category === "drink" ? drinks : desserts;
+        const newItem = { ...sideOrders.get(itemId), id: generateId() } as SideItem;
+        sideOrders.set(newItem.id, newItem);
+        setRefresh(!refresh);
+    }
 
     const remove = (category: string, itemId: String) => {
         const newItems = category === "drink" ? drinks : desserts;
@@ -296,6 +304,17 @@ const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
                                     <TextField id={key as string} margin="none" size='small'
                                         type='number'
                                         inputProps={{ inputMode: 'numeric', style: { paddingLeft: 0, fontSize: 16, fontWeight: 600 } }}
+                                        InputProps={{
+                                            type: "number",
+                                            sx: {
+                                                '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                                    display: 'none'
+                                                },
+                                                '& input[type=number]': {
+                                                    MozAppearance: 'textfield'
+                                                },
+                                            }
+                                        }}
                                         fullWidth={true}
                                         sx={{
                                             p: 0, m: 0,
@@ -307,7 +326,7 @@ const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
                                             },
                                             "& fieldset": { border: 'none' },
                                         }}
-                                        placeholder={`${value} ${Drinks[key as keyof typeof Drinks] || key}`}
+                                        placeholder={`${value.count} ${Drinks[value.name as keyof typeof Drinks] || value.name}`}
                                         value={''}
                                         onChange={(e) => {
                                             const num = Number(e.target.value.slice(-1));
@@ -315,12 +334,16 @@ const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
                                                 remove("drink", key);
                                                 return;
                                             }
-                                            else drinks.set(key, Number(e.target.value.slice(-1)));
+                                            const sideItem = drinks.get(key) || {} as SideItem;
+                                            sideItem.count = num;
                                             setRefresh(!refresh);
                                         }}
                                     />
                                 }
                             />
+                            <Button onClick={() => copy("drink", key)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                                <FaPlus style={{ fontSize: 26 }} />
+                            </Button>
                         </OrderItem>
                     );
                 })}
@@ -345,6 +368,17 @@ const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
                                     <TextField id={key as string} margin="none" size='small'
                                         type='number'
                                         inputProps={{ inputMode: 'numeric', style: { paddingLeft: 0, fontSize: 16, fontWeight: 600 } }}
+                                        InputProps={{
+                                            type: "number",
+                                            sx: {
+                                                '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                                    display: 'none'
+                                                },
+                                                '& input[type=number]': {
+                                                    MozAppearance: 'textfield'
+                                                },
+                                            }
+                                        }}
                                         fullWidth={true}
                                         sx={{
                                             p: 0, m: 0,
@@ -356,7 +390,7 @@ const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
                                             },
                                             "& fieldset": { border: 'none' },
                                         }}
-                                        placeholder={`${value} ${Dessert[key as keyof typeof Dessert]}`}
+                                        placeholder={`${value.count} ${Dessert[value.name as keyof typeof Dessert] || value.name}`}
                                         value={''}
                                         onChange={(e) => {
                                             const num = Number(e.target.value.slice(-1));
@@ -364,12 +398,16 @@ const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
                                                 remove("dessert", key);
                                                 return;
                                             }
-                                            else desserts.set(key, Number(e.target.value.slice(-1)));
+                                            const sideItem = desserts.get(key) || {} as SideItem;
+                                            sideItem.count = num;
                                             setRefresh(!refresh);
                                         }}
                                     />
                                 }
                             />
+                            <Button onClick={() => copy("dessert", key)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                                <FaPlus style={{ fontSize: 26 }} />
+                            </Button>
                         </OrderItem>
                     );
                 })}

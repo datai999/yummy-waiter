@@ -114,20 +114,20 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
             }
         } else {
             if (nonPho.drink.length > 0) {
-                nonPho.drink.forEach((drink, index) => {
-                    if (!newItem.drink.has(drink))
-                        newItem.drink.set(drink, 1);
+                nonPho.drink.forEach((item, index) => {
+                    const newSideItem = { id: id + "_" + index, name: item, count: 1 };
+                    newItem.drink.set(newSideItem.id, newSideItem);
                 });
             }
             if (nonPho.dessert.length > 0) {
-                nonPho.dessert.forEach((dessert, index) => {
-                    if (!newItem.dessert.has(dessert))
-                        newItem.dessert.set(dessert, 1);
+                nonPho.dessert.forEach((item, index) => {
+                    const newSideItem = { id: id + "_" + index, name: item, count: 1 };
+                    newItem.dessert.set(newSideItem.id, newSideItem);
                 });
             }
             if (pho.note) {
-                if (!newItem.drink.has(pho.note))
-                    newItem.drink.set(pho.note, 1);
+                const newSideItem = { id: id + "_note", name: pho.note, count: 1 };
+                newItem.drink.set(newSideItem.id, newSideItem);
             }
         }
         console.log("newItem", newItem);
