@@ -115,12 +115,14 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
         } else {
             if (nonPho.drink.length > 0) {
                 nonPho.drink.forEach((drink, index) => {
-                    newItem.drink.set(id + '_' + index, drink);
+                    if (!newItem.drink.has(drink))
+                        newItem.drink.set(drink, 1);
                 });
             }
             if (nonPho.dessert.length > 0) {
                 nonPho.dessert.forEach((dessert, index) => {
-                    newItem.dessert.set(id + '_' + index, dessert);
+                    if (!newItem.dessert.has(dessert))
+                        newItem.dessert.set(dessert, 1);
                 });
             }
         }

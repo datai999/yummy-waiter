@@ -32,8 +32,8 @@ declare module 'myTypes' {
         chickenSide: Map<string, string>,
         chickenUpdated: string[],
 
-        drink: Map<string, string>,
-        dessert: Map<string, string>,
+        drink: Map<string, number>,
+        dessert: Map<string, number>,
     };
 }
 
