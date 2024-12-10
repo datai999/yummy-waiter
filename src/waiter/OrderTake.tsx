@@ -244,7 +244,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                             createLabel={(key) => Drinks[key as keyof typeof Drinks]}
                             callback={(newSideOrder) => setNonPho({ ...nonPho, drink: newSideOrder })}
                         />
-                        <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
+                        <Divider textAlign="left" sx={{ pb: 1.1, mb: 1, pt: 0 }}></Divider>
                         <CheckButton
                             multi={true}
                             allOptions={Object.keys(Dessert)}
@@ -256,7 +256,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                 )}
 
                 <Grid2 container spacing={2} alignItems="center">
-                    <Grid2 size={{ xs: 7, sm: 6, md: 3 }}  >
+                    <Grid2 size={{ xs: 7, sm: 6, md: 5 }}  >
                         <TextField
                             fullWidth
                             label="Special Notes"

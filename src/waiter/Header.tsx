@@ -69,6 +69,7 @@ const Header = ({ selectedTable, setSelectedTable, selectedCategory, setSelected
                     {Object.values(Categories).map((category) => (
                         <CategoryButton
                             key={category}
+                            size='large'
                             selected={selectedCategory === Categories[category as keyof typeof Categories]}
                             onClick={() => setSelectedCategory(Categories[category as keyof typeof Categories])}
                             variant="contained"
@@ -77,7 +78,7 @@ const Header = ({ selectedTable, setSelectedTable, selectedCategory, setSelected
                         </CategoryButton>
                     ))}
                 </Grid2>
-                <Grid2 size={{ xs: 4, sm: 5, md: 2 }}>
+                <Grid2 size={{ xs: 4, sm: 5, md: 'grow' }} sx={{ display: { xs: 'block', sm: 'none', md: 'block' } }}>
                     <Select
                         fullWidth
                         value={selectedTable}
@@ -86,7 +87,7 @@ const Header = ({ selectedTable, setSelectedTable, selectedCategory, setSelected
                         size='small'
                     >
                         <MenuItem value="">Table selection</MenuItem>
-                        {Array.from({ length: 20 }, (_, i) => (
+                        {Array.from({ length: 21 }, (_, i) => (
                             <MenuItem key={i + 1} value={i + 1}>
                                 Table {i + 1}
                             </MenuItem>
@@ -95,7 +96,41 @@ const Header = ({ selectedTable, setSelectedTable, selectedCategory, setSelected
                 </Grid2>
             </Grid2>
 
-            <Box sx={{ display: { sm: 'block', md: 'none' }, flexWrap: "wrap" }}>
+            <Box sx={{ display: { xs: 'none', sm: 'block', md: 'none', flexWrap: "wrap" } }}>
+                <Divider textAlign="left" sx={{ mb: 0 }}></Divider>
+                <Grid2 container spacing={2} alignItems="center">
+                    <Grid2 size={{ sm: 8, }}>
+                        {Object.values(Categories).map((category) => (
+                            <CategoryButton
+                                key={category}
+                                selected={selectedCategory === Categories[category as keyof typeof Categories]}
+                                onClick={() => setSelectedCategory(Categories[category as keyof typeof Categories])}
+                                variant="contained"
+                                size="large"
+                            >
+                                {category === Categories.SIDE_ORDERS ? "SIDE ORDER" : category}
+                            </CategoryButton>
+                        ))}
+                    </Grid2>
+                    <Grid2 size={{ sm: 'grow', }} >
+                        <Select
+                            fullWidth
+                            value={selectedTable}
+                            onChange={(e) => setSelectedTable(e.target.value)}
+                            displayEmpty
+                        >
+                            <MenuItem value="">Table selection</MenuItem>
+                            {Array.from({ length: 20 }, (_, i) => (
+                                <MenuItem key={i + 1} value={i + 1}>
+                                    Table {i + 1}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </Grid2>
+                </Grid2>
+            </Box>
+
+            <Box sx={{ display: { xs: 'block', sm: 'none', md: 'none' }, flexWrap: "wrap" }}>
                 <Divider textAlign="left" sx={{ mb: 0 }}></Divider>
                 {Object.values(Categories).map((category) => (
                     <CategoryButton
@@ -109,7 +144,7 @@ const Header = ({ selectedTable, setSelectedTable, selectedCategory, setSelected
                     </CategoryButton>
                 ))}
             </Box>
-        </StyledPaper>);
+        </StyledPaper >);
 }
 
 export default Header;

@@ -18,11 +18,12 @@ interface Props {
 export const CheckButton = ({ multi, allOptions, options = [], createLabel, callback }: Props) => {
     return (
         <>
-            <Grid2 container spacing={1} sx={{ display: { xs: 'none', sm: 'none', md: 'flex', lg: 'flex' }, mb: 1 }}>
+            <Grid2 container spacing={1} sx={{ display: { xs: 'none', sm: 'flex', md: 'flex', lg: 'flex' }, mb: 1 }}>
                 {allOptions.map((option) => (
                     <Grid2 key={option}>
                         <CategoryButton
                             variant='outlined'
+                            size='large'
                             onClick={() => {
                                 if (!multi) {
                                     callback([option]);
@@ -40,7 +41,7 @@ export const CheckButton = ({ multi, allOptions, options = [], createLabel, call
                     </Grid2>
                 ))}
             </Grid2>
-            <Grid2 container spacing={1} sx={{ display: { xs: 'flex', sm: 'flex', md: 'none', lg: 'none' }, mb: 1 }}>
+            <Grid2 container spacing={1} sx={{ display: { xs: 'flex', sm: 'none', md: 'none', lg: 'none' }, mb: 1 }}>
                 {allOptions.map((option) => (
                     <Grid2 key={option}>
                         <Chip
