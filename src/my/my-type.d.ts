@@ -21,24 +21,24 @@ declare module 'myTypes' {
         preferenceCodes?: string,
     };
 
-    type SideItem = {
+    type NonPhoCode = {
         id: string,
-        code?: string,
-        name: string,
+        key?: string,
+        code: string,
         count: number,
     }
 
     type SelectedItem = {
         beef: Map<string, PhoCode>,
-        beefSide: Map<string, SideItem>,
+        beefSide: Map<string, NonPhoCode>,
         beefUpdated: string[],
 
         chicken: Map<string, PhoCode>,
-        chickenSide: Map<string, SideItem>,
+        chickenSide: Map<string, NonPhoCode>,
         chickenUpdated: string[],
 
-        drink: Map<string, SideItem>,
-        dessert: Map<string, SideItem>,
+        drink: Map<string, NonPhoCode>,
+        dessert: Map<string, NonPhoCode>,
     };
 }
 
@@ -46,6 +46,6 @@ module.exports = {
     Pho,
     NonPho,
     PhoCode,
-    SideItem,
+    NonPhoCode,
     SelectedItem,
 };

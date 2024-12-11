@@ -6,6 +6,7 @@ import React, {
 import _ from 'lodash';
 import {
   NonPho,
+  NonPhoCode,
   Pho,
   PhoCode,
   SelectedItem,
@@ -28,8 +29,10 @@ import { CheckButton } from '../my/my-component';
 import {
   BeefMeats,
   BeefMeatSideOrder,
+  BeefMeatSideOrderCodes,
   BeefPreferences,
   BeefSideOrder,
+  BeefSideOrderCodes,
   Categories,
   ChickenMeats,
   ChickenSideOrder,
@@ -41,6 +44,7 @@ import {
 } from '../my/my-constants';
 import {
   generateId,
+  selectedNotEmpty,
   toPhoCode,
 } from '../my/my-service';
 import { StyledPaper } from '../my/my-styled';
@@ -106,27 +110,27 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
         } else if (Categories.SIDE_ORDERS === selectedCategory) {
             if (nonPho.beefSide.length > 0) {
                 nonPho.beefSide.forEach((item, index) => {
-                    const newSideItem = { id: id + "_" + index, code: item, name: BeefSideOrder[item as keyof typeof BeefSideOrder], count: 1 };
+                    const newSideItem = { id: id + "_" + index, key: item, code: BeefSideOrderCodes[item as keyof typeof BeefSideOrderCodes], count: 1 } as NonPhoCode;
                     newItem.beefSide.set(newSideItem.id, newSideItem);
                 });
                 newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':add beef side'];
             }
             if (nonPho.beefMeatSide.length > 0) {
                 nonPho.beefMeatSide.forEach((item, index) => {
-                    const newSideItem = { id: id + "_" + index, code: item, name: BeefMeatSideOrder[item as keyof typeof BeefMeatSideOrder], count: 1 };
+                    const newSideItem = { id: id + "_" + index, key: item, code: BeefMeatSideOrderCodes[item as keyof typeof BeefMeatSideOrderCodes], count: 1 } as NonPhoCode;
                     newItem.beefSide.set(newSideItem.id, newSideItem);
                 });
                 newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':add beef meat side'];
             }
             if (nonPho.chickenSide.length > 0) {
                 nonPho.chickenSide.forEach((item, index) => {
-                    const newSideItem = { id: id + "_" + index, code: item, name: ChickenSideOrder[item as keyof typeof ChickenSideOrder], count: 1 };
+                    const newSideItem = { id: id + "_" + index, key: item, code: ChickenSideOrder[item as keyof typeof ChickenSideOrder], count: 1 } as NonPhoCode;
                     newItem.chickenSide.set(newSideItem.id, newSideItem);
                 });
                 newItem.chickenUpdated = [...newItem.chickenUpdated, new Date().toISOString() + ':add chicken side'];
             }
             if (pho.note && pho.note.length > 0) {
-                const newSideItem = { id: id + "_note", name: pho.note, count: 1 };
+                const newSideItem = { id: id + "_note", code: pho.note, count: 1 } as NonPhoCode;
                 newItem.beefSide.set(newSideItem.id, newSideItem);
                 newItem.chickenSide.set(newSideItem.id, newSideItem);
                 newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':note'];
@@ -146,7 +150,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                 });
             }
             if (pho.note) {
-                const newSideItem = { id: id + "_note", name: pho.note, count: 1 };
+                const newSideItem = { id: id + "_note", code: pho.note, count: 1 } as NonPhoCode;;
                 newItem.drink.set(newSideItem.id, newSideItem);
             }
         }
@@ -295,7 +299,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                 )}
 
                 <Grid2 container spacing={2} alignItems="center">
-                    <Grid2 size={{ xs: 6, sm: 6, md: 5 }}  >
+                    <Grid2 size={{ xs: 5, sm: 6, md: 5 }}  >
                         <TextField
                             fullWidth
                             label="Special Notes"
@@ -330,20 +334,20 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
 
             <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 1 }}>
                 {Array.from(selected.entries()).map(([key, item], index) => {
-                    console.log("item", item);
-                    return (<>
-                        <OrderSummary
-                            key={index}
-                            bag={key}
-                            selectedItems={item}
-                            phoId={pho.id} showPho={showPho}
-                        />
+                    return (selectedNotEmpty(item) && <>
+                        <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 0 }}>
+                            <Typography variant="h6" style={{ fontWeight: 'bold' }} >
+                                {key === 0 ? 'Dine-in' : `Togo ${key}`}
+                            </Typography>
+                            <OrderSummary
+                                key={index}
+                                bag={key}
+                                selectedItems={item}
+                                phoId={pho.id} showPho={showPho}
+                            />
+                        </StyledPaper>
                     </>);
                 })}
-                {/* <OrderSummary
-                    selectedItems={selectedItems}
-                    phoId={pho.id} showPho={showPho}
-                /> */}
                 <Button
                     variant="contained"
                     color="primary"

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
 import {
+  NonPhoCode,
   PhoCode,
   SelectedItem,
-  SideItem,
 } from 'myTypes';
 import {
   FaMinus,
@@ -69,7 +69,7 @@ interface PhoListProps {
     category: Categories,
     phoId: String,
     phos: Map<String, PhoCode>,
-    sideOrders: Map<String, SideItem>,
+    sideOrders: Map<String, NonPhoCode>,
     showPho: (bag: number, category: Categories, itemId: string) => void,
 }
 
@@ -136,8 +136,8 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
 }
 
 interface DrinkDessertListProps {
-    drinks: Map<String, SideItem>,
-    desserts: Map<String, SideItem>,
+    drinks: Map<String, NonPhoCode>,
+    desserts: Map<String, NonPhoCode>,
 }
 
 const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {

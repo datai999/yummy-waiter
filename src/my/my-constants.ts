@@ -84,6 +84,17 @@ export enum BeefSideOrder {
     BREAD = "Bánh mì"
 }
 
+export enum BeefSideOrderCodes {
+    VINEGAR_ONION = "HD",
+    ROOT_ONION = "HT",
+    FAT = "Béo",
+    XiQ = "XiQ",
+    EXTRA_NOODLE = "Ch.Bánh",
+    EXTRA_FRESH_NOODLE = "Ch.BT",
+    EGG_YOLK = "Ch.Egg",
+    BREAD = "B.Mì"
+}
+
 export enum BeefMeatSideOrder {
     RARE = "Dĩa Tái",
     RARE_SOUP = "Chén Tái",
@@ -92,6 +103,16 @@ export enum BeefMeatSideOrder {
     TENDON = "Chén Gân",
     TRIPE = "Chén Sách",
     BEEF_BALL = "Chén Bò viên",
+}
+
+export enum BeefMeatSideOrderCodes {
+    RARE = "Dĩa T",
+    RARE_SOUP = "Ch.T",
+    LEAN = "Ch.C",
+    FATTY = "Ch.G`",
+    TENDON = "Ch.g",
+    TRIPE = "Ch.S",
+    BEEF_BALL = "Ch.BV",
 }
 
 export enum ChickenSideOrder {

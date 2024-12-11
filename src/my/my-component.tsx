@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { SideItem } from 'myTypes';
+import { NonPhoCode } from 'myTypes';
 import {
   FaMinus,
   FaPlus,
@@ -80,7 +80,7 @@ export const CheckButton = ({ multi, allOptions, options = [], createLabel, call
 }
 
 interface SideItemListProps {
-    sideItems: Map<String, SideItem>,
+    sideItems: Map<String, NonPhoCode>,
     doubleCol?: boolean,
 }
 
@@ -88,7 +88,7 @@ export const SideItemList = ({ sideItems, doubleCol = true }: SideItemListProps)
     const [refresh, setRefresh] = useState<Boolean>(false);
 
     const copy = (itemId: String) => {
-        const newItem = { ...sideItems.get(itemId), id: generateId() } as SideItem;
+        const newItem = { ...sideItems.get(itemId), id: generateId() } as NonPhoCode;
         sideItems.set(newItem.id, newItem);
         setRefresh(!refresh);
     }
@@ -147,7 +147,7 @@ export const SideItemList = ({ sideItems, doubleCol = true }: SideItemListProps)
                                                 },
                                                 "& fieldset": { border: 'none' },
                                             }}
-                                            placeholder={`${value.count > 1 ? value.count : ''} ${value.name}`}
+                                            placeholder={`${value.count > 1 ? value.count : ''} ${value.code}`}
                                             value={''}
                                             onChange={(e) => {
                                                 const num = Number(e.target.value.slice(-1));
@@ -155,7 +155,7 @@ export const SideItemList = ({ sideItems, doubleCol = true }: SideItemListProps)
                                                     remove(key);
                                                     return;
                                                 }
-                                                const sideItem = sideItems.get(key) || {} as SideItem;
+                                                const sideItem = sideItems.get(key) || {} as NonPhoCode;
                                                 sideItem.count = num;
                                                 setRefresh(!refresh);
                                             }}

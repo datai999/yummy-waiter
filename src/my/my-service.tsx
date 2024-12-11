@@ -1,6 +1,7 @@
 import {
   Pho,
   PhoCode,
+  SelectedItem,
 } from 'myTypes';
 
 import {
@@ -39,4 +40,14 @@ export const toPhoCode = (category: Categories, pho: Pho): PhoCode => {
         .map(e => BeefPreferenceCodes[e as keyof typeof BeefPreferenceCodes])
         .join(", ");
     return phoCode;
+}
+
+export const selectedNotEmpty = (selectedItem: SelectedItem): boolean => {
+    return selectedItem.beef.size > 0
+        || selectedItem.beefSide.size > 0
+        || selectedItem.chicken.size > 0
+        || selectedItem.chickenSide.size > 0
+        || selectedItem.drink.size > 0
+        || selectedItem.dessert.size > 0
+        ;
 }
