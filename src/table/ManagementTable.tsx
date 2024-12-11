@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 import CardTable from './CardTable';
+import { TableStatus } from '../my/my-constants';
 
 const ModalContent = styled(Box)({
   position: "absolute",
@@ -38,11 +39,11 @@ const ModalContent = styled(Box)({
   overflowY: "auto"
 });
 
-const TableManagerment = ({ setTable }: { setTable: (table: string) => void }) => {
+const TableManagerment = ({ orderTable }: { orderTable: (tableId: string) => void }) => {
   const [tables, setTables] = useState<Table[]>(
     Array.from({ length: 21 }, (_, index) => ({
       id: String(index < 12 ? index + 1 : index < 20 ? index + 2 : 'TOGO'),
-      status: Math.random() > 0.5 ? "active" : Math.random() > 0.5 ? "attention" : "available",
+      status: Math.random() > 0.5 ? TableStatus.AVAILABLE : Math.random() > 0.5 ? TableStatus.ACTIVE : TableStatus.AVAILABLE,
       orderTime: new Date(Date.now() - Math.floor(Math.random() * 3600000)),
       orders: [
         { item: "Pasta Carbonara", quantity: 2, notes: "Extra cheese" },
@@ -71,7 +72,7 @@ const TableManagerment = ({ setTable }: { setTable: (table: string) => void }) =
       <Grid2 container spacing={3}>
         {tables.map(table => (
           <Grid2 key={table.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <CardTable table={table} doneTable={handleMoveToHistory} />
+            <CardTable table={table} orderTable={orderTable} doneTable={handleMoveToHistory} />
           </Grid2>
         ))}
       </Grid2>

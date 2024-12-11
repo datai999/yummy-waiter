@@ -145,6 +145,11 @@ export enum Dessert {
     THREE_COLOR = "3 màu"
 }
 
+export enum TableStatus {
+    AVAILABLE = "AVAILABLE",
+    ACTIVE = "ACTIVE"
+}
+
 export const DefaultPho: Pho = {
     id: '',
     meats: [],

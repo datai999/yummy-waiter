@@ -45,7 +45,7 @@ declare module 'myTypes' {
 declare module 'myTable' {
     type Table = {
         id: string;
-        status: "active" | "attention" | "available";
+        status: TableStatus;
         orderTime: Date | null;
         timer: number;
         orders: { item: string; quantity: number; notes: string }[];

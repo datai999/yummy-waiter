@@ -4,23 +4,33 @@ import { Table } from 'myTable';
 
 import styled from '@emotion/styled';
 import {
+  Box,
   Button,
   Card,
   CardContent,
+  Chip,
+  Modal,
   Stack,
   Typography,
 } from '@mui/material';
 import { FiAlertCircle, FiCheckCircle, FiClock } from 'react-icons/fi';
+import { TableStatus } from '../my/my-constants';
 
-const StyledCard = styled(Card)(({ status }: { status: string }) => ({
+const StyledCard = styled(Card)(({ status }: { status: TableStatus }) => ({
   minHeight: "200px",
   cursor: "pointer",
   transition: "all 0.3s ease",
+  // background:
+  //   status === "active"
+  //     ? "#e8f5e9"
+  //     : status === "attention"
+  //       ? "#ffebee"
+  //       : "#f5f5f5",
   background:
-    status === "active"
-      ? "#e8f5e9"
-      : status === "attention"
-        ? "#ffebee"
+    status === TableStatus.ACTIVE
+      ? "#ffebee"
+      : status === TableStatus.AVAILABLE
+        ? "#f5f5f5"
         : "#f5f5f5",
   "&:hover": {
     transform: "translateY(-5px)",
@@ -28,8 +38,27 @@ const StyledCard = styled(Card)(({ status }: { status: string }) => ({
   }
 }));
 
-const CardTable = ({ table, doneTable }: { table: Table, doneTable: (tableId: string) => void }) => {
+const ModalContent = styled(Box)({
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "90%",
+  maxWidth: "500px",
+  backgroundColor: "#fff",
+  borderRadius: "8px",
+  padding: "20px",
+  maxHeight: "80vh",
+  overflowY: "auto"
+});
+
+const CardTable = ({ table, orderTable, doneTable }: {
+  table: Table,
+  orderTable: (tableId: string) => void,
+  doneTable: (tableId: string) => void
+}) => {
   const [timer, setTimer] = useState(0);
+  const [openOrderModal, setOpenOrderModal] = useState(false);
 
   useEffect(() => {
     if (table.orderTime) {
@@ -41,6 +70,12 @@ const CardTable = ({ table, doneTable }: { table: Table, doneTable: (tableId: st
     }
   }, [table.orderTime]);
 
+  const cardOnClick = () => {
+    console.log("Card clicked", table);
+    if (table.status === TableStatus.AVAILABLE) {
+      orderTable(table.id);
+    } else setOpenOrderModal(true);
+  }
 
   const renderTableStatus = (status: string) => {
     switch (status) {
@@ -61,23 +96,23 @@ const CardTable = ({ table, doneTable }: { table: Table, doneTable: (tableId: st
 
   return (<StyledCard
     status={table.status}
-    onClick={() => {
-      //TODO
-    }}
+    onClick={cardOnClick}
   >
     <CardContent>
       <Stack spacing={2} alignItems="center">
-        <Typography variant="h4">Table {table.id}</Typography>
-        {renderTableStatus(table.status)}
-        {table.status !== "available" && (
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <FiClock />
-            <Typography>
-              {formatTime(timer)}
-            </Typography>
-          </Stack>
-        )}
-        {table.status !== "available" && (
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Typography variant="h4">Table {table.id}</Typography>
+          {/* {renderTableStatus(table.status)} */}
+          {table.status !== TableStatus.AVAILABLE && (
+            <>
+              <FiClock />
+              <Typography>
+                {formatTime(timer)}
+              </Typography>
+            </>
+          )}
+        </Stack>
+        {table.status !== TableStatus.AVAILABLE && (
           <Button
             variant="contained"
             onClick={(e) => {
@@ -90,6 +125,40 @@ const CardTable = ({ table, doneTable }: { table: Table, doneTable: (tableId: st
         )}
       </Stack>
     </CardContent>
+
+    <Modal
+      open={Boolean(openOrderModal)}
+      onClose={() => setOpenOrderModal(false)}
+    >
+      <ModalContent>
+        {openOrderModal && (
+          <>
+            <Typography variant="h5" gutterBottom>
+              Table {table.id} Details
+            </Typography>
+            <Stack spacing={2}>
+              {table.orders.map((order, index) => (
+                <Box key={index}>
+                  <Typography variant="h6">{order.item}</Typography>
+                  <Stack direction="row" spacing={1}>
+                    <Chip label={`Qty: ${order.quantity}`} />
+                    <Chip label={order.notes} variant="outlined" />
+                  </Stack>
+                </Box>
+              ))}
+            </Stack>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={() => setOpenOrderModal(false)}
+              sx={{ mt: 3 }}
+            >
+              Close
+            </Button>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
   </StyledCard>);
 }
 
