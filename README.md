@@ -1,4 +1,4 @@
-**User Interface Design for Waiters at a Pho Restaurant**
+**User Interface Design for Waiters take order at a Pho Restaurant**
 
 Design a modern mobile website interface for waiters at a pho restaurant to streamline the order-taking process. 
 
@@ -31,4 +31,38 @@ All options must be displayed in the base UI; do not use pop-ups.
 
 8. **Placing Orders**: At the bottom of the interface, there will be a "Place Order" button. Clicking this button will open a confirmation popup to finalize the order.
 
-This design aims to enhance the efficiency of order-taking while providing a user-friendly experience for the waiter.
+
+**User Interface Design for Waiters select table at a Pho Restaurant**
+
+To create a card interface used on the mobile web restaurant tables numbered from 1 to 20 for waitstaff, follow these guidelines:
+
+**Features:**
+
+1. **Card Layout**:
+   - Each table is represented as a card.
+   - Display the table number prominently on each card (e.g., "Table 1," "Table 2," ..., "Table 21").
+   - Include a timer indicating how long it has been since the order was taken for each table.
+
+2. **Color Change**:
+   - Set a default color for the cards (e.g., light gray).
+   - Change the card color to indicate activity: use green for "has order" and red for "needs attention."
+
+3. **Tap to View Order**:
+   - Make the entire card tappable. When tapped, it should display the full details of the order for that table (e.g., items ordered, customer notes, etc.).
+
+4. **Move Order to History**:
+   - Include a button on the card labeled "Move to History."
+   - When clicked, this button should archive the order and update the table's status to "available."
+
+5. **Overall Interaction**:
+   - Ensure a smooth user experience so that waitstaff can quickly view and manage orders without unnecessary delays.
+
+6. **Oldest Table**:
+   - Implement a horizontal swipe feature to view the history of tables at the bottom.
+   - Sort the order history by the time the order was taken.
+
+7. **Order History**:
+   - Allow swiping across the horizontal order history at the bottom.
+   - Sort the orders with the most recent first.
+
+This concept will help streamline operations for waitstaff and enhance efficiency in managing orders at the restaurant.
