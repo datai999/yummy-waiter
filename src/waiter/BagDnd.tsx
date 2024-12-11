@@ -26,7 +26,7 @@ import {
 import { Categories } from '../my/my-constants';
 import { StyledPaper } from '../my/my-styled';
 import theme from '../theme';
-import OrderSummary from './OrderSummary';
+import OrderSummary from './DetailOrder';
 
 interface Props {
     selected: Map<number, SelectedItem>,

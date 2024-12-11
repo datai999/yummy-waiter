@@ -38,17 +38,18 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 type Props = {
+    setIsWaiter: (value: boolean) => void,
     selectedTable: string,
     setSelectedTable(selectedTable: string): void,
     selectedCategory: Categories,
     setSelectedCategory(selectedItems: Categories): void;
 };
 
-const Header = ({ selectedTable, setSelectedTable, selectedCategory, setSelectedCategory }: Props) => {
+const Header = ({ setIsWaiter, selectedTable, setSelectedTable, selectedCategory, setSelectedCategory }: Props) => {
     return (
         <StyledPaper>
             <Grid2 container spacing={2} alignItems="center">
-                <Grid2 size={{ xs: 2, sm: 1, md: 1 }}>
+                <Grid2 size={{ xs: 2, sm: 1, md: 1 }} onClick={() => setIsWaiter(false)}>
                     <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} />
                     <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} />
                 </Grid2>
