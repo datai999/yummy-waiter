@@ -44,11 +44,10 @@ import {
 } from '../my/my-constants';
 import {
   generateId,
-  selectedNotEmpty,
   toPhoCode,
 } from '../my/my-service';
 import { StyledPaper } from '../my/my-styled';
-import OrderSummary from './OrderSummary';
+import BagDnd from './BagDnd';
 
 const defaultSelectedItems: SelectedItem = {
     beef: new Map(),
@@ -333,21 +332,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
             </StyledPaper>
 
             <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 1 }}>
-                {Array.from(selected.entries()).map(([key, item], index) => {
-                    return (selectedNotEmpty(item) && <>
-                        <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 0 }}>
-                            <Typography variant="h6" style={{ fontWeight: 'bold' }} >
-                                {key === 0 ? 'Dine-in' : `Togo ${key}`}
-                            </Typography>
-                            <OrderSummary
-                                key={index}
-                                bag={key}
-                                selectedItems={item}
-                                phoId={pho.id} showPho={showPho}
-                            />
-                        </StyledPaper>
-                    </>);
-                })}
+                <BagDnd selected={selected} phoId={pho.id} showPho={showPho} />
                 <Button
                     variant="contained"
                     color="primary"
