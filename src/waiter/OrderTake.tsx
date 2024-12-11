@@ -12,8 +12,10 @@ import {
   SelectedItem,
 } from 'myTypes';
 import { FaChevronRight } from 'react-icons/fa';
+import { GiPaperBagFolded } from 'react-icons/gi';
 
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -181,6 +183,12 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
             setPho({ ...selected.get(bag)?.chicken.get(selectedItemId)! });
     }
 
+    const addBag = () => {
+        const nextSelected = new Map(selected);
+        nextSelected.set(selected.size, _.cloneDeep(defaultSelectedItems));
+        setSelected(nextSelected);
+    }
+
     const confirmOrder = () => {
         console.log("Order placed:", { table: selectedTable, items: selected });
         setOpenConfirmDialog(false);
@@ -331,18 +339,29 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
 
             </StyledPaper>
 
-            <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 1 }}>
+            <StyledPaper sx={{ mt: 0, p: 0 }}>
                 <BagDnd selected={selected} phoId={pho.id} showPho={showPho} />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={() => setOpenConfirmDialog(true)}
-                    disabled={!selectedTable}
-                    sx={{ mt: 1 }}
-                >
-                    Place Order <FaChevronRight style={{ marginLeft: 8 }} />
-                </Button>
+                <Box display="flex"
+                    justifyContent="center"
+                    alignItems="center">
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={addBag}
+                        sx={{ mr: '10%' }}
+                    >
+                        Add bag <GiPaperBagFolded style={{ fontSize: 20, marginLeft: 8 }} />
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => setOpenConfirmDialog(true)}
+                        disabled={!selectedTable}
+                        sx={{ mr: '20%' }}
+                    >
+                        Place Order <FaChevronRight style={{ marginLeft: 8 }} />
+                    </Button>
+                </Box>
             </StyledPaper>
 
             <Dialog open={openConfirmDialog} onClose={() => setOpenConfirmDialog(false)}>
