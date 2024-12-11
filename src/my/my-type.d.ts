@@ -15,12 +15,10 @@ declare module 'myTypes' {
         dessert: string[],
     }
 
-    type PhoCode = {
-        id: string,
-        meats: string,
-        noodle: string,
-        preferences?: string,
-        note?: string,
+    type PhoCode = Pho & {
+        meatCodes: string,
+        noodleCode: string,
+        preferenceCodes?: string,
     };
 
     type SideItem = {
@@ -31,11 +29,11 @@ declare module 'myTypes' {
     }
 
     type SelectedItem = {
-        beef: Map<string, Pho>,
+        beef: Map<string, PhoCode>,
         beefSide: Map<string, SideItem>,
         beefUpdated: string[],
 
-        chicken: Map<string, Pho>,
+        chicken: Map<string, PhoCode>,
         chickenSide: Map<string, SideItem>,
         chickenUpdated: string[],
 

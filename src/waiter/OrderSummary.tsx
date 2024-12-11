@@ -1,10 +1,6 @@
-import React, {
-  useEffect,
-  useState,
-} from 'react';
+import React, { useState } from 'react';
 
 import {
-  Pho,
   PhoCode,
   SelectedItem,
   SideItem,
@@ -19,7 +15,6 @@ import { RiDrinks2Line } from 'react-icons/ri';
 
 import {
   Badge,
-  Box,
   Button,
   Divider,
   Grid2,
@@ -30,123 +25,67 @@ import {
 } from '@mui/material';
 
 import { SideItemList } from '../my/my-component';
-import {
-  BeefMeatCodes,
-  BeefPreferenceCodes,
-  Categories,
-  ChickenMeats,
-  ChikenPreferences,
-  Noodles,
-} from '../my/my-constants';
+import { Categories } from '../my/my-constants';
 import { generateId } from '../my/my-service';
 import {
   OrderItem,
   StyledPaper,
 } from '../my/my-styled';
 
-type Props = {
+interface Props {
+    bag: number,
     selectedItems: SelectedItem,
-    setSelectedItems(selectedItem: SelectedItem): void;
     phoId: String;
-    showPho: (category: Categories, itemId: string) => void;
+    showPho: (bag: number, category: Categories, itemId: string) => void;
 };
 
-const OrderSummary = ({ selectedItems, setSelectedItems, phoId, showPho }: Props) => {
-    const [phoBeefs, setPhoBeefs] = useState<Map<String, PhoCode>>(new Map<String, PhoCode>());
-    const [phoChickens, setPhoChickens] = useState<Map<String, PhoCode>>(new Map<String, PhoCode>());
-
-    useEffect(() => {
-        const beefs = new Map<String, PhoCode>();
-        selectedItems.beef.forEach((beef: Pho, id: string) => {
-            const phoCode: PhoCode = {
-                ...beef,
-                meats: beef.meats.map(e => BeefMeatCodes[e as keyof typeof BeefMeatCodes]).join(','),
-                noodle: Noodles[beef.noodle as keyof typeof Noodles] as string,
-                preferences: (beef.preferences || [])
-                    .map(e => BeefPreferenceCodes[e as keyof typeof BeefPreferenceCodes])
-                    .join(", ")
-            }
-            beefs.set(id, phoCode);
-        });
-        console.log("beefs", beefs);
-        setPhoBeefs(beefs);
-    }, [selectedItems.beef.size, selectedItems.beefUpdated]);
-
-    useEffect(() => {
-        const chickens = new Map<String, PhoCode>();
-        selectedItems.chicken.forEach((chicken: Pho, id: string) => {
-            const phoCode: PhoCode = {
-                ...chicken,
-                meats: chicken.meats.map(e => ChickenMeats[e as keyof typeof ChickenMeats]).join(','),
-                noodle: Noodles[chicken.noodle as keyof typeof Noodles] as string,
-                preferences: (chicken.preferences || [])
-                    .map(e => ChikenPreferences[e as keyof typeof ChikenPreferences])
-                    .join(", ")
-            }
-            chickens.set(id, phoCode);
-        });
-        console.log("beefs", chickens);
-        setPhoChickens(chickens);
-    }, [selectedItems.chicken.size, selectedItems.chickenUpdated]);
-
-    const removeItem = (category: Categories, itemId: string) => {
-        const newSelectedItems = { ...selectedItems };
-        if (Categories.BEEF === category)
-            newSelectedItems.beef.delete(itemId);
-        else if (Categories.CHICKEN === category)
-            newSelectedItems.chicken.delete(itemId);
-        setSelectedItems(newSelectedItems);
-    };
-
-    const copyItem = (category: Categories, itemId: string) => {
-        const newItems = { ...selectedItems };
-        if (Categories.BEEF === category) {
-            const copyItem = { ...selectedItems.beef.get(itemId) } as Pho;
-            copyItem.id = generateId();
-            newItems.beef.set(copyItem.id, copyItem);
-        }
-        else if (Categories.CHICKEN === category) {
-            const copyItem = { ...selectedItems.chicken.get(itemId) } as Pho;
-            copyItem.id = generateId();
-            newItems.chicken.set(copyItem.id, copyItem);
-        }
-        setSelectedItems(newItems);
-    }
+const OrderSummary = ({ bag, selectedItems, phoId, showPho }: Props) => {
+    const [refresh, setRefresh] = useState<Boolean>(false);
 
     return (
-        <Box>
+        <>
             <Grid2 container spacing={2}>
-                {phoBeefs.size + selectedItems.beefSide.size > 0 && (
+                {selectedItems.beef.size + selectedItems.beefSide.size > 0 && (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }}  >
-                        <PhoList category={Categories.BEEF} phoId={phoId} phos={phoBeefs} sideOrders={selectedItems.beefSide}
-                            showPho={showPho} copy={copyItem} remove={removeItem} />
+                        <PhoList bag={bag} category={Categories.BEEF} phoId={phoId} phos={selectedItems.beef} sideOrders={selectedItems.beefSide}
+                            showPho={showPho} />
                     </Grid2>)}
-                {phoChickens.size + selectedItems.chickenSide.size > 0 && (
+                {selectedItems.chicken.size + selectedItems.chickenSide.size > 0 && (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }}  >
-                        <PhoList category={Categories.CHICKEN} phoId={phoId} phos={phoChickens} sideOrders={selectedItems.chickenSide}
-                            showPho={showPho} copy={copyItem} remove={removeItem} />
+                        <PhoList bag={bag} category={Categories.CHICKEN} phoId={phoId} phos={selectedItems.chicken} sideOrders={selectedItems.chickenSide}
+                            showPho={showPho} />
                     </Grid2>)}
                 {selectedItems.drink.size + selectedItems.dessert.size > 0 && (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }}  >
                         <DrinkDessertList drinks={selectedItems.drink} desserts={selectedItems.dessert} />
                     </Grid2>)}
             </Grid2>
-        </Box >
+        </ >
     )
 }
 
 interface PhoListProps {
+    bag: number,
     category: Categories,
     phoId: String,
     phos: Map<String, PhoCode>,
-    sideOrders: Map<String, SideItem>;
-    showPho: (category: Categories, itemId: string) => void;
-    copy: (category: Categories, itemId: string) => void,
-    remove: (category: Categories, itemId: string) => void,
+    sideOrders: Map<String, SideItem>,
+    showPho: (bag: number, category: Categories, itemId: string) => void,
 }
 
-const PhoList = ({ category, phoId, phos, sideOrders, showPho, copy, remove, }: PhoListProps) => {
+const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListProps) => {
     const [refresh, setRefresh] = useState<Boolean>(false);
+
+    const remove = (itemId: string) => {
+        phos.delete(itemId);
+        setRefresh(!refresh);
+    };
+
+    const copy = (itemId: string) => {
+        const copyItem = { ...phos.get(itemId), id: generateId() } as PhoCode;
+        phos.set(copyItem.id, copyItem);
+        setRefresh(!refresh);
+    }
 
     return (
         <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0 }}>
@@ -168,11 +107,11 @@ const PhoList = ({ category, phoId, phos, sideOrders, showPho, copy, remove, }: 
                     return (
                         <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }}
                             style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
-                            <Button onClick={() => remove(category, item.id)} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
+                            <Button onClick={() => remove(item.id)} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
                                 <FaMinus style={{ fontSize: 12 }} />
                             </Button>
                             <ListItemButton onClick={() => {
-                                showPho(category, item.id);
+                                showPho(bag, category, item.id);
                             }} dense sx={{ p: 0, m: 0 }}>
                                 <ListItemText
                                     id={item.id}
@@ -180,11 +119,11 @@ const PhoList = ({ category, phoId, phos, sideOrders, showPho, copy, remove, }: 
                                     secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
                                     sx={{ p: 0, m: 0 }}
                                     primary={
-                                        `${item.meats} (${item.noodle}) ${(item.preferences) ? `(${item.preferences})` : ''}`}
+                                        `${item.meatCodes} (${item.noodleCode}) ${(item.preferenceCodes) ? `(${item.preferenceCodes})` : ''}`}
                                     secondary={item.note ? item.note : null}
                                 />
                             </ListItemButton>
-                            <Button onClick={() => copy(category, item.id)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                            <Button onClick={() => copy(item.id)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
                                 <FaPlus style={{ fontSize: 26 }} />
                             </Button>
                         </OrderItem>

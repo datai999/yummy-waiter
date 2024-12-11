@@ -3,9 +3,11 @@ import React, {
   useState,
 } from 'react';
 
+import _ from 'lodash';
 import {
   NonPho,
   Pho,
+  PhoCode,
   SelectedItem,
 } from 'myTypes';
 import { FaChevronRight } from 'react-icons/fa';
@@ -37,7 +39,10 @@ import {
   Drinks,
   Noodles,
 } from '../my/my-constants';
-import { generateId } from '../my/my-service';
+import {
+  generateId,
+  toPhoCode,
+} from '../my/my-service';
 import { StyledPaper } from '../my/my-styled';
 import OrderSummary from './OrderSummary';
 
@@ -62,7 +67,11 @@ const defaultNonPho: NonPho = {
     drink: [],
 }
 
-type Props = {
+const DEFAULT_SELECTED: Map<number, SelectedItem> = new Map([
+    [0, _.cloneDeep(defaultSelectedItems)], [1, _.cloneDeep(defaultSelectedItems)]
+]);
+
+interface Props {
     selectedTable: string,
     setSelectedTable(selectedTable: string): void,
     selectedCategory: Categories,
@@ -73,24 +82,26 @@ type Props = {
 const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelectedCategory, refreshState }: Props) => {
     const [pho, setPho] = useState<Pho>(DefaultPho);
     const [nonPho, setNonPho] = useState<NonPho>(defaultNonPho);
-    const [selectedItems, setSelectedItems] = useState<SelectedItem>(defaultSelectedItems);
+
+    const [selected, setSelected] = useState<Map<number, SelectedItem>>(DEFAULT_SELECTED);
+
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
     useEffect(() => {
         setPho(DefaultPho);
+        setNonPho(defaultNonPho);
     }, [refreshState]);
 
-    const handleAddItem = () => {
-        const newItem = { ...selectedItems };
+    const handleItem = (newItem: SelectedItem) => {
         const id = pho.id.length ? pho.id : generateId();
-        const newPho = { ...pho, id: id };
+        let newPho = { ...pho, id: id };
         if (Categories.BEEF === selectedCategory) {
-            if (newPho.meats.length === 0) newPho.meats = ["BPN"];
-            else newPho.meats = newPho.meats.filter(meat => meat !== "BPN");
-            newItem.beef.set(id, newPho);
+            newPho = toPhoCode(selectedCategory, newPho);
+            newItem.beef.set(id, newPho as PhoCode);
             newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':add beef'];
         } else if (Categories.CHICKEN === selectedCategory) {
-            newItem.chicken.set(id, newPho);
+            newPho = toPhoCode(selectedCategory, newPho);
+            newItem.chicken.set(id, newPho as PhoCode);
             newItem.chickenUpdated = [...newItem.chickenUpdated, new Date().toISOString() + ':add chicken'];
         } else if (Categories.SIDE_ORDERS === selectedCategory) {
             if (nonPho.beefSide.length > 0) {
@@ -139,24 +150,37 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                 newItem.drink.set(newSideItem.id, newSideItem);
             }
         }
-        console.log("newItem", newItem);
-        setSelectedItems(newItem);
-        setPho(DefaultPho);
-        setNonPho(defaultNonPho);
     };
 
-    const showPho = (category: Categories, selectedItemId: string) => {
+    const handleAddItem = () => {
+        const dineIn = new Map(selected);
+        handleItem(dineIn.get(0)!);
+        setSelected(dineIn);
+        console.log("dineInItem", dineIn);
+        setPho(DefaultPho);
+        setNonPho(defaultNonPho);
+    }
+
+    const togoItem = () => {
+        const newTogo = new Map(selected);
+        handleItem(newTogo.get(1)!);
+        setSelected(newTogo);
+        console.log("togoItem", newTogo);
+        setPho(DefaultPho);
+        setNonPho(defaultNonPho);
+    }
+
+    const showPho = (bag: number, category: Categories, selectedItemId: string) => {
         setSelectedCategory(category);
         if (Categories.BEEF === category)
-            setPho({ ...selectedItems.beef.get(selectedItemId)! });
+            setPho({ ...selected.get(bag)?.beef.get(selectedItemId)! });
         else if (Categories.CHICKEN === category)
-            setPho({ ...selectedItems.chicken.get(selectedItemId)! });
+            setPho({ ...selected.get(bag)?.chicken.get(selectedItemId)! });
     }
 
     const confirmOrder = () => {
-        console.log("Order placed:", { table: selectedTable, items: selectedItems });
+        console.log("Order placed:", { table: selectedTable, items: selected });
         setOpenConfirmDialog(false);
-        setSelectedItems(defaultSelectedItems);
         setSelectedTable("");
     };
 
@@ -271,7 +295,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                 )}
 
                 <Grid2 container spacing={2} alignItems="center">
-                    <Grid2 size={{ xs: 7, sm: 6, md: 5 }}  >
+                    <Grid2 size={{ xs: 6, sm: 6, md: 5 }}  >
                         <TextField
                             fullWidth
                             label="Special Notes"
@@ -280,14 +304,24 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                             onChange={(e) => setPho({ ...pho, note: e.target.value })}
                         />
                     </Grid2>
-                    <Grid2 size={{ xs: 5, sm: 3, md: 2 }}  >
+                    <Grid2 size={{ xs: 'auto', sm: 2, md: 2 }}  >
                         <Button
                             variant="contained"
                             color="primary"
                             onClick={handleAddItem}
                             fullWidth
                         >
-                            {`${pho.id.length > 0 ? 'Edit item' : 'Add to Order'}`}
+                            {`${pho.id.length > 0 ? 'Edit item' : 'Dine-in'}`}
+                        </Button>
+                    </Grid2>
+                    <Grid2 size={{ xs: 'auto', sm: 2, md: 2 }}  >
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={togoItem}
+                            fullWidth
+                        >
+                            {`Togo`}
                         </Button>
                     </Grid2>
                 </Grid2>
@@ -295,10 +329,21 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
             </StyledPaper>
 
             <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 1 }}>
-                <OrderSummary
-                    selectedItems={selectedItems} setSelectedItems={setSelectedItems}
+                {Array.from(selected.entries()).map(([key, item], index) => {
+                    console.log("item", item);
+                    return (<>
+                        <OrderSummary
+                            key={index}
+                            bag={key}
+                            selectedItems={item}
+                            phoId={pho.id} showPho={showPho}
+                        />
+                    </>);
+                })}
+                {/* <OrderSummary
+                    selectedItems={selectedItems}
                     phoId={pho.id} showPho={showPho}
-                />
+                /> */}
                 <Button
                     variant="contained"
                     color="primary"

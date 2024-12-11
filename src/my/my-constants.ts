@@ -50,7 +50,6 @@ export enum Noodles {
 }
 
 export enum BeefPreferences {
-    TOGO = "TOGO",
     NO_ONION = "Không hành",
     NO_FAT = "Không béo",
     LESS_NOODLE = "Ít bánh",
@@ -58,7 +57,6 @@ export enum BeefPreferences {
 }
 
 export enum BeefPreferenceCodes {
-    TOGO = "TOGO",
     NO_ONION = "No H",
     NO_FAT = "No Béo",
     LESS_NOODLE = "-b",
@@ -69,7 +67,6 @@ export enum BeefPreferenceCodes {
 }
 
 export enum ChikenPreferences {
-    TOGO = "TOGO",
     NO_ONION = "Không hành",
     NO_SKIN = "No skin",
     BAMBOO_SHOOTS = "Măng",
