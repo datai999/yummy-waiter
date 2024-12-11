@@ -42,10 +42,22 @@ declare module 'myTypes' {
     };
 }
 
+declare module 'myTable' {
+    type Table = {
+        id: string;
+        status: "active" | "attention" | "available";
+        orderTime: Date | null;
+        timer: number;
+        orders: { item: string; quantity: number; notes: string }[];
+    }
+}
+
 module.exports = {
     Pho,
     NonPho,
     PhoCode,
     NonPhoCode,
     SelectedItem,
+
+    Table
 };

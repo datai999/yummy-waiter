@@ -3,6 +3,7 @@ import React, {
   useState,
 } from 'react';
 
+import { Table } from 'myTable';
 import {
   FiAlertCircle,
   FiCheckCircle,
@@ -15,28 +16,13 @@ import {
   Card,
   CardContent,
   Chip,
-  Grid,
+  Grid2,
   Modal,
   Stack,
   Typography,
 } from '@mui/material';
 import { styled } from '@mui/system';
-
-const StyledCard = styled(Card)(({ status }: { status: string }) => ({
-  minHeight: "200px",
-  cursor: "pointer",
-  transition: "all 0.3s ease",
-  background:
-    status === "active"
-      ? "#e8f5e9"
-      : status === "attention"
-        ? "#ffebee"
-        : "#f5f5f5",
-  "&:hover": {
-    transform: "translateY(-5px)",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.1)"
-  }
-}));
+import CardTable from './CardTable';
 
 const ModalContent = styled(Box)({
   position: "absolute",
@@ -52,18 +38,10 @@ const ModalContent = styled(Box)({
   overflowY: "auto"
 });
 
-type Table = {
-  id: number;
-  status: "active" | "attention" | "available";
-  orderTime: Date | null;
-  timer: number;
-  orders: { item: string; quantity: number; notes: string }[];
-}
-
-const TableManagerment = () => {
+const TableManagerment = ({ setTable }: { setTable: (table: string) => void }) => {
   const [tables, setTables] = useState<Table[]>(
-    Array.from({ length: 20 }, (_, index) => ({
-      id: index + 1,
+    Array.from({ length: 21 }, (_, index) => ({
+      id: String(index < 12 ? index + 1 : index < 20 ? index + 2 : 'TOGO'),
       status: Math.random() > 0.5 ? "active" : Math.random() > 0.5 ? "attention" : "available",
       orderTime: new Date(Date.now() - Math.floor(Math.random() * 3600000)),
       orders: [
@@ -76,25 +54,7 @@ const TableManagerment = () => {
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
   const [orderHistory, setOrderHistory] = useState<Table[]>([]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTables(prevTables =>
-        prevTables.map(table => ({
-          ...table,
-          timer: table.status !== "available" ? new Date().getMilliseconds() - table.orderTime!.getMilliseconds() : 0
-        }))
-      );
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  const formatTime = (ms: Date) => {
-    const minutes = Math.floor(ms.getMilliseconds() / 60000);
-    return `${minutes % 60}m`;
-  };
-
-  const handleMoveToHistory = (tableId: number) => {
+  const handleMoveToHistory = (tableId: string) => {
     setTables(prevTables =>
       prevTables.map(table =>
         table.id === tableId
@@ -106,55 +66,15 @@ const TableManagerment = () => {
     setOrderHistory(prev => [movedTable, ...prev] as Table[]);
   };
 
-  const renderTableStatus = (status: string) => {
-    switch (status) {
-      case "active":
-        return <FiCheckCircle color="#4caf50" size={24} />;
-      case "attention":
-        return <FiAlertCircle color="#f44336" size={24} />;
-      default:
-        return null;
-    }
-  };
-
   return (
     <Box sx={{ padding: "20px" }}>
-      <Grid container spacing={3}>
+      <Grid2 container spacing={3}>
         {tables.map(table => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={table.id}>
-            <StyledCard
-              status={table.status}
-              onClick={() => setSelectedTable(table)}
-            >
-              <CardContent>
-                <Stack spacing={2} alignItems="center">
-                  <Typography variant="h4">Table {table.id}</Typography>
-                  {renderTableStatus(table.status)}
-                  {table.status !== "available" && (
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                      <FiClock />
-                      <Typography>
-                        {formatTime(table.orderTime!)}
-                      </Typography>
-                    </Stack>
-                  )}
-                  {table.status !== "available" && (
-                    <Button
-                      variant="contained"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleMoveToHistory(table.id);
-                      }}
-                    >
-                      Move to History
-                    </Button>
-                  )}
-                </Stack>
-              </CardContent>
-            </StyledCard>
-          </Grid>
+          <Grid2 key={table.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+            <CardTable table={table} doneTable={handleMoveToHistory} />
+          </Grid2>
         ))}
-      </Grid>
+      </Grid2>
 
       <Box sx={{ mt: 4 }}>
         <Typography variant="h6" gutterBottom>
