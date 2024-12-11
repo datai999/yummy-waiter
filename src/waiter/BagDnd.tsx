@@ -39,7 +39,8 @@ const BagDnd = ({ selected, phoId, showPho }: Props) => {
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(MouseSensor),
-        useSensor(TouchSensor)
+        useSensor(TouchSensor),
+        // useSensor(KeyboardSensor)
         // useSensor(MouseSensor, {
         //     // Press delay of 250ms, with tolerance of 5px of movement
         //     activationConstraint: {
@@ -126,6 +127,7 @@ export const Draggable = (props: { id: string, children: React.ReactNode }) => {
         transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : '',
         borderRadius: theme.shape.borderRadius,
         border: `${transform ? `3px solid ${theme.palette.primary.main}` : null}`,
+        touchAction: 'none',
     };
 
     return (
