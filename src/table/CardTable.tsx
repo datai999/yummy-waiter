@@ -135,7 +135,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
     >
       <ModalContent>
         {openOrderModal && (
-          <>
+          <Box id={"Table.ModalContent.Box." + table.id} >
             <Typography variant="h5" gutterBottom>
               Table {table.id}
             </Typography>
@@ -154,7 +154,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
             >
               Close
             </Button>
-          </>
+          </Box>
         )}
       </ModalContent>
     </Modal>

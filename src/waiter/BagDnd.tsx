@@ -1,26 +1,26 @@
 import React from 'react';
 
 import {
-  PhoCode,
-  SelectedItem,
+    PhoCode,
+    SelectedItem,
 } from 'myTypes';
 import { RiDragMove2Fill } from 'react-icons/ri';
 
 import {
-  DndContext,
-  DragEndEvent,
-  MouseSensor,
-  PointerSensor,
-  TouchSensor,
-  useDraggable,
-  useDroppable,
-  useSensor,
-  useSensors,
+    DndContext,
+    DragEndEvent,
+    MouseSensor,
+    PointerSensor,
+    TouchSensor,
+    useDraggable,
+    useDroppable,
+    useSensor,
+    useSensors,
 } from '@dnd-kit/core';
 import {
-  Box,
-  Button,
-  Typography,
+    Box,
+    Button,
+    Typography,
 } from '@mui/material';
 
 import { Categories } from '../my/my-constants';
@@ -117,7 +117,7 @@ const BagDnd = ({ bags, phoId, showPho }: Props) => {
     );
 }
 
-export const Draggable = (props: { id: string, children: React.ReactNode }) => {
+export const Draggable = (props: { id: string, children: React.ReactNode, enable: boolean }) => {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: 'Draggable_' + props.id,
     });
@@ -133,9 +133,10 @@ export const Draggable = (props: { id: string, children: React.ReactNode }) => {
     return (
         <Box ref={setNodeRef} style={style} >
             {props.children}
-            <Button {...listeners} {...attributes} variant='outlined' sx={{ m: 0.5, p: 0.7, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
-                <RiDragMove2Fill style={{ fontSize: 26 }} />
-            </Button>
+            {props.enable &&
+                <Button {...listeners} {...attributes} variant='outlined' sx={{ m: 0.5, p: 0.7, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                    <RiDragMove2Fill style={{ fontSize: 26 }} />
+                </Button>}
         </Box>
     );
 }

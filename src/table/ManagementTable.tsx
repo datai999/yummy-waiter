@@ -58,6 +58,14 @@ const TableManagerment = ({ orderTable }: { orderTable: (tableId: string) => voi
               meatCodes: "BPN",
               noodleCode: "BC",
             }]]),
+          chicken: new Map([
+            [generateId(), {
+              id: generateId(),
+              meats: [],
+              noodle: "REGULAR",
+              meatCodes: "Đùi",
+              noodleCode: "BC",
+            }]]),
         }]
       ])
     } as Table))
@@ -116,7 +124,7 @@ const TableManagerment = ({ orderTable }: { orderTable: (tableId: string) => voi
       <Modal
         open={Boolean(selectedTable)}
         onClose={() => setSelectedTable(null)}
-      >
+              >
         <ModalContent>
           {selectedTable && (
             <>

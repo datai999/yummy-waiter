@@ -47,17 +47,17 @@ const OrderSummary = ({ bag, selectedItems, phoId, showPho }: Props) => {
         <>
             <Grid2 container spacing={2}>
                 {selectedItems.beef.size + selectedItems.beefSide.size > 0 && (
-                    <Grid2 size={{ xs: 12, sm: 6, md: 4 }}  >
+                    <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: showPho ? 4 : 'grow' }} >
                         <PhoList bag={bag} category={Categories.BEEF} phoId={phoId} phos={selectedItems.beef} sideOrders={selectedItems.beefSide}
                             showPho={showPho} />
                     </Grid2>)}
                 {selectedItems.chicken.size + selectedItems.chickenSide.size > 0 && (
-                    <Grid2 size={{ xs: 12, sm: 6, md: 4 }}  >
+                    <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: showPho ? 4 : 'grow' }} >
                         <PhoList bag={bag} category={Categories.CHICKEN} phoId={phoId} phos={selectedItems.chicken} sideOrders={selectedItems.chickenSide}
                             showPho={showPho} />
                     </Grid2>)}
                 {selectedItems.drink.size + selectedItems.dessert.size > 0 && (
-                    <Grid2 size={{ xs: 12, sm: 6, md: 4 }}  >
+                    <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: showPho ? 4 : 'grow' }} >
                         <DrinkDessertList drinks={selectedItems.drink} desserts={selectedItems.dessert} />
                     </Grid2>)}
             </Grid2>
@@ -89,7 +89,7 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
     }
 
     return (
-        <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0 }}>
+        <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0, minWidth: '600' }}>
             <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} >
                 <Badge badgeContent={phos.size} color="primary" anchorOrigin={{
                     vertical: 'top',
@@ -108,10 +108,10 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
                     return (
                         <>
                             <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }} style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
-                                <Button onClick={() => remove(item.id)} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
+                                <Button onClick={() => { if (showPho) remove(item.id) }} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
                                     <FaMinus style={{ fontSize: 12 }} />
                                 </Button>
-                                <Draggable id={`${bag}_${category}_${id}`} >
+                                <Draggable id={`${bag}_${category}_${id}`} enable={Boolean()}>
                                     <ListItemButton onClick={() => {
                                         if (showPho)
                                             showPho(bag, category, item.id);
@@ -127,9 +127,10 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
                                         />
                                     </ListItemButton>
                                 </Draggable>
-                                <Button onClick={() => copy(item.id)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
-                                    <FaPlus style={{ fontSize: 26 }} />
-                                </Button>
+                                {showPho &&
+                                    <Button onClick={() => copy(item.id)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                                        <FaPlus style={{ fontSize: 26 }} />
+                                    </Button>}
                             </OrderItem>
                         </>
                     );
