@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { FiAlertCircle, FiCheckCircle, FiClock } from 'react-icons/fi';
 import { TableStatus } from '../my/my-constants';
+import OrderSummary from '../waiter/DetailOrder';
 
 const StyledCard = styled(Card)(({ status }: { status: TableStatus }) => ({
   minHeight: "200px",
@@ -138,17 +139,13 @@ const CardTable = ({ table, orderTable, doneTable }: {
             <Typography variant="h5" gutterBottom>
               Table {table.id}
             </Typography>
-            <Stack spacing={2}>
-              {table.orders.map((order, index) => (
-                <Box key={index}>
-                  <Typography variant="h6">{order.item}</Typography>
-                  <Stack direction="row" spacing={1}>
-                    <Chip label={`Qty: ${order.quantity}`} />
-                    <Chip label={order.notes} variant="outlined" />
-                  </Stack>
-                </Box>
-              ))}
-            </Stack>
+            {Array.from(table.bags.entries()).map(([key, item], index) => (
+              <OrderSummary
+                key={index}
+                bag={key}
+                selectedItems={item}
+                phoId={"null"} />))
+            }
             <Button
               fullWidth
               variant="contained"

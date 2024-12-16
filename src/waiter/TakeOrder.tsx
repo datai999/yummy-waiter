@@ -42,6 +42,7 @@ import {
   DefaultPho,
   Dessert,
   Drinks,
+  INIT_SELECTED_ITEM,
   Noodles,
 } from '../my/my-constants';
 import {
@@ -51,19 +52,6 @@ import {
 import { StyledPaper } from '../my/my-styled';
 import BagDnd from './BagDnd';
 
-const defaultSelectedItems: SelectedItem = {
-    beef: new Map(),
-    beefSide: new Map(),
-    beefUpdated: [],
-
-    chicken: new Map(),
-    chickenSide: new Map(),
-    chickenUpdated: [],
-
-    drink: new Map(),
-    dessert: new Map(),
-};
-
 const defaultNonPho: NonPho = {
     beefSide: [],
     beefMeatSide: [],
@@ -72,8 +60,8 @@ const defaultNonPho: NonPho = {
     drink: [],
 }
 
-const DEFAULT_SELECTED: Map<number, SelectedItem> = new Map([
-    [0, _.cloneDeep(defaultSelectedItems)], [1, _.cloneDeep(defaultSelectedItems)]
+const INIT_BAG: Map<number, SelectedItem> = new Map([
+    [0, _.cloneDeep(INIT_SELECTED_ITEM)], [1, _.cloneDeep(INIT_SELECTED_ITEM)]
 ]);
 
 interface Props {
@@ -88,7 +76,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
     const [pho, setPho] = useState<Pho>(DefaultPho);
     const [nonPho, setNonPho] = useState<NonPho>(defaultNonPho);
 
-    const [selected, setSelected] = useState<Map<number, SelectedItem>>(DEFAULT_SELECTED);
+    const [bags, setBags] = useState<Map<number, SelectedItem>>(INIT_BAG);
 
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
@@ -158,18 +146,18 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
     };
 
     const handleAddItem = () => {
-        const dineIn = new Map(selected);
+        const dineIn = new Map(bags);
         handleItem(dineIn.get(0)!);
-        setSelected(dineIn);
+        setBags(dineIn);
         console.log("dineInItem", dineIn);
         setPho(DefaultPho);
         setNonPho(defaultNonPho);
     }
 
     const togoItem = () => {
-        const newTogo = new Map(selected);
+        const newTogo = new Map(bags);
         handleItem(newTogo.get(1)!);
-        setSelected(newTogo);
+        setBags(newTogo);
         console.log("togoItem", newTogo);
         setPho(DefaultPho);
         setNonPho(defaultNonPho);
@@ -178,19 +166,19 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
     const showPho = (bag: number, category: Categories, selectedItemId: string) => {
         setSelectedCategory(category);
         if (Categories.BEEF === category)
-            setPho({ ...selected.get(bag)?.beef.get(selectedItemId)! });
+            setPho({ ...bags.get(bag)?.beef.get(selectedItemId)! });
         else if (Categories.CHICKEN === category)
-            setPho({ ...selected.get(bag)?.chicken.get(selectedItemId)! });
+            setPho({ ...bags.get(bag)?.chicken.get(selectedItemId)! });
     }
 
     const addBag = () => {
-        const nextSelected = new Map(selected);
-        nextSelected.set(selected.size, _.cloneDeep(defaultSelectedItems));
-        setSelected(nextSelected);
+        const nextSelected = new Map(bags);
+        nextSelected.set(bags.size, _.cloneDeep(INIT_SELECTED_ITEM));
+        setBags(nextSelected);
     }
 
     const confirmOrder = () => {
-        console.log("Order placed:", { table: selectedTable, items: selected });
+        console.log("Order placed:", { table: selectedTable, items: bags });
         setOpenConfirmDialog(false);
         setSelectedTable("");
     };
@@ -226,7 +214,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                             multi={false}
                             allOptions={Object.keys(Noodles)
                                 .filter(e => Categories.BEEF === selectedCategory
-                                    ? ![Noodles.VERMICELL, Noodles.GLASS].includes(Noodles[e as keyof typeof Noodles])
+                                    ? ![Noodles.VERMICELL, Noodles.GLASS, Noodles.EGG].includes(Noodles[e as keyof typeof Noodles])
                                     : e)}
                             options={[pho.noodle]}
                             createLabel={(key) => Noodles[key as keyof typeof Noodles]}
@@ -340,7 +328,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
             </StyledPaper>
 
             <StyledPaper sx={{ mt: 0, p: 0 }}>
-                <BagDnd selected={selected} phoId={pho.id} showPho={showPho} />
+                <BagDnd bags={bags} phoId={pho.id} showPho={showPho} />
                 <Box display="flex"
                     justifyContent="center"
                     alignItems="center">

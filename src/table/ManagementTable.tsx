@@ -9,6 +9,7 @@ import {
   FiCheckCircle,
   FiClock,
 } from 'react-icons/fi';
+import _ from 'lodash';
 
 import {
   Box,
@@ -23,7 +24,8 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 import CardTable from './CardTable';
-import { TableStatus } from '../my/my-constants';
+import { INIT_SELECTED_ITEM, TableStatus } from '../my/my-constants';
+import { generateId } from '../my/my-service';
 
 const ModalContent = styled(Box)({
   position: "absolute",
@@ -45,10 +47,19 @@ const TableManagerment = ({ orderTable }: { orderTable: (tableId: string) => voi
       id: String(index < 12 ? index + 1 : index < 20 ? index + 2 : 'TOGO'),
       status: Math.random() > 0.5 ? TableStatus.AVAILABLE : Math.random() > 0.5 ? TableStatus.ACTIVE : TableStatus.AVAILABLE,
       orderTime: new Date(Date.now() - Math.floor(Math.random() * 3600000)),
-      orders: [
-        { item: "Pasta Carbonara", quantity: 2, notes: "Extra cheese" },
-        { item: "Caesar Salad", quantity: 1, notes: "No croutons" }
-      ]
+      bags: new Map([
+        [0, {
+          ...INIT_SELECTED_ITEM,
+          beef: new Map([
+            [generateId(), {
+              id: generateId(),
+              meats: [],
+              noodle: "REGULAR",
+              meatCodes: "BPN",
+              noodleCode: "BC",
+            }]]),
+        }]
+      ])
     } as Table))
   );
 
@@ -113,7 +124,7 @@ const TableManagerment = ({ orderTable }: { orderTable: (tableId: string) => voi
                 Table {selectedTable.id} Details
               </Typography>
               <Stack spacing={2}>
-                {selectedTable.orders.map((order, index) => (
+                {/* {selectedTable.orders.map((order, index) => (
                   <Box key={index}>
                     <Typography variant="h6">{order.item}</Typography>
                     <Stack direction="row" spacing={1}>
@@ -121,7 +132,7 @@ const TableManagerment = ({ orderTable }: { orderTable: (tableId: string) => voi
                       <Chip label={order.notes} variant="outlined" />
                     </Stack>
                   </Box>
-                ))}
+                ))} */}
               </Stack>
               <Button
                 fullWidth

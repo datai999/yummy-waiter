@@ -1,35 +1,35 @@
 import React, { useState } from 'react';
 
 import {
-  NonPhoCode,
-  PhoCode,
-  SelectedItem,
+    NonPhoCode,
+    PhoCode,
+    SelectedItem,
 } from 'myTypes';
 import {
-  FaMinus,
-  FaPlus,
+    FaMinus,
+    FaPlus,
 } from 'react-icons/fa';
 import { GiChicken } from 'react-icons/gi';
 import { PiCow } from 'react-icons/pi';
 import { RiDrinks2Line } from 'react-icons/ri';
 
 import {
-  Badge,
-  Button,
-  Divider,
-  Grid2,
-  List,
-  ListItemButton,
-  ListItemText,
-  Typography,
+    Badge,
+    Button,
+    Divider,
+    Grid2,
+    List,
+    ListItemButton,
+    ListItemText,
+    Typography,
 } from '@mui/material';
 
 import { SideItemList } from '../my/my-component';
 import { Categories } from '../my/my-constants';
 import { generateId } from '../my/my-service';
 import {
-  OrderItem,
-  StyledPaper,
+    OrderItem,
+    StyledPaper,
 } from '../my/my-styled';
 import { Draggable } from './BagDnd';
 
@@ -37,7 +37,7 @@ interface Props {
     bag: number,
     selectedItems: SelectedItem,
     phoId: String;
-    showPho: (bag: number, category: Categories, itemId: string) => void;
+    showPho?: (bag: number, category: Categories, itemId: string) => void;
 };
 
 const OrderSummary = ({ bag, selectedItems, phoId, showPho }: Props) => {
@@ -71,7 +71,7 @@ interface PhoListProps {
     phoId: String,
     phos: Map<String, PhoCode>,
     sideOrders: Map<String, NonPhoCode>,
-    showPho: (bag: number, category: Categories, itemId: string) => void,
+    showPho?: (bag: number, category: Categories, itemId: string) => void,
 }
 
 const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListProps) => {
@@ -113,7 +113,8 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
                                 </Button>
                                 <Draggable id={`${bag}_${category}_${id}`} >
                                     <ListItemButton onClick={() => {
-                                        showPho(bag, category, item.id);
+                                        if (showPho)
+                                            showPho(bag, category, item.id);
                                     }} dense sx={{ p: 0, m: 0 }}>
                                         <ListItemText
                                             id={item.id}

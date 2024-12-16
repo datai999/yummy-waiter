@@ -48,7 +48,7 @@ declare module 'myTable' {
         status: TableStatus;
         orderTime: Date | null;
         timer: number;
-        orders: { item: string; quantity: number; notes: string }[];
+        bags: Map<number, SelectedItem>;
     }
 }
 

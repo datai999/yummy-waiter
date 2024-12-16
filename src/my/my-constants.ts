@@ -1,4 +1,4 @@
-import { Pho } from 'myTypes';
+import { Pho, SelectedItem } from 'myTypes';
 
 export enum Categories {
     BEEF = "BEEF",
@@ -46,7 +46,8 @@ export enum Noodles {
     REGULAR_UNCOOKED = "BS",
     FRESH_UNCOOKED = "BTS",
     VERMICELL = "Bún",
-    GLASS = "Miến"
+    GLASS = "Miến",
+    EGG = "Mì"
 }
 
 export enum BeefPreferences {
@@ -157,3 +158,16 @@ export const DefaultPho: Pho = {
     preferences: [],
     note: ''
 }
+
+export const INIT_SELECTED_ITEM: SelectedItem = {
+    beef: new Map(),
+    beefSide: new Map(),
+    beefUpdated: [],
+
+    chicken: new Map(),
+    chickenSide: new Map(),
+    chickenUpdated: [],
+
+    drink: new Map(),
+    dessert: new Map(),
+};

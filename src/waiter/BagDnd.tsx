@@ -29,11 +29,11 @@ import theme from '../theme';
 import OrderSummary from './DetailOrder';
 
 interface Props {
-    selected: Map<number, SelectedItem>,
+    bags: Map<number, SelectedItem>,
     phoId: String;
     showPho: (bag: number, category: Categories, itemId: string) => void,
 };
-const BagDnd = ({ selected, phoId, showPho }: Props) => {
+const BagDnd = ({ bags, phoId, showPho }: Props) => {
     const [refresh, setRefresh] = React.useState(false);
 
     const sensors = useSensors(
@@ -73,15 +73,15 @@ const BagDnd = ({ selected, phoId, showPho }: Props) => {
         const overBag = Number(String(over.id).slice(-1));
         if (activeBag === overBag) return;
 
-        const selectedItem = selected.get(activeBag);
+        const selectedItem = bags.get(activeBag);
         if (category === Categories.BEEF) {
             const item = selectedItem?.beef.get(itemId) as PhoCode;
             selectedItem?.beef.delete(itemId);
-            selected.get(overBag)?.beef.set(item?.id as string, item);
+            bags.get(overBag)?.beef.set(item?.id as string, item);
         } else if (category === Categories.CHICKEN) {
             const item = selectedItem?.chicken.get(itemId) as PhoCode;
             selectedItem?.chicken.delete(itemId);
-            selected.get(overBag)?.chicken.set(item?.id as string, item);
+            bags.get(overBag)?.chicken.set(item?.id as string, item);
         }
         setRefresh(!refresh);
     }
@@ -94,7 +94,7 @@ const BagDnd = ({ selected, phoId, showPho }: Props) => {
             // onDragStart={handleDragStart}
             onDragEnd={onDragEnd}
         >
-            {Array.from(selected.entries()).map(([key, item], index) => {
+            {Array.from(bags.entries()).map(([key, item], index) => {
                 return (<>
                     <Droppable id={`${key}`}>
                         <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 0 }}>
