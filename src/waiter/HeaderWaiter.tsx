@@ -1,19 +1,21 @@
 import React from 'react';
 
 import {
-  Box,
-  Divider,
-  Grid2,
-  MenuItem,
-  Paper,
-  Select,
-  styled,
-  Typography,
+    Box,
+    Divider,
+    Grid2,
+    MenuItem,
+    Paper,
+    Select,
+    styled,
+    Typography,
 } from '@mui/material';
 
 import YummyLogo from '../assets/yummy.png';
 import { Categories } from '../my/my-constants';
 import { CategoryButton } from '../my/my-styled';
+import { Table } from 'myTable';
+import { ChildWaiterProps } from './Waiter';
 
 const LogoImage = styled("img")({
     width: "60px",
@@ -37,19 +39,12 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
 }));
 
-type Props = {
-    setIsWaiter: (value: boolean) => void,
-    selectedTable: string,
-    setSelectedTable(selectedTable: string): void,
-    selectedCategory: Categories,
-    setSelectedCategory(selectedItems: Categories): void;
-};
 
-const Header = ({ setIsWaiter, selectedTable, setSelectedTable, selectedCategory, setSelectedCategory }: Props) => {
+const Header = ({ props }: { props: ChildWaiterProps }) => {
     return (
         <StyledPaper>
             <Grid2 container spacing={2} alignItems="center">
-                <Grid2 size={{ xs: 2, sm: 1, md: 1 }} onClick={() => setIsWaiter(false)}>
+                <Grid2 size={{ xs: 2, sm: 1, md: 1 }} onClick={() => props.setIsWaiter(false)}>
                     <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} />
                     <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} />
                 </Grid2>
@@ -71,8 +66,8 @@ const Header = ({ setIsWaiter, selectedTable, setSelectedTable, selectedCategory
                         <CategoryButton
                             key={category}
                             size='large'
-                            selected={selectedCategory === Categories[category as keyof typeof Categories]}
-                            onClick={() => setSelectedCategory(Categories[category as keyof typeof Categories])}
+                            selected={props.category === Categories[category as keyof typeof Categories]}
+                            onClick={() => props.setCategory(Categories[category as keyof typeof Categories])}
                             variant="contained"
                         >
                             {category === Categories.SIDE_ORDERS ? "SIDE ORDER" : category}
@@ -82,8 +77,8 @@ const Header = ({ setIsWaiter, selectedTable, setSelectedTable, selectedCategory
                 <Grid2 size={{ xs: 4, sm: 5, md: 'grow' }} sx={{ display: { xs: 'block', sm: 'none', md: 'block' } }}>
                     <Select
                         fullWidth
-                        value={selectedTable}
-                        onChange={(e) => setSelectedTable(e.target.value)}
+                        value={props.category}
+                        // onChange={(e) => props.orderTable(e.target.value)}
                         displayEmpty
                         size='small'
                     >
@@ -104,8 +99,8 @@ const Header = ({ setIsWaiter, selectedTable, setSelectedTable, selectedCategory
                         {Object.values(Categories).map((category) => (
                             <CategoryButton
                                 key={category}
-                                selected={selectedCategory === Categories[category as keyof typeof Categories]}
-                                onClick={() => setSelectedCategory(Categories[category as keyof typeof Categories])}
+                                selected={props.category === Categories[category as keyof typeof Categories]}
+                                onClick={() => props.setCategory(Categories[category as keyof typeof Categories])}
                                 variant="contained"
                                 size="large"
                             >
@@ -116,8 +111,8 @@ const Header = ({ setIsWaiter, selectedTable, setSelectedTable, selectedCategory
                     <Grid2 size={{ sm: 'grow', }} >
                         <Select
                             fullWidth
-                            value={selectedTable}
-                            onChange={(e) => setSelectedTable(e.target.value)}
+                            value={props.table}
+                            // onChange={(e) => props.orderTable(e.target.value)}
                             displayEmpty
                         >
                             <MenuItem value="">Table selection</MenuItem>
@@ -136,8 +131,8 @@ const Header = ({ setIsWaiter, selectedTable, setSelectedTable, selectedCategory
                 {Object.values(Categories).map((category) => (
                     <CategoryButton
                         key={category}
-                        selected={selectedCategory === Categories[category as keyof typeof Categories]}
-                        onClick={() => setSelectedCategory(Categories[category as keyof typeof Categories])}
+                        selected={props.category === Categories[category as keyof typeof Categories]}
+                        onClick={() => props.setCategory(Categories[category as keyof typeof Categories])}
                         variant="contained"
                         size="small"
                     >

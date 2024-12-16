@@ -1,56 +1,58 @@
 import React, {
-  useEffect,
-  useState,
+    useEffect,
+    useState,
 } from 'react';
 
 import _ from 'lodash';
 import {
-  NonPho,
-  NonPhoCode,
-  Pho,
-  PhoCode,
-  SelectedItem,
+    NonPho,
+    NonPhoCode,
+    Pho,
+    PhoCode,
+    SelectedItem,
 } from 'myTypes';
 import { FaChevronRight } from 'react-icons/fa';
 import { GiPaperBagFolded } from 'react-icons/gi';
 
 import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  Grid2,
-  TextField,
-  Typography,
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    Grid2,
+    TextField,
+    Typography,
 } from '@mui/material';
 
 import { CheckButton } from '../my/my-component';
 import {
-  BeefMeats,
-  BeefMeatSideOrder,
-  BeefMeatSideOrderCodes,
-  BeefPreferences,
-  BeefSideOrder,
-  BeefSideOrderCodes,
-  Categories,
-  ChickenMeats,
-  ChickenSideOrder,
-  ChikenPreferences,
-  DefaultPho,
-  Dessert,
-  Drinks,
-  INIT_SELECTED_ITEM,
-  Noodles,
+    BeefMeats,
+    BeefMeatSideOrder,
+    BeefMeatSideOrderCodes,
+    BeefPreferences,
+    BeefSideOrder,
+    BeefSideOrderCodes,
+    Categories,
+    ChickenMeats,
+    ChickenSideOrder,
+    ChikenPreferences,
+    DefaultPho,
+    Dessert,
+    Drinks,
+    INIT_SELECTED_ITEM,
+    Noodles,
 } from '../my/my-constants';
 import {
-  generateId,
-  toPhoCode,
+    generateId,
+    toPhoCode,
 } from '../my/my-service';
 import { StyledPaper } from '../my/my-styled';
 import BagDnd from './BagDnd';
+import { Table } from 'myTable';
+import { ChildWaiterProps } from './Waiter';
 
 const defaultNonPho: NonPho = {
     beefSide: [],
@@ -64,15 +66,11 @@ const INIT_BAG: Map<number, SelectedItem> = new Map([
     [0, _.cloneDeep(INIT_SELECTED_ITEM)], [1, _.cloneDeep(INIT_SELECTED_ITEM)]
 ]);
 
-interface Props {
-    selectedTable: string,
-    setSelectedTable(selectedTable: string): void,
-    selectedCategory: Categories,
-    setSelectedCategory: (selectedCategory: Categories) => void,
+interface OrderTakeProps extends ChildWaiterProps {
     refreshState: boolean
-};
+}
 
-const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelectedCategory, refreshState }: Props) => {
+const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     const [pho, setPho] = useState<Pho>(DefaultPho);
     const [nonPho, setNonPho] = useState<NonPho>(defaultNonPho);
 
@@ -83,20 +81,20 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
     useEffect(() => {
         setPho(DefaultPho);
         setNonPho(defaultNonPho);
-    }, [refreshState]);
+    }, [props.refreshState]);
 
     const handleItem = (newItem: SelectedItem) => {
         const id = pho.id.length ? pho.id : generateId();
         let newPho = { ...pho, id: id };
-        if (Categories.BEEF === selectedCategory) {
-            newPho = toPhoCode(selectedCategory, newPho);
+        if (Categories.BEEF === props.category) {
+            newPho = toPhoCode(props.category, newPho);
             newItem.beef.set(id, newPho as PhoCode);
             newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':add beef'];
-        } else if (Categories.CHICKEN === selectedCategory) {
-            newPho = toPhoCode(selectedCategory, newPho);
+        } else if (Categories.CHICKEN === props.category) {
+            newPho = toPhoCode(props.category, newPho);
             newItem.chicken.set(id, newPho as PhoCode);
             newItem.chickenUpdated = [...newItem.chickenUpdated, new Date().toISOString() + ':add chicken'];
-        } else if (Categories.SIDE_ORDERS === selectedCategory) {
+        } else if (Categories.SIDE_ORDERS === props.category) {
             if (nonPho.beefSide.length > 0) {
                 nonPho.beefSide.forEach((item, index) => {
                     const newSideItem = { id: id + "_" + index, key: item, code: BeefSideOrderCodes[item as keyof typeof BeefSideOrderCodes], count: 1 } as NonPhoCode;
@@ -145,6 +143,8 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
         }
     };
 
+    console.log("table", props.table);
+
     const handleAddItem = () => {
         const dineIn = new Map(bags);
         handleItem(dineIn.get(0)!);
@@ -164,7 +164,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
     }
 
     const showPho = (bag: number, category: Categories, selectedItemId: string) => {
-        setSelectedCategory(category);
+        props.setCategory(category);
         if (Categories.BEEF === category)
             setPho({ ...bags.get(bag)?.beef.get(selectedItemId)! });
         else if (Categories.CHICKEN === category)
@@ -178,16 +178,17 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
     }
 
     const confirmOrder = () => {
-        console.log("Order placed:", { table: selectedTable, items: bags });
+        console.log("Order placed:", { table: props.table, items: bags });
         setOpenConfirmDialog(false);
-        setSelectedTable("");
+        props.orderTable(null);
+        props.setIsWaiter(false);
     };
 
     return (
         <>
             <StyledPaper sx={{ mb: 1, pb: 1 }}>
 
-                {selectedCategory === Categories.BEEF && (
+                {props.category === Categories.BEEF && (
                     <CheckButton
                         multi={true}
                         allOptions={Object.keys(BeefMeats)}
@@ -197,7 +198,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                     />
                 )}
 
-                {selectedCategory === Categories.CHICKEN && (
+                {props.category === Categories.CHICKEN && (
                     <CheckButton
                         multi={false}
                         allOptions={Object.keys(ChickenMeats)}
@@ -207,13 +208,13 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                     />
                 )}
 
-                {[Categories.BEEF, Categories.CHICKEN].includes(selectedCategory) && (
+                {[Categories.BEEF, Categories.CHICKEN].includes(props.category) && (
                     <>
                         <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
                         <CheckButton
                             multi={false}
                             allOptions={Object.keys(Noodles)
-                                .filter(e => Categories.BEEF === selectedCategory
+                                .filter(e => Categories.BEEF === props.category
                                     ? ![Noodles.VERMICELL, Noodles.GLASS, Noodles.EGG].includes(Noodles[e as keyof typeof Noodles])
                                     : e)}
                             options={[pho.noodle]}
@@ -224,7 +225,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                     </>
                 )}
 
-                {selectedCategory === Categories.BEEF && (
+                {props.category === Categories.BEEF && (
                     <CheckButton
                         multi={true}
                         allOptions={Object.keys(BeefPreferences)}
@@ -234,7 +235,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                     />
                 )}
 
-                {selectedCategory === Categories.CHICKEN && (
+                {props.category === Categories.CHICKEN && (
                     <CheckButton
                         multi={true}
                         allOptions={Object.keys(ChikenPreferences)}
@@ -244,7 +245,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                     />
                 )}
 
-                {selectedCategory === Categories.SIDE_ORDERS && (
+                {props.category === Categories.SIDE_ORDERS && (
                     <>
                         <CheckButton
                             multi={true}
@@ -273,7 +274,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
 
                 )}
 
-                {selectedCategory === Categories.DRINKS && (
+                {props.category === Categories.DRINKS && (
                     <>
                         <CheckButton
                             multi={true}
@@ -344,7 +345,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                         variant="contained"
                         color="primary"
                         onClick={() => setOpenConfirmDialog(true)}
-                        disabled={!selectedTable}
+                        disabled={false}
                         sx={{ mr: '20%' }}
                     >
                         Place Order <FaChevronRight style={{ marginLeft: 8 }} />
@@ -356,7 +357,7 @@ const OrderTake = ({ selectedTable, setSelectedTable, selectedCategory, setSelec
                 <DialogTitle>Confirm Order</DialogTitle>
                 <DialogContent>
                     <Typography>
-                        Are you sure you want to place the order for Table {selectedTable}?
+                        Are you sure you want to place the order for Table {props.table.id}?
                     </Typography>
                 </DialogContent>
                 <DialogActions>

@@ -41,10 +41,10 @@ const ModalContent = styled(Box)({
   overflowY: "auto"
 });
 
-const TableManagerment = ({ orderTable }: { orderTable: (tableId: string) => void }) => {
+const TableManagerment = (props: { orderTable: (table: Table) => void }) => {
   const [tables, setTables] = useState<Table[]>(
     Array.from({ length: 21 }, (_, index) => ({
-      id: String(index < 12 ? index + 1 : index < 20 ? index + 2 : 'TOGO'),
+      id: String(index > 19 ? 'TOGO ' + (index - 19) : 'Table ' + (index < 12 ? index + 1 : index + 2)),
       status: Math.random() > 0.5 ? TableStatus.AVAILABLE : Math.random() > 0.5 ? TableStatus.ACTIVE : TableStatus.AVAILABLE,
       orderTime: new Date(Date.now() - Math.floor(Math.random() * 3600000)),
       bags: new Map([
@@ -88,10 +88,10 @@ const TableManagerment = ({ orderTable }: { orderTable: (tableId: string) => voi
 
   return (
     <Box sx={{ padding: "20px" }}>
-      <Grid2 container spacing={3}>
+      <Grid2 container spacing={2}>
         {tables.map(table => (
-          <Grid2 key={table.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <CardTable table={table} orderTable={orderTable} doneTable={handleMoveToHistory} />
+          <Grid2 key={table.id} size={{ xs: 6, sm: 4, md: 3, lg: 3 }}>
+            <CardTable table={table} orderTable={props.orderTable} doneTable={handleMoveToHistory} />
           </Grid2>
         ))}
       </Grid2>
@@ -124,7 +124,7 @@ const TableManagerment = ({ orderTable }: { orderTable: (tableId: string) => voi
       <Modal
         open={Boolean(selectedTable)}
         onClose={() => setSelectedTable(null)}
-              >
+      >
         <ModalContent>
           {selectedTable && (
             <>

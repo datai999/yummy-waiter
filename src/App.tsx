@@ -4,10 +4,11 @@ import Header from './table/Header';
 import TableManagerment from './table/ManagementTable';
 import Waiter from './waiter/Waiter';
 import { Box } from '@mui/material';
+import { Table } from 'myTable';
 
 export default function App() {
   const [isWaiter, setIsWaiter] = useState<Boolean>(false);
-  const [table, orderTable] = useState("");
+  const [table, orderTable] = useState<Table | null>(null);
 
   useEffect(() => {
     if (table)
@@ -17,7 +18,7 @@ export default function App() {
   return (
     <>
       {isWaiter
-        ? (<Waiter setIsWaiter={setIsWaiter} table={table} setTable={orderTable} />)
+        ? (<Waiter setIsWaiter={setIsWaiter} table={table!} orderTable={orderTable} />)
         : (<>
           <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
             <Header />

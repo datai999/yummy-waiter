@@ -9,6 +9,7 @@ import {
   Card,
   CardContent,
   Chip,
+  Grid2,
   Modal,
   Stack,
   Typography,
@@ -18,7 +19,7 @@ import { TableStatus } from '../my/my-constants';
 import OrderSummary from '../waiter/DetailOrder';
 
 const StyledCard = styled(Card)(({ status }: { status: TableStatus }) => ({
-  minHeight: "200px",
+  minHeight: "100px",
   cursor: "pointer",
   transition: "all 0.3s ease",
   // background:
@@ -55,7 +56,7 @@ const ModalContent = styled(Box)({
 
 const CardTable = ({ table, orderTable, doneTable }: {
   table: Table,
-  orderTable: (tableId: string) => void,
+  orderTable: (table: Table) => void,
   doneTable: (tableId: string) => void
 }) => {
   const [timer, setTimer] = useState(0);
@@ -74,13 +75,13 @@ const CardTable = ({ table, orderTable, doneTable }: {
   const cardOnClick = () => {
     console.log("Card clicked", table);
     if (table.status === TableStatus.AVAILABLE) {
-      orderTable(table.id);
+      orderTable(table);
     } else setOpenOrderModal(true);
   }
 
   const renderTableStatus = (status: string) => {
     switch (status) {
-      case "active":
+      case "ACTIVE":
         return <FiCheckCircle color="#4caf50" size={24} />;
       case "attention":
         return <FiAlertCircle color="#f44336" size={24} />;
@@ -100,34 +101,34 @@ const CardTable = ({ table, orderTable, doneTable }: {
       status={table.status}
       onClick={cardOnClick}
     >
-      <CardContent>
-        <Stack spacing={2} alignItems="center">
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography variant="h4">Table {table.id}</Typography>
-            {/* {renderTableStatus(table.status)} */}
+      <CardContent sx={{ p:1 }}>
+        <Grid2 container>
+          <Grid2 size={{ xs: 0, sm: 4, md: 4 }} />
+          <Grid2 size='grow' >
+            <Typography variant="h5">{table.id}</Typography>
+          </Grid2>
+          {/* {renderTableStatus(table.status)} */}
+          <Grid2>
             {table.status !== TableStatus.AVAILABLE && (
-              <>
-                <FiClock />
-                <Typography>
-                  {formatTime(timer)}
-                </Typography>
-              </>
+              <Button
+                variant="contained"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  doneTable(table.id);
+                }}
+                size='small'
+              >
+                <>
+                  <Typography>
+                    {formatTime(timer)}
+                  </Typography>
+                </>
+              </Button>
             )}
-          </Stack>
-          {table.status !== TableStatus.AVAILABLE && (
-            <Button
-              variant="contained"
-              onClick={(e) => {
-                e.stopPropagation();
-                doneTable(table.id);
-              }}
-            >
-              Clean table
-            </Button>
-          )}
-        </Stack>
+          </Grid2>
+        </Grid2>
       </CardContent>
-    </StyledCard>
+    </StyledCard >
 
     <Modal
       open={Boolean(openOrderModal)}
