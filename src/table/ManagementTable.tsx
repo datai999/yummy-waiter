@@ -24,8 +24,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 import CardTable from './CardTable';
-import { INIT_SELECTED_ITEM, TableStatus } from '../my/my-constants';
-import { generateId } from '../my/my-service';
+import { TableStatus } from '../my/my-constants';
 
 const ModalContent = styled(Box)({
   position: "absolute",
@@ -41,55 +40,29 @@ const ModalContent = styled(Box)({
   overflowY: "auto"
 });
 
-const TableManagerment = (props: { orderTable: (table: Table) => void }) => {
-  const [tables, setTables] = useState<Table[]>(
-    Array.from({ length: 21 }, (_, index) => ({
-      id: String(index > 19 ? 'TOGO ' + (index - 19) : 'Table ' + (index < 12 ? index + 1 : index + 2)),
-      status: Math.random() > 0.5 ? TableStatus.AVAILABLE : Math.random() > 0.5 ? TableStatus.ACTIVE : TableStatus.AVAILABLE,
-      orderTime: new Date(Date.now() - Math.floor(Math.random() * 3600000)),
-      bags: new Map([
-        [0, {
-          ...INIT_SELECTED_ITEM,
-          beef: new Map([
-            [generateId(), {
-              id: generateId(),
-              meats: [],
-              noodle: "REGULAR",
-              meatCodes: "BPN",
-              noodleCode: "BC",
-            }]]),
-          chicken: new Map([
-            [generateId(), {
-              id: generateId(),
-              meats: [],
-              noodle: "REGULAR",
-              meatCodes: "Đùi",
-              noodleCode: "BC",
-            }]]),
-        }]
-      ])
-    } as Table))
-  );
+const TableManagerment = (props: {
+  tables: Table[],
+  setTables: (tables: Table[]) => void,
+  orderTable: (table: Table) => void
+}) => {
 
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
   const [orderHistory, setOrderHistory] = useState<Table[]>([]);
 
   const handleMoveToHistory = (tableId: string) => {
-    setTables(prevTables =>
-      prevTables.map(table =>
-        table.id === tableId
-          ? { ...table, status: "available", orderTime: null }
-          : table
-      )
-    );
-    const movedTable = tables.find(table => table.id === tableId);
+    props.setTables(props.tables.map(table =>
+      table.id === tableId
+        ? { ...table, status: TableStatus.AVAILABLE, orderTime: null }
+        : table
+    ));
+    const movedTable = props.tables.find(table => table.id === tableId);
     setOrderHistory(prev => [movedTable, ...prev] as Table[]);
   };
 
   return (
     <Box sx={{ padding: "20px" }}>
       <Grid2 container spacing={2}>
-        {tables.map(table => (
+        {props.tables.map(table => (
           <Grid2 key={table.id} size={{ xs: 6, sm: 4, md: 3, lg: 3 }}>
             <CardTable table={table} orderTable={props.orderTable} doneTable={handleMoveToHistory} />
           </Grid2>

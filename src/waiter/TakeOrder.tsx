@@ -44,6 +44,7 @@ import {
     Drinks,
     INIT_SELECTED_ITEM,
     Noodles,
+    TableStatus,
 } from '../my/my-constants';
 import {
     generateId,
@@ -62,10 +63,6 @@ const defaultNonPho: NonPho = {
     drink: [],
 }
 
-const INIT_BAG: Map<number, SelectedItem> = new Map([
-    [0, _.cloneDeep(INIT_SELECTED_ITEM)], [1, _.cloneDeep(INIT_SELECTED_ITEM)]
-]);
-
 interface OrderTakeProps extends ChildWaiterProps {
     refreshState: boolean
 }
@@ -74,7 +71,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     const [pho, setPho] = useState<Pho>(DefaultPho);
     const [nonPho, setNonPho] = useState<NonPho>(defaultNonPho);
 
-    const [bags, setBags] = useState<Map<number, SelectedItem>>(INIT_BAG);
+    const [bags, setBags] = useState<Map<number, SelectedItem>>(props.table.bags);
 
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
@@ -143,13 +140,12 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         }
     };
 
-    console.log("table", props.table);
-
     const handleAddItem = () => {
         const dineIn = new Map(bags);
         handleItem(dineIn.get(0)!);
+        props.table.bags = dineIn;
+        props.table.status = TableStatus.ACTIVE;
         setBags(dineIn);
-        console.log("dineInItem", dineIn);
         setPho(DefaultPho);
         setNonPho(defaultNonPho);
     }
@@ -157,8 +153,9 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     const togoItem = () => {
         const newTogo = new Map(bags);
         handleItem(newTogo.get(1)!);
+        props.table.bags = newTogo;
+        props.table.status = TableStatus.ACTIVE;
         setBags(newTogo);
-        console.log("togoItem", newTogo);
         setPho(DefaultPho);
         setNonPho(defaultNonPho);
     }
@@ -178,9 +175,11 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     }
 
     const confirmOrder = () => {
-        console.log("Order placed:", { table: props.table, items: bags });
+        props.table.orderTime = new Date();
+        console.log("Order placed:", props.table);
         setOpenConfirmDialog(false);
         props.orderTable(null);
+        console.log("Order placed 2:", props.table);
         props.setIsWaiter(false);
     };
 
