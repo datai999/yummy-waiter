@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Header from './table/Header';
 import TableManagerment from './table/ManagementTable';
 import Waiter from './waiter/Waiter';
+import { Box } from '@mui/material';
 
 export default function App() {
   const [isWaiter, setIsWaiter] = useState<Boolean>(false);
@@ -17,7 +18,10 @@ export default function App() {
     <>
       {isWaiter
         ? (<Waiter setIsWaiter={setIsWaiter} table={table} setTable={orderTable} />)
-        : (<> <Header />
+        : (<>
+          <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
+            <Header />
+          </Box>
           <TableManagerment orderTable={orderTable} /></>)}
     </>
     /**

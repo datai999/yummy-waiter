@@ -94,37 +94,39 @@ const CardTable = ({ table, orderTable, doneTable }: {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  return (<StyledCard
-    status={table.status}
-    onClick={cardOnClick}
-  >
-    <CardContent>
-      <Stack spacing={2} alignItems="center">
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Typography variant="h4">Table {table.id}</Typography>
-          {/* {renderTableStatus(table.status)} */}
+  return (<>
+    <StyledCard
+      status={table.status}
+      onClick={cardOnClick}
+    >
+      <CardContent>
+        <Stack spacing={2} alignItems="center">
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Typography variant="h4">Table {table.id}</Typography>
+            {/* {renderTableStatus(table.status)} */}
+            {table.status !== TableStatus.AVAILABLE && (
+              <>
+                <FiClock />
+                <Typography>
+                  {formatTime(timer)}
+                </Typography>
+              </>
+            )}
+          </Stack>
           {table.status !== TableStatus.AVAILABLE && (
-            <>
-              <FiClock />
-              <Typography>
-                {formatTime(timer)}
-              </Typography>
-            </>
+            <Button
+              variant="contained"
+              onClick={(e) => {
+                e.stopPropagation();
+                doneTable(table.id);
+              }}
+            >
+              Clean table
+            </Button>
           )}
         </Stack>
-        {table.status !== TableStatus.AVAILABLE && (
-          <Button
-            variant="contained"
-            onClick={(e) => {
-              e.stopPropagation();
-              doneTable(table.id);
-            }}
-          >
-            Clean table
-          </Button>
-        )}
-      </Stack>
-    </CardContent>
+      </CardContent>
+    </StyledCard>
 
     <Modal
       open={Boolean(openOrderModal)}
@@ -134,7 +136,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
         {openOrderModal && (
           <>
             <Typography variant="h5" gutterBottom>
-              Table {table.id} Details
+              Table {table.id}
             </Typography>
             <Stack spacing={2}>
               {table.orders.map((order, index) => (
@@ -159,7 +161,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
         )}
       </ModalContent>
     </Modal>
-  </StyledCard>);
+  </>);
 }
 
 export default CardTable;
