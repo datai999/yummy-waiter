@@ -59,8 +59,6 @@ const BagDnd = ({ bags, phoId, showPho }: Props) => {
     );
 
     const onDragEnd = (event: DragEndEvent) => {
-        console.log('event', event);
-        console.log('active.id', event.active.id);
         const { active, over } = event;
 
         if (!over) return;

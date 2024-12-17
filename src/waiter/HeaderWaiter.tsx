@@ -12,10 +12,11 @@ import {
 } from '@mui/material';
 
 import YummyLogo from '../assets/yummy.png';
-import { Categories } from '../my/my-constants';
+import { Categories, TableStatus } from '../my/my-constants';
 import { CategoryButton } from '../my/my-styled';
 import { Table } from 'myTable';
 import { ChildWaiterProps } from './Waiter';
+import { changeTable } from '../my/my-service';
 
 const LogoImage = styled("img")({
     width: "60px",
@@ -63,24 +64,11 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
                 </Grid2>
                 <Grid2 size={{ md: 6 }} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
                     {Object.values(Categories).map((category) => (
-                        <WrapCategoryButton props={{ category: category, setCategory: props.setCategory, size: 'medium' }} />
+                        <WrapCategoryButton props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'medium' }} />
                     ))}
                 </Grid2>
                 <Grid2 size={{ xs: 4, sm: 5, md: 'grow' }} sx={{ display: { xs: 'block', sm: 'none', md: 'block' } }}>
-                    <Select
-                        fullWidth
-                        value={props.category}
-                        // onChange={(e) => props.orderTable(e.target.value)}
-                        displayEmpty
-                        size='small'
-                    >
-                        <MenuItem value="">Table selection</MenuItem>
-                        {Array.from({ length: 21 }, (_, i) => (
-                            <MenuItem key={i + 1} value={i + 1}>
-                                Table {i + 1}
-                            </MenuItem>
-                        ))}
-                    </Select>
+                    <TableSelections props={props} size='small' />
                 </Grid2>
             </Grid2>
 
@@ -89,23 +77,11 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
                 <Grid2 container spacing={2} alignItems="center">
                     <Grid2 size={{ sm: 8, }}>
                         {Object.values(Categories).map((category) => (
-                            <WrapCategoryButton props={{ category: category, setCategory: props.setCategory, size: 'large' }} />
+                            <WrapCategoryButton props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'large' }} />
                         ))}
                     </Grid2>
                     <Grid2 size={{ sm: 'grow', }} >
-                        <Select
-                            fullWidth
-                            value={props.table}
-                            // onChange={(e) => props.orderTable(e.target.value)}
-                            displayEmpty
-                        >
-                            <MenuItem value="">Table selection</MenuItem>
-                            {Array.from({ length: 20 }, (_, i) => (
-                                <MenuItem key={i + 1} value={i + 1}>
-                                    Table {i + 1}
-                                </MenuItem>
-                            ))}
-                        </Select>
+                        <TableSelections props={props} size='medium' />
                     </Grid2>
                 </Grid2>
             </Box>
@@ -113,7 +89,7 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
             <Box sx={{ display: { xs: 'block', sm: 'none', md: 'none' }, flexWrap: "wrap" }}>
                 <Divider textAlign="left" sx={{ mb: 0 }}></Divider>
                 {Object.values(Categories).map((category) => (
-                    <WrapCategoryButton props={{ category: category, setCategory: props.setCategory, size: 'small' }} />
+                    <WrapCategoryButton props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'small' }} />
                 ))}
             </Box>
         </StyledPaper >);
@@ -122,18 +98,45 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
 const WrapCategoryButton = ({ props }: {
     props: {
         size: string,
+        selectedCategory: Categories,
         category: Categories, setCategory: React.Dispatch<Categories>
     }
 }) => {
     return (<CategoryButton
         key={props.category}
-        selected={props.category === Categories[props.category as keyof typeof Categories]}
+        selected={props.selectedCategory === Categories[props.category as keyof typeof Categories]}
         onClick={() => props.setCategory(Categories[props.category as keyof typeof Categories])}
         variant="contained"
         size={props.size == "small" ? "small" : props.size == "medium" ? "medium" : "large"}
     >
         {props.category === Categories.SIDE_ORDERS ? "SIDE ORDER" : props.category}
     </CategoryButton>)
+}
+
+const TableSelections = ({ props, size }: { props: ChildWaiterProps, size: string }) => {
+    let tableIdAvailable = props.tables
+        .filter((table: Table) => table.status === TableStatus.AVAILABLE && table.id.startsWith("Table"))
+        .map(table => table.id);
+
+    if (!tableIdAvailable.includes(props.table.id))
+        tableIdAvailable = [props.table.id, ...tableIdAvailable];
+
+    return (<Select
+        fullWidth
+        value={props.table.id}
+        onChange={(e) => {
+            const toTable = changeTable(props.tables, props.table, e.target.value) as Table;
+            props.orderTable(toTable);
+        }}
+        displayEmpty
+        size={size === "small" ? "small" : "medium"}
+    >
+        {tableIdAvailable.map((tableId) => (
+            <MenuItem key={tableId} value={tableId}>
+                {tableId}
+            </MenuItem>
+        ))}
+    </Select>);
 }
 
 export default Header;

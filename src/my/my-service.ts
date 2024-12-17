@@ -26,7 +26,6 @@ export const generateId = () => {
 }
 
 export const generateTables = () => {
-    console.log(`Generating tables`);
     const realTable = 9;
     return Array.from({ length: 21 }, (_, index) => ({
         id: String(index > 19 ? 'TOGO ' + (index - 19) : 'Table ' + (index < 12 ? index + 1 : index + 2)),
@@ -58,6 +57,22 @@ export const generateTables = () => {
                 }]
             ])
     } as Table));
+}
+
+export const changeTable = (tables: Table[], fromTable: Table, toTableId: string): Table => {
+    const toTable = tables.find(table => table.id === toTableId) as Table;
+
+    toTable.status = fromTable.status;
+    toTable.orderTime = fromTable.orderTime;
+    fromTable.bags.forEach((selectedItem, index) => {
+        toTable.bags.set(index, selectedItem);
+    });
+
+    fromTable.status = TableStatus.AVAILABLE;
+    fromTable.orderTime = null;
+    fromTable.bags = new Map([[0, lodash.cloneDeep(INIT_SELECTED_ITEM)], [1, lodash.cloneDeep(INIT_SELECTED_ITEM)]]);
+
+    return toTable;
 }
 
 export const toPhoCode = (category: Categories, pho: Pho): PhoCode => {

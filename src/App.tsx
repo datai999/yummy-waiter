@@ -20,7 +20,7 @@ export default function App() {
   return (
     <>
       {isWaiter
-        ? (<Waiter setIsWaiter={setIsWaiter} table={table!} orderTable={orderTable} />)
+        ? (<Waiter setIsWaiter={setIsWaiter} tables={tables} table={table!} orderTable={orderTable} />)
         : (<>
           <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
             <Header />

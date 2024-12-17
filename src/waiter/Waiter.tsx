@@ -9,9 +9,9 @@ import { Table } from 'myTable';
 
 interface WaiterProps {
     setIsWaiter: (isWaiter: boolean) => void,
+    tables: Table[],
     table: Table,
     orderTable: (table: Table | null) => void,
-    // Other props...
 }
 
 export interface ChildWaiterProps extends WaiterProps {

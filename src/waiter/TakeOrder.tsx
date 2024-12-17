@@ -176,10 +176,8 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
 
     const confirmOrder = () => {
         props.table.orderTime = new Date();
-        console.log("Order placed:", props.table);
         setOpenConfirmDialog(false);
         props.orderTable(null);
-        console.log("Order placed 2:", props.table);
         props.setIsWaiter(false);
     };
 
