@@ -28,12 +28,12 @@ export default function Waiter(props: WaiterProps) {
         setRefreshState(!refreshState);
     }
 
-    const childProps: ChildWaiterProps = { ...props, category: category, setCategory: setRefreshCategory, }
+    const childProps: ChildWaiterProps = { ...props, category: category, setCategory: setCategory, }
 
     return (
         <>
             <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
-                <Header props={childProps} />
+                <Header props={{ ...childProps, setCategory: setRefreshCategory }} />
             </Box>
             <OrderTake props={{ ...childProps, refreshState: refreshState }} />
         </>
