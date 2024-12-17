@@ -9,6 +9,7 @@ import {
   Card,
   CardContent,
   Chip,
+  Divider,
   Grid2,
   Modal,
   Stack,
@@ -17,6 +18,7 @@ import {
 import { FiAlertCircle, FiCheckCircle, FiClock } from 'react-icons/fi';
 import { TableStatus } from '../my/my-constants';
 import OrderSummary from '../waiter/DetailOrder';
+import { StyledPaper } from '../my/my-styled';
 
 const StyledCard = styled(Card)(({ status }: { status: TableStatus }) => ({
   minHeight: "100px",
@@ -73,7 +75,6 @@ const CardTable = ({ table, orderTable, doneTable }: {
   }, [table.orderTime]);
 
   const cardOnClick = () => {
-    console.log("Card clicked", table);
     if (table.status === TableStatus.AVAILABLE) {
       orderTable(table);
     } else setOpenOrderModal(true);
@@ -101,7 +102,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
       status={table.status}
       onClick={cardOnClick}
     >
-      <CardContent sx={{ p:1 }}>
+      <CardContent sx={{ p: 1 }}>
         <Grid2 container>
           <Grid2 size={{ xs: 0, sm: 4, md: 4 }} />
           <Grid2 size='grow' >
@@ -110,23 +111,15 @@ const CardTable = ({ table, orderTable, doneTable }: {
           {/* {renderTableStatus(table.status)} */}
           <Grid2>
             {table.status !== TableStatus.AVAILABLE && (
-              <Button
-                variant="contained"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  doneTable(table.id);
-                }}
-                size='small'
-              >
-                <>
-                  <Typography>
-                    {formatTime(timer)}
-                  </Typography>
-                </>
-              </Button>
+              <Typography>
+                {formatTime(timer)}
+              </Typography>
             )}
           </Grid2>
         </Grid2>
+        {/* <Typography>
+          {table.orderTime && table.orderTime.toLocaleTimeString()}
+        </Typography> */}
       </CardContent>
     </StyledCard >
 
@@ -137,23 +130,54 @@ const CardTable = ({ table, orderTable, doneTable }: {
       <ModalContent>
         {openOrderModal && (
           <Box id={"Table.ModalContent.Box." + table.id} >
-            <Typography variant="h5" gutterBottom>
-              Table {table.id}
-            </Typography>
+            <Grid2 container sx={{ pb: 1 }}>
+              <Grid2 size={{ xs: 0, sm: 4, md: 4 }} />
+              <Grid2 size='grow' >
+                <Typography variant="h5">{table.id}</Typography>
+              </Grid2>
+              {/* {renderTableStatus(table.status)} */}
+              <Grid2>
+                {table.status !== TableStatus.AVAILABLE && (
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <FiClock />
+                    <Typography>
+                      {formatTime(timer)}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      onClick={() => {
+                        orderTable(table);
+                      }}
+                    >
+                      Modify
+                    </Button>
+                  </Stack>
+                )}
+              </Grid2>
+            </Grid2>
             {Array.from(table.bags.entries()).map(([key, item], index) => (
-              <OrderSummary
-                key={index}
-                bag={key}
-                selectedItems={item}
-                phoId={"null"} />))
+              <>
+                <Typography variant="h6" style={{ fontWeight: 'bold' }} >
+                  {key === 0 ? 'Dine-in' : `Togo ${key}`}
+                </Typography>
+                <OrderSummary
+                  key={index}
+                  bag={key}
+                  selectedItems={item}
+                  phoId={"null"} />
+                {index < table.bags.size - 1 && (<Divider sx={{ pt: 1, pb: 1 }} />)}
+              </>))
             }
             <Button
               fullWidth
               variant="contained"
-              onClick={() => setOpenOrderModal(false)}
+              onClick={() => {
+                setOpenOrderModal(false);
+                doneTable(table.id);
+              }}
               sx={{ mt: 3 }}
             >
-              Close
+              Clear table
             </Button>
           </Box>
         )}

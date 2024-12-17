@@ -96,9 +96,9 @@ const BagDnd = ({ bags, phoId, showPho }: Props) => {
         >
             {Array.from(bags.entries()).map(([key, item], index) => {
                 return (<>
-                    <Droppable id={`${key}`}>
-                        <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 0 }}>
-                            <Typography variant="h6" style={{ fontWeight: 'bold' }} >
+                    <Droppable id={`${key}`} key={`BagDnd.Droppable.${key}`}>
+                        <StyledPaper key={'BagDnd.StyledPaper.' + key} sx={{ mt: 0, pt: 0, mb: 1, pb: 0 }}>
+                            <Typography key={'BagDnd.Typography.' + key} variant="h6" style={{ fontWeight: 'bold' }} >
                                 {key === 0 ? 'Dine-in' : `Togo ${key}`}
                             </Typography>
 

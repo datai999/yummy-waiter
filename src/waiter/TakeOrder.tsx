@@ -343,7 +343,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => setOpenConfirmDialog(true)}
+                        onClick={() => confirmOrder()}
                         disabled={false}
                         sx={{ mr: '20%' }}
                     >
