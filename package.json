@@ -7,6 +7,7 @@
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
     "@mui/material": "latest",
+    "@types/lodash": "^4.17.13",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "react": "latest",
@@ -32,8 +33,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@types/lodash": "^4.17.13"
   }
 }
