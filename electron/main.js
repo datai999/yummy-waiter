@@ -5,6 +5,7 @@ function createWindow () {
   const win = new BrowserWindow({
     width: 1366,
     height: 1024,
+    icon: __dirname + './../public/yummy.ico',
     webPreferences: {
       nodeIntegration: true
     }

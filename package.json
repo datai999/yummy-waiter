@@ -1,9 +1,9 @@
 {
-  "name": "yummy-pho-2-waiter",
+  "name": "yummy-pho-2",
   "version": "1.0.0",
   "private": true,
   "description": "App for waiter at Yummy Pho 2 restaurant",
-  "main": "main.js",
+  "main": "electron/main.js",
   "scripts": {
     "start": "react-scripts start",
     "e": "electron .",
