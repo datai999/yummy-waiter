@@ -30,6 +30,13 @@ export default function App() {
     /**
      * kitchen: select part of bill, print bill & system change status to waiter
      * chicken: update number of chicken meats to waiter
+     * 
+     * communicate web app - desktop app:
+     *  - chrome extension read from local storage or cookie -> run bat
+     *  - turn web app to desktop app: effort -> x
+     *  - embedded browser to desktop app : electronjs, expo -> electronjs
+     *  - custom uri: only Internet Explorer -> x
+     * -> electronjs
      */
   );
 }
