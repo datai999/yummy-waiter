@@ -5,6 +5,11 @@
 /.pnp
 .pnp.js
 
+# transpiles
+dist
+dist-react
+dist-electron
+
 # testing
 /coverage
 
