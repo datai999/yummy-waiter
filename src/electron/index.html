@@ -6,8 +6,7 @@
     <title>Hello World!</title>
     <!-- https://electronjs.org/docs/tutorial
                            /security#csp-meta-tag -->
-    <meta http-equiv="Content-Security-Policy" 
-          content="script-src 'self' 'unsafe-inline';" />
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
 </head>
 
 <body>
@@ -16,11 +15,14 @@
 
     <br><br>
     <button id="current">
-    Print Current Content of Page
+        Print Current Content of Page
     </button>
 
     <!-- Adding Individual Renderer Process JS File -->
-    <script src="index.js"></script>
+
+    <div id="root"></div>
+    <!-- <script src="index.js"></script> -->
+    <script src="../../dist-electron/print.js"></script>
 </body>
 
 </html>

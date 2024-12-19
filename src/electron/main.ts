@@ -1,4 +1,6 @@
 const { app, BrowserWindow } = require('electron')
+const remoteMain = require("@electron/remote/main");
+remoteMain.initialize();
 
 function createWindow() {
   // Create the browser window.
@@ -11,6 +13,8 @@ function createWindow() {
       contextIsolation: false
     }
   })
+
+  remoteMain.enable(win.webContents);
 
   // Load the index.html of the app.
   // win.loadURL('http://localhost:3000')
@@ -27,7 +31,7 @@ function createWindow() {
 // This method is equivalent to 'app.on('ready', function())'
 app.whenReady().then(() => {
   createWindow();
-})
+  })
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
