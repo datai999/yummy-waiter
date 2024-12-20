@@ -17,8 +17,8 @@ function createWindow() {
   remoteMain.enable(win.webContents);
 
   // Load the index.html of the app.
-  win.loadURL('http://localhost:3000')
-  // win.loadFile('./src/electron/index.html')
+  // win.loadURL('http://localhost:3000')
+  win.loadFile('./src/index.html')
 
   // Open the DevTools.
   win.webContents.openDevTools()

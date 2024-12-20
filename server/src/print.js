@@ -21,7 +21,7 @@ let options = {
 
 const printByCommand = true;
 
-document.getElementById('current')!.addEventListener('click', (event) => {
+document.getElementById('current').addEventListener('click', (event) => {
   console.log('Print click');
 
   if (printByCommand) {
@@ -31,7 +31,7 @@ document.getElementById('current')!.addEventListener('click', (event) => {
   }
 
   let win = remote.getCurrentWindow();
-  win.webContents.print(options, function (success: boolean, failureReason: any) {
+  win.webContents.print(options, function (success, failureReason) {
     if (!success)
       console.log(failureReason);
     console.log('Print Initiated');
