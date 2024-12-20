@@ -12,6 +12,8 @@ dist-electron
 
 # testing
 /coverage
+/print
+FILE
 
 # production
 /build
