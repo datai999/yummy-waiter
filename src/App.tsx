@@ -28,6 +28,13 @@ export default function App() {
           <TableManagerment tables={tables} setTables={setTables} orderTable={orderTable} /></>)}
     </>
     /**
+     * waiter: 
+     *  - communicate between devices in LAN
+     *  - TOGO in dine screen
+     *  - remove confirmation
+     *  - multi item selection to edit
+     *  - button edit all items
+     *  - UI line by line
      * kitchen: select part of bill, print bill & system change status to waiter
      * chicken: update number of chicken meats to waiter
      * 

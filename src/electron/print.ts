@@ -46,7 +46,7 @@ const printByCommandService = () => {
   var printer = "FILE";
 
   const date = new Date();
-  const fileName = date.getDate() + "_" + date.getHours() + "" + date.getMinutes() + "" + date.getSeconds();
+  const fileName = date.getDate() + "_" + date.getHours() + "_" + date.getMinutes() + "" + date.getSeconds();
   var tmpFileName = `.\\print\\${fileName}.prn`;
   fs.writeFileSync(tmpFileName, printString, "utf8");
 
