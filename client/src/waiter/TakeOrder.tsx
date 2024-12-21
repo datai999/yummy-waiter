@@ -54,6 +54,7 @@ import { StyledPaper } from '../my/my-styled';
 import BagDnd from './BagDnd';
 import { Table } from 'myTable';
 import { ChildWaiterProps } from './Waiter';
+import { SYNC_TYPE, syncServer } from '../my/my-ws';
 
 const defaultNonPho: NonPho = {
     beefSide: [],
@@ -140,25 +141,24 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         }
     };
 
-    const handleAddItem = () => {
+    const addItem = (bag: number) => {
         const dineIn = new Map(bags);
-        handleItem(dineIn.get(0)!);
-        props.table.bags = dineIn;
-        props.table.status = TableStatus.ACTIVE;
+        handleItem(dineIn.get(bag)!);
         setBags(dineIn);
         setPho(DefaultPho);
         setNonPho(defaultNonPho);
     }
 
-    const togoItem = () => {
-        const newTogo = new Map(bags);
-        handleItem(newTogo.get(1)!);
-        props.table.bags = newTogo;
-        props.table.status = TableStatus.ACTIVE;
-        setBags(newTogo);
-        setPho(DefaultPho);
-        setNonPho(defaultNonPho);
-    }
+    const confirmOrder = () => {
+        if (props.table.status === TableStatus.AVAILABLE) {
+            props.table.status = TableStatus.ACTIVE;
+            props.table.orderTime = new Date();
+        }
+        syncServer(SYNC_TYPE.TABLE, props.table);
+        setOpenConfirmDialog(false);
+        props.orderTable(null);
+        props.setIsWaiter(false);
+    };
 
     const showPho = (bag: number, category: Categories, selectedItemId: string) => {
         props.setCategory(category);
@@ -173,13 +173,6 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         nextSelected.set(bags.size, _.cloneDeep(INIT_SELECTED_ITEM));
         setBags(nextSelected);
     }
-
-    const confirmOrder = () => {
-        props.table.orderTime = new Date();
-        setOpenConfirmDialog(false);
-        props.orderTable(null);
-        props.setIsWaiter(false);
-    };
 
     return (
         <>
@@ -305,7 +298,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
                         <Button
                             variant="contained"
                             color="primary"
-                            onClick={handleAddItem}
+                            onClick={() => addItem(0)}
                             fullWidth
                         >
                             {`${pho.id.length > 0 ? 'Edit item' : 'Dine-in'}`}
@@ -315,7 +308,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
                         <Button
                             variant="contained"
                             color="primary"
-                            onClick={togoItem}
+                            onClick={() => addItem(1)}
                             fullWidth
                         >
                             {`Togo`}

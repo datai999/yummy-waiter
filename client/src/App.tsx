@@ -14,7 +14,7 @@ export default function App() {
   const [table, orderTable] = useState<Table | null>(null);
 
   useEffect(() => {
-    return initWsClient();
+    return initWsClient("Client_" + Math.floor(Math.random() * 10));
   }, []);
 
   useEffect(() => {
