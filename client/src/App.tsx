@@ -6,11 +6,16 @@ import Waiter from './waiter/Waiter';
 import { Box } from '@mui/material';
 import { Table } from 'myTable';
 import { generateTables } from './my/my-service';
+import initWsClient from './my/my-ws';
 
 export default function App() {
   const [isWaiter, setIsWaiter] = useState<Boolean>(false);
   const [tables, setTables] = useState<Table[]>(generateTables());
   const [table, orderTable] = useState<Table | null>(null);
+
+  useEffect(() => {
+    return initWsClient();
+  }, []);
 
   useEffect(() => {
     if (table)

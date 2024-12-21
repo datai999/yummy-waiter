@@ -2,6 +2,8 @@ const { app, BrowserWindow } = require('electron')
 const remoteMain = require("@electron/remote/main");
 remoteMain.initialize();
 
+const { initWsServer } = require("./websocket")
+
 function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
@@ -17,8 +19,8 @@ function createWindow() {
   remoteMain.enable(win.webContents);
 
   // Load the index.html of the app.
-  // win.loadURL('http://localhost:3000')
-  win.loadFile('./src/index.html')
+  win.loadURL('http://localhost:3000')
+  // win.loadFile('./src/index.html')
 
   // Open the DevTools.
   win.webContents.openDevTools()
@@ -31,7 +33,8 @@ function createWindow() {
 // This method is equivalent to 'app.on('ready', function())'
 app.whenReady().then(() => {
   createWindow();
-  })
+  initWsServer();
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
