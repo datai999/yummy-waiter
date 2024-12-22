@@ -15,7 +15,7 @@ export default function App() {
   const [refresh, setRefresh] = useState<Boolean>(false);
 
   useEffect(() => {
-    return initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTable);
+    return initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables);
   }, []);
 
   useEffect(() => {
@@ -23,11 +23,13 @@ export default function App() {
       setIsWaiter(true);
   }, [table]);
 
-  const onSyncTable = (syncTable: Table) => {
-    const syncTableIndex = tables.findIndex(t => t.id === syncTable.id);
-    tables[syncTableIndex] = syncTable;
+  const onSyncTables = (syncTables: Map<String, Table>) => {
+    syncTables.forEach(syncTable => {
+      const syncTableIndex = tables.findIndex(t => t.id === syncTable.id);
+      tables[syncTableIndex] = syncTable;
+    });
     if (!isWaiter) {
-      setRefresh((cur:Boolean) => !cur);
+      setRefresh((cur: Boolean) => !cur);
     }
   }
 

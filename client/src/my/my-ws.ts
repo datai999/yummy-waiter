@@ -6,6 +6,7 @@ let clienId: string;
 
 export enum SYNC_TYPE {
     MESSAGE,
+    REQUEST,
     TABLE
 }
 
@@ -18,25 +19,28 @@ export const syncServer = (type: SYNC_TYPE, data: any) => {
     websocket.send(message);
 }
 
-const initWsClient = (username: string, onSyncTable: (table: Table) => void) => {
+const initWsClient = (username: string, onSyncTables: (tables: Map<String, Table>) => void) => {
     clienId = username;
     websocket = new WebSocket('ws://192.168.12.182:8080');
 
     websocket.onopen = () => {
         console.log('WebSocket is connected');
         websocket.send(JSON.stringify({
-            clientId: clienId,
-            type: SYNC_TYPE[SYNC_TYPE.MESSAGE],
-            payload: `I'm here`,
+            senter: clienId,
+            type: SYNC_TYPE[SYNC_TYPE.REQUEST],
+            payload: "TABLES_ACTIVE",
         }));
     };
 
     websocket.onmessage = (evt) => {
         const data = JSON.parse(evt.data, JSON_reviver);
-        console.log(`[${new Date().toLocaleTimeString()}]<${data.clientId}><${data.type}>:Received message`);
+        console.log(`[${new Date().toLocaleTimeString()}]<${data.senter}><${data.type}>:Received message`);
+        if (data.type === SYNC_TYPE[SYNC_TYPE.REQUEST]) {
+            onSyncTables(new Map(Object.entries(data.payload)));
+        }
         if (data.type === SYNC_TYPE[SYNC_TYPE.TABLE]) {
             const table = data.payload as Table;
-            onSyncTable(table);
+            onSyncTables(new Map([[table.id, table]]));
         }
     };
 
