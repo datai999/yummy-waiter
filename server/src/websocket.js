@@ -19,7 +19,8 @@ const onConnection = ws => {
     ws.on('message', (message, isBinary) => {
         const messageConvert = isBinary ? message : message.toString();
         const data = JSON.parse(messageConvert, JSON_reviver);
-        console.log(`${new Date()} Received: ${data.type} from client ${data.clientId}`);
+        console.log(`[${new Date().toLocaleTimeString()}]<${data.clientId}><${data.type}>
+                                ${data.type !== 'MESSAGE' ? null : `:${data.payload}`}`);
 
         if (data.type === 'TABLE') {
             boardcastMessageExceptOwner(ws, messageConvert);
@@ -27,7 +28,7 @@ const onConnection = ws => {
     });
 
     ws.on('close', () => {
-        console.log('Client disconnected');
+        console.log(`[${new Date().toLocaleTimeString()}]:Client disconnected:${JSON.stringify(ws)}`);
     });
 };
 

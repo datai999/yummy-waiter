@@ -5,9 +5,8 @@ export const JSON_replacer = (key: any, value: any) => {
             dataType: 'Map',
             value: Array.from(value.entries()), // or with spread: value: [...value]
         };
-    } else {
-        return value;
     }
+    return value;
 }
 
 export const JSON_reviver = (key: any, value: any) => {
@@ -15,6 +14,9 @@ export const JSON_reviver = (key: any, value: any) => {
         if (value.dataType === 'Map') {
             return new Map(value.value);
         }
+    }
+    if (["orderTime"].includes(key)) {
+        return new Date(value);
     }
     return value;
 }

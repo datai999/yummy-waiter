@@ -10,17 +10,28 @@ import initWsClient from './my/my-ws';
 
 export default function App() {
   const [isWaiter, setIsWaiter] = useState<Boolean>(false);
-  const [tables, setTables] = useState<Table[]>(generateTables());
+  const [tables, setTables] = useState<Table[]>(generateTables);
   const [table, orderTable] = useState<Table | null>(null);
 
   useEffect(() => {
-    return initWsClient("Client_" + Math.floor(Math.random() * 10));
+    return initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTable);
   }, []);
 
   useEffect(() => {
     if (table)
       setIsWaiter(true);
   }, [table]);
+
+  const onSyncTable = (syncTable: Table) => {
+    const syncTableIndex = tables.findIndex(t => t.id === syncTable.id);
+    if (isWaiter)
+      tables[syncTableIndex] = syncTable;
+    else {
+      const cloneTables = [...tables];
+      cloneTables[syncTableIndex] = syncTable;
+      setTables(cloneTables);
+    }
+  }
 
   return (
     <>
