@@ -2,23 +2,23 @@ import React, { useState } from 'react';
 
 import { NonPhoCode } from 'myTypes';
 import {
-  FaMinus,
-  FaPlus,
+    FaMinus,
+    FaPlus,
 } from 'react-icons/fa';
 
 import {
-  Button,
-  Chip,
-  Grid2,
-  List,
-  ListItemText,
-  TextField,
+    Button,
+    Chip,
+    Grid2,
+    List,
+    ListItemText,
+    TextField,
 } from '@mui/material';
 
 import { generateId } from './my-service';
 import {
-  CategoryButton,
-  OrderItem,
+    CategoryButton,
+    OrderItem,
 } from './my-styled';
 
 interface CheckButtonProps {
@@ -79,12 +79,11 @@ export const CheckButton = ({ multi, allOptions, options = [], createLabel, call
     );
 }
 
-interface SideItemListProps {
+export const SideItemList = ({ canEdit, sideItems, doubleCol = true }: {
+    canEdit: boolean;
     sideItems: Map<String, NonPhoCode>,
     doubleCol?: boolean,
-}
-
-export const SideItemList = ({ sideItems, doubleCol = true }: SideItemListProps) => {
+}) => {
     const [refresh, setRefresh] = useState<Boolean>(false);
 
     const copy = (itemId: String) => {
@@ -111,7 +110,7 @@ export const SideItemList = ({ sideItems, doubleCol = true }: SideItemListProps)
                                         : (index % 2 === 1))
                                         ? '#f3f3f3' : null}`
                                 }}>
-                                <Button onClick={() => remove(key)}
+                                <Button onClick={() => { if (canEdit) remove(key) }}
                                     sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }}
                                     style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
                                     <FaMinus style={{ fontSize: 12 }} />
@@ -162,9 +161,10 @@ export const SideItemList = ({ sideItems, doubleCol = true }: SideItemListProps)
                                         />
                                     }
                                 />
-                                <Button onClick={() => copy(key)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
-                                    <FaPlus style={{ fontSize: 26 }} />
-                                </Button>
+                                {canEdit && (
+                                    <Button onClick={() => copy(key)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                                        <FaPlus style={{ fontSize: 26 }} />
+                                    </Button>)}
                             </OrderItem>
                         </Grid2>
                     );

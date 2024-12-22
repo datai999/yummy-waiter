@@ -58,7 +58,7 @@ const OrderSummary = ({ bag, selectedItems, phoId, showPho }: Props) => {
                     </Grid2>)}
                 {selectedItems.drink.size + selectedItems.dessert.size > 0 && (
                     <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: showPho ? 4 : 'grow' }} >
-                        <DrinkDessertList drinks={selectedItems.drink} desserts={selectedItems.dessert} />
+                        <DrinkDessertList canEdit={Boolean(showPho)} drinks={selectedItems.drink} desserts={selectedItems.dessert} />
                     </Grid2>)}
             </Grid2>
         </ >
@@ -135,16 +135,15 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
                 })}
             </List>
             {phos.size > 0 && sideOrders.size > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
-            <SideItemList sideItems={sideOrders} />
+            <SideItemList canEdit={Boolean(showPho)} sideItems={sideOrders} />
         </StyledPaper>);
 }
 
-interface DrinkDessertListProps {
+const DrinkDessertList = ({ canEdit, drinks, desserts }: {
+    canEdit: boolean,
     drinks: Map<String, NonPhoCode>,
     desserts: Map<String, NonPhoCode>,
-}
-
-const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
+}) => {
     return (
         <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0 }}>
             <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} >
@@ -162,11 +161,11 @@ const DrinkDessertList = ({ drinks, desserts }: DrinkDessertListProps) => {
             <Grid2 container columnSpacing={2}>
                 {drinks.size > 0 &&
                     <Grid2 size={desserts.size ? 6 : 12}  >
-                        <SideItemList sideItems={drinks} doubleCol={!desserts.size} />
+                        <SideItemList canEdit={canEdit} sideItems={drinks} doubleCol={!desserts.size} />
                     </Grid2>}
                 {desserts.size > 0 &&
                     <Grid2 size={drinks.size ? 6 : 12}  >
-                        <SideItemList sideItems={desserts} doubleCol={!drinks.size} />
+                        <SideItemList canEdit={canEdit} sideItems={desserts} doubleCol={!drinks.size} />
                     </Grid2>}
             </Grid2>
 
