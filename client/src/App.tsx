@@ -10,7 +10,7 @@ import initWsClient from './my/my-ws';
 
 export default function App() {
   const [isWaiter, setIsWaiter] = useState<Boolean>(false);
-  const [tables, setTables] = useState<Table[]>(generateTables);
+  const [tables, setTables] = useState<Map<String, Table>>(generateTables);
   const [table, orderTable] = useState<Table | null>(null);
   const [refresh, setRefresh] = useState<Boolean>(false);
 
@@ -25,8 +25,7 @@ export default function App() {
 
   const onSyncTables = (syncTables: Map<String, Table>) => {
     syncTables.forEach(syncTable => {
-      const syncTableIndex = tables.findIndex(t => t.id === syncTable.id);
-      tables[syncTableIndex] = syncTable;
+      tables.set(syncTable.id, syncTable);
     });
     if (!isWaiter) {
       setRefresh((cur: Boolean) => !cur);
@@ -41,7 +40,7 @@ export default function App() {
           <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
             <Header />
           </Box>
-          <TableManagerment tables={tables} setTables={setTables} orderTable={orderTable} /></>)}
+          <TableManagerment tables={tables} orderTable={orderTable} /></>)}
     </>
     /**
      * waiter: 

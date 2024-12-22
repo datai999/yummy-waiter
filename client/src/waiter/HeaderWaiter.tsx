@@ -114,7 +114,7 @@ const WrapCategoryButton = ({ props }: {
 }
 
 const TableSelections = ({ props, size }: { props: ChildWaiterProps, size: string }) => {
-    let tableIdAvailable = props.tables
+    let tableIdAvailable = Array.from(props.tables.values())
         .filter((table: Table) => table.status === TableStatus.AVAILABLE && table.id.startsWith("Table"))
         .map(table => table.id);
 

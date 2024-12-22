@@ -9,7 +9,7 @@ import { Table } from 'myTable';
 
 interface WaiterProps {
     setIsWaiter: (isWaiter: boolean) => void,
-    tables: Table[],
+    tables: Map<String, Table>,
     table: Table,
     orderTable: (table: Table | null) => void,
 }

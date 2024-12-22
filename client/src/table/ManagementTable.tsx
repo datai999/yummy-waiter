@@ -41,8 +41,7 @@ const ModalContent = styled(Box)({
 });
 
 const TableManagerment = (props: {
-  tables: Table[],
-  setTables: (tables: Table[]) => void,
+  tables: Map<String, Table>,
   orderTable: (table: Table) => void
 }) => {
 
@@ -50,19 +49,17 @@ const TableManagerment = (props: {
   const [orderHistory, setOrderHistory] = useState<Table[]>([]);
 
   const handleMoveToHistory = (tableId: string) => {
-    props.setTables(props.tables.map(table =>
-      table.id === tableId
-        ? { ...table, status: TableStatus.AVAILABLE, orderTime: null }
-        : table
-    ));
-    const movedTable = props.tables.find(table => table.id === tableId);
+    const table = props.tables.get(tableId)!;
+    const movedTable = { ...table };
+    table.status = TableStatus.AVAILABLE;
+    table.orderTime = null;
     setOrderHistory(prev => [movedTable, ...prev] as Table[]);
   };
 
   return (
     <Box sx={{ padding: "20px" }}>
       <Grid2 container spacing={2}>
-        {props.tables.map(table => (
+        {Array.from(props.tables.values()).map(table => (
           <Grid2 key={table.id} size={{ xs: 6, sm: 4, md: 3, lg: 3 }}>
             <CardTable table={table} orderTable={props.orderTable} doneTable={handleMoveToHistory} />
           </Grid2>

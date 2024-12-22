@@ -14,7 +14,10 @@ module.exports = {
 }
 
 const users = {};
-const activeTables = {};
+const activeTables = {
+    "Table 6": { "id": "Table 6", "status": "ACTIVE", "orderTime": "2024-12-22T19:39:18.726Z", "bags": { "dataType": "Map", "value": [[0, { "beef": { "dataType": "Map", "value": [["12/22/24, 11:39:18 78", { "id": "12/22/24, 11:39:18 78", "meats": ["BPN"], "noodle": "REGULAR", "preferences": [], "note": "", "noodleCode": "BC", "meatCodes": "BPN", "preferenceCodes": "" }]] }, "beefSide": { "dataType": "Map", "value": [] }, "beefUpdated": ["2024-12-22T19:39:18.079Z:add beef"], "chicken": { "dataType": "Map", "value": [] }, "chickenSide": { "dataType": "Map", "value": [] }, "chickenUpdated": [], "drink": { "dataType": "Map", "value": [] }, "dessert": { "dataType": "Map", "value": [] } }], [1, { "beef": { "dataType": "Map", "value": [] }, "beefSide": { "dataType": "Map", "value": [] }, "beefUpdated": [], "chicken": { "dataType": "Map", "value": [] }, "chickenSide": { "dataType": "Map", "value": [] }, "chickenUpdated": [], "drink": { "dataType": "Map", "value": [] }, "dessert": { "dataType": "Map", "value": [] } }]] } }
+    , "Table 9": { "id": "Table 9", "status": "ACTIVE", "orderTime": "2024-12-22T19:39:26.373Z", "bags": { "dataType": "Map", "value": [[0, { "beef": { "dataType": "Map", "value": [["12/22/24, 11:39:25 630", { "id": "12/22/24, 11:39:25 630", "meats": ["TENDON"], "noodle": "REGULAR", "preferences": [], "note": "", "noodleCode": "BC", "meatCodes": "g", "preferenceCodes": "" }], ["12/22/24, 11:39:42 694", { "id": "12/22/24, 11:39:42 694", "meats": ["BEEF_BALL"], "noodle": "REGULAR", "preferences": [], "note": "", "noodleCode": "BC", "meatCodes": "BV", "preferenceCodes": "" }]] }, "beefSide": { "dataType": "Map", "value": [] }, "beefUpdated": ["2024-12-22T19:39:25.630Z:add beef", "2024-12-22T19:39:42.694Z:add beef"], "chicken": { "dataType": "Map", "value": [] }, "chickenSide": { "dataType": "Map", "value": [] }, "chickenUpdated": [], "drink": { "dataType": "Map", "value": [] }, "dessert": { "dataType": "Map", "value": [] } }], [1, { "beef": { "dataType": "Map", "value": [] }, "beefSide": { "dataType": "Map", "value": [] }, "beefUpdated": [], "chicken": { "dataType": "Map", "value": [] }, "chickenSide": { "dataType": "Map", "value": [] }, "chickenUpdated": [], "drink": { "dataType": "Map", "value": [] }, "dessert": { "dataType": "Map", "value": [] } }]] } }
+}
 
 const onConnection = (ws, req) => {
     ws.on('error', console.error);
@@ -24,9 +27,9 @@ const onConnection = (ws, req) => {
 
     ws.on('message', (message, isBinary) => {
         const messageConvert = isBinary ? message : message.toString();
-        const data = JSON.parse(messageConvert, JSON_reviver);
+        const data = JSON.parse(messageConvert);
         console.log(`[${new Date().toLocaleTimeString()}]<${data.senter}><${data.type}>
-                                ${data.type !== 'MESSAGE' ? null : `:${data.payload}`}`);
+                                ${data.type !== 'MESSAGE' ? '' : `:${data.payload}`}`);
 
         if (data.type === 'REQUEST') {
             sendMessageTo(ws, JSON.stringify({
@@ -46,12 +49,14 @@ const onConnection = (ws, req) => {
     });
 };
 
-const updateActiveTable = (syncTable) => {
-    if (syncTable.status === 'ACTIVE') {
-        activeTables[syncTable.id] = syncTable;
-    } else {
-        delete activeTables[syncTable.id];
-    }
+const updateActiveTable = (syncTables) => {
+    Object.entries(syncTables).forEach((tableId, syncTable) => {
+        if (syncTable.status === 'ACTIVE') {
+            activeTables[tableId] = syncTable;
+        } else {
+            delete activeTables[tableId];
+        }
+    });
 }
 
 const boardcastMessageExceptOwner = (ws, message) => {

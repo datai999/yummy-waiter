@@ -39,8 +39,7 @@ const initWsClient = (username: string, onSyncTables: (tables: Map<String, Table
             onSyncTables(new Map(Object.entries(data.payload)));
         }
         if (data.type === SYNC_TYPE[SYNC_TYPE.TABLE]) {
-            const table = data.payload as Table;
-            onSyncTables(new Map([[table.id, table]]));
+            onSyncTables(new Map(Object.entries(data.payload)));
         }
     };
 

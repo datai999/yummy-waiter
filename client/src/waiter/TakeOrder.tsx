@@ -154,7 +154,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
             props.table.status = TableStatus.ACTIVE;
             props.table.orderTime = new Date();
         }
-        syncServer(SYNC_TYPE.TABLE, props.table);
+        syncServer(SYNC_TYPE.TABLE, { [props.table.id]: props.table });
         setOpenConfirmDialog(false);
         props.orderTable(null);
         props.setIsWaiter(false);

@@ -16,6 +16,7 @@ import {
 } from './my-constants';
 import { Table } from 'myTable';
 import _ from 'lodash';
+import { syncServer, SYNC_TYPE } from './my-ws';
 
 const lodash = _;
 
@@ -25,42 +26,25 @@ export const generateId = () => {
         + " " + date.getMilliseconds();
 }
 
-export const generateTables = () => {
-    const realTable = 9;
-    return Array.from({ length: 21 }, (_, index) => ({
-        id: String(index > 19 ? 'TOGO ' + (index - 19) : 'Table ' + (index < 12 ? index + 1 : index + 2)),
-        status: index < realTable ? TableStatus.AVAILABLE : Math.random() > 0.9 ? TableStatus.AVAILABLE : TableStatus.ACTIVE,
-        orderTime: index < realTable ? null : new Date(Date.now() - Math.floor(Math.random() * 3600000)),
-        bags: index < realTable
-            ? new Map([
+export const generateTables = () =>
+    new Map(Array.from({ length: 21 }, (_, index) => {
+        const id = String(index > 19 ? 'TOGO ' + (index - 19) : 'Table ' + (index < 12 ? index + 1 : index + 2));
+        return [id, {
+            id: id,
+            status: TableStatus.AVAILABLE,
+            orderTime: null,
+            bags: new Map([
                 [0, lodash.cloneDeep(INIT_SELECTED_ITEM)], [1, lodash.cloneDeep(INIT_SELECTED_ITEM)]
             ])
-            : new Map([
-                [0, {
-                    ...INIT_SELECTED_ITEM,
-                    beef: new Map([
-                        [generateId(), {
-                            id: generateId(),
-                            meats: [],
-                            noodle: "REGULAR",
-                            meatCodes: "BPN",
-                            noodleCode: "BC",
-                        }]]),
-                    chicken: new Map([
-                        [generateId(), {
-                            id: generateId(),
-                            meats: [],
-                            noodle: "REGULAR",
-                            meatCodes: "Đùi",
-                            noodleCode: "BC",
-                        }]]),
-                }]
-            ])
-    } as Table));
-}
+        } as Table]
+    }));
 
-export const changeTable = (tables: Table[], fromTable: Table, toTableId: string): Table => {
-    const toTable = tables.find(table => table.id === toTableId) as Table;
+export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTableId: string): Table | null => {
+    const toTable = tables.get(toTableId) as Table;
+    if (!toTable) {
+        console.error('Could not find toTableId:' + toTableId);
+        return null;
+    }
 
     toTable.status = fromTable.status;
     toTable.orderTime = fromTable.orderTime;
@@ -71,6 +55,11 @@ export const changeTable = (tables: Table[], fromTable: Table, toTableId: string
     fromTable.status = TableStatus.AVAILABLE;
     fromTable.orderTime = null;
     fromTable.bags = new Map([[0, lodash.cloneDeep(INIT_SELECTED_ITEM)], [1, lodash.cloneDeep(INIT_SELECTED_ITEM)]]);
+
+    if (toTable.status === TableStatus.ACTIVE) {
+        const data = { [fromTable.id]: fromTable, [toTableId]: toTable };
+        syncServer(SYNC_TYPE.TABLE, data);
+    }
 
     return toTable;
 }
