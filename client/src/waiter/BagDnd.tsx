@@ -95,7 +95,11 @@ const BagDnd = ({ bags, phoId, showPho }: Props) => {
             {Array.from(bags.entries()).map(([key, item], index) => {
                 return (
                     <Droppable id={`${key}`} key={index}>
-                        <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 0 }}>
+                        <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 0 }} onClick={() => {
+                            console.log("click " + phoId + "f");
+                            if (phoId)
+                                showPho(key, Categories.BEEF, "");
+                        }}>
                             <Typography variant="h6" style={{ fontWeight: 'bold' }} >
                                 {key === 0 ? 'Dine-in' : `Togo ${key}`}
                             </Typography>

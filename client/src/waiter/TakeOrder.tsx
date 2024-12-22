@@ -161,6 +161,11 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     };
 
     const showPho = (bag: number, category: Categories, selectedItemId: string) => {
+        if (selectedItemId === null || selectedItemId.length === 0) {
+            setPho(DefaultPho);
+            setNonPho(defaultNonPho);
+            return;
+        }
         props.setCategory(category);
         if (Categories.BEEF === category)
             setPho({ ...bags.get(bag)?.beef.get(selectedItemId)! });
