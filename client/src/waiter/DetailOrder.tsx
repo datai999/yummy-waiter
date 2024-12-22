@@ -106,33 +106,31 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
             <List dense sx={{ width: '100%', p: 0 }}>
                 {Array.from(phos.entries()).map(([id, item], index) => {
                     return (
-                        <>
-                            <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }} style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
-                                <Button onClick={() => { if (showPho) remove(item.id) }} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
-                                    <FaMinus style={{ fontSize: 12 }} />
-                                </Button>
-                                <Draggable id={`${bag}_${category}_${id}`} enable={Boolean(showPho)}>
-                                    <ListItemButton onClick={() => {
-                                                                                if (showPho)
-                                            showPho(bag, category, item.id);
-                                    }} dense sx={{ p: 0, m: 0 }}>
-                                        <ListItemText
-                                            id={item.id}
-                                            primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
-                                            secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
-                                            sx={{ p: 0, m: 0 }}
-                                            primary={
-                                                `${item.meatCodes} (${item.noodleCode}) ${(item.preferenceCodes) ? `(${item.preferenceCodes})` : ''}`}
-                                            secondary={item.note ? item.note : null}
-                                        />
-                                    </ListItemButton>
-                                </Draggable>
-                                {showPho &&
-                                    <Button onClick={() => copy(item.id)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
-                                        <FaPlus style={{ fontSize: 26 }} />
-                                    </Button>}
-                            </OrderItem>
-                        </>
+                        <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }} style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
+                            <Button onClick={() => { if (showPho) remove(item.id) }} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
+                                <FaMinus style={{ fontSize: 12 }} />
+                            </Button>
+                            <Draggable id={`${bag}_${category}_${id}`} enable={Boolean(showPho)}>
+                                <ListItemButton onClick={() => {
+                                    if (showPho)
+                                        showPho(bag, category, item.id);
+                                }} dense sx={{ p: 0, m: 0 }}>
+                                    <ListItemText
+                                        id={item.id}
+                                        primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
+                                        secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
+                                        sx={{ p: 0, m: 0 }}
+                                        primary={
+                                            `${item.meatCodes} (${item.noodleCode}) ${(item.preferenceCodes) ? `(${item.preferenceCodes})` : ''}`}
+                                        secondary={item.note ? item.note : null}
+                                    />
+                                </ListItemButton>
+                            </Draggable>
+                            {showPho &&
+                                <Button onClick={() => copy(item.id)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                                    <FaPlus style={{ fontSize: 26 }} />
+                                </Button>}
+                        </OrderItem>
                     );
                 })}
             </List>

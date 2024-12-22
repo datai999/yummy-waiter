@@ -127,7 +127,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
       open={Boolean(openOrderModal)}
       onClose={() => setOpenOrderModal(false)}
     >
-      <ModalContent>
+      <ModalContent key={table.id}>
         {openOrderModal && (
           <Box id={"Table.ModalContent.Box." + table.id} >
             <Grid2 container sx={{ pb: 1 }}>
@@ -156,7 +156,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
               </Grid2>
             </Grid2>
             {Array.from(table.bags.entries()).map(([key, item], index) => (
-              <>
+              <Box key={index}>
                 <Typography variant="h6" style={{ fontWeight: 'bold' }} >
                   {key === 0 ? 'Dine-in' : `Togo ${key}`}
                 </Typography>
@@ -166,7 +166,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
                   selectedItems={item}
                   phoId={"null"} />
                 {index < table.bags.size - 1 && (<Divider sx={{ pt: 1, pb: 1 }} />)}
-              </>))
+              </Box>))
             }
             <Button
               fullWidth

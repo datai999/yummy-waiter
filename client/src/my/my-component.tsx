@@ -103,7 +103,7 @@ export const SideItemList = ({ sideItems, doubleCol = true }: SideItemListProps)
             <Grid2 container columnSpacing={2}>
                 {Array.from(sideItems.entries()).map(([key, value], index) => {
                     return (
-                        <Grid2 size={doubleCol ? 6 : 12}  >
+                        <Grid2 key={index} size={doubleCol ? 6 : 12}  >
                             <OrderItem key={key as string} sx={{ display: 'flex' }}
                                 style={{
                                     backgroundColor: `${(doubleCol

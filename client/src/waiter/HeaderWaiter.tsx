@@ -64,7 +64,7 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
                 </Grid2>
                 <Grid2 size={{ md: 6 }} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
                     {Object.values(Categories).map((category) => (
-                        <WrapCategoryButton props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'medium' }} />
+                        <WrapCategoryButton key={category} props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'medium' }} />
                     ))}
                 </Grid2>
                 <Grid2 size={{ xs: 4, sm: 5, md: 'grow' }} sx={{ display: { xs: 'block', sm: 'none', md: 'block' } }}>
@@ -77,7 +77,7 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
                 <Grid2 container spacing={2} alignItems="center">
                     <Grid2 size={{ sm: 8, }}>
                         {Object.values(Categories).map((category) => (
-                            <WrapCategoryButton props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'large' }} />
+                            <WrapCategoryButton key={category} props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'large' }} />
                         ))}
                     </Grid2>
                     <Grid2 size={{ sm: 'grow', }} >
@@ -89,7 +89,7 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
             <Box sx={{ display: { xs: 'block', sm: 'none', md: 'none' }, flexWrap: "wrap" }}>
                 <Divider textAlign="left" sx={{ mb: 0 }}></Divider>
                 {Object.values(Categories).map((category) => (
-                    <WrapCategoryButton props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'small' }} />
+                    <WrapCategoryButton key={category} props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'small' }} />
                 ))}
             </Box>
         </StyledPaper >);
