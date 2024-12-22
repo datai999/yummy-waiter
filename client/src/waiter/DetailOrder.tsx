@@ -112,8 +112,12 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
                             </Button>
                             <Draggable id={`${bag}_${category}_${id}`} enable={Boolean(showPho)}>
                                 <ListItemButton onClick={() => {
-                                    if (showPho)
-                                        showPho(bag, category, item.id);
+                                    if (showPho) {
+                                        if (phoId === item.id)
+                                            showPho(bag, category, "");
+                                        else
+                                            showPho(bag, category, item.id);
+                                    }
                                 }} dense sx={{ p: 0, m: 0 }}>
                                     <ListItemText
                                         id={item.id}
