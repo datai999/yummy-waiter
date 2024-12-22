@@ -33,7 +33,7 @@ const initWsClient = (username: string, onSyncTable: (table: Table) => void) => 
 
     websocket.onmessage = (evt) => {
         const data = JSON.parse(evt.data, JSON_reviver);
-        console.log(`[${new Date().toLocaleTimeString()}]<${data.clientId}><${data.type}>Received message`);
+        console.log(`[${new Date().toLocaleTimeString()}]<${data.clientId}><${data.type}>:Received message`);
         if (data.type === SYNC_TYPE[SYNC_TYPE.TABLE]) {
             const table = data.payload as Table;
             onSyncTable(table);

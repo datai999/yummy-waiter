@@ -12,6 +12,7 @@ export default function App() {
   const [isWaiter, setIsWaiter] = useState<Boolean>(false);
   const [tables, setTables] = useState<Table[]>(generateTables);
   const [table, orderTable] = useState<Table | null>(null);
+  const [refresh, setRefresh] = useState<Boolean>(false);
 
   useEffect(() => {
     return initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTable);
@@ -24,12 +25,9 @@ export default function App() {
 
   const onSyncTable = (syncTable: Table) => {
     const syncTableIndex = tables.findIndex(t => t.id === syncTable.id);
-    if (isWaiter)
-      tables[syncTableIndex] = syncTable;
-    else {
-      const cloneTables = [...tables];
-      cloneTables[syncTableIndex] = syncTable;
-      setTables(cloneTables);
+    tables[syncTableIndex] = syncTable;
+    if (!isWaiter) {
+      setRefresh((cur:Boolean) => !cur);
     }
   }
 
