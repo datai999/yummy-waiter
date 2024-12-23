@@ -83,6 +83,14 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         setNonPho(defaultNonPho);
     }, [props.refreshState]);
 
+    useEffect(() => {
+        const beefCombo = Object.entries(BEEF_COMBO).find(([key, value]) => {
+            if (value.length !== pho.meats.length) return false;
+            return value.sort().join(',') === pho.meats.sort().join(',');
+        });
+        setPho({ ...pho, combo: beefCombo ? beefCombo[0] : '' });
+    }, [pho.meats]);
+
     const handleItem = (newItem: SelectedItem) => {
         const id = pho.id.length ? pho.id : generateId();
         let newPho = { ...pho, id: id };
@@ -194,8 +202,8 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
                             createLabel={(key) => key}
                             callback={(combo) => setPho({
                                 ...pho,
-                                combo: combo[0],
-                                meats: BEEF_COMBO[combo[0] as keyof typeof BEEF_COMBO]
+                                combo: combo.length === 0 ? '' : combo[0],
+                                meats: combo.length === 0 ? [] : BEEF_COMBO[combo[0] as keyof typeof BEEF_COMBO]
                             })}
                         />
                         <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
@@ -203,7 +211,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
                             multi={true}
                             allOptions={Object.keys(BEEF_MEAT)}
                             options={pho.meats}
-                            createLabel={(key) => BEEF_MEAT[key as keyof typeof BEEF_MEAT]}
+                            createLabel={(key) => BEEF_MEAT[key as keyof typeof BEEF_MEAT].label}
                             callback={(meats) => setPho({ ...pho, meats })}
                         />
                     </>

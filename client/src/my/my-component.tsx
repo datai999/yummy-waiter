@@ -40,7 +40,9 @@ export const CheckButton = ({ multi, allOptions, options = [], createLabel, call
                             size='large'
                             onClick={() => {
                                 if (!multi) {
-                                    callback([option]);
+                                    if (options?.includes(option))
+                                        callback([]);
+                                    else callback([option]);
                                     return;
                                 }
                                 const newOptions = options.includes(option)

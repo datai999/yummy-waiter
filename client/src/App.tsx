@@ -55,6 +55,7 @@ export default function App() {
      *  - user login
      *  - user manager
      *  - action by
+     *  - void after 5min must accept by manager
      * kitchen: select part of bill, print bill & system change status to waiter
      * chicken: update number of chicken meats to waiter
      * 

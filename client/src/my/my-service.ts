@@ -5,7 +5,6 @@ import {
 } from 'myTypes';
 
 import {
-    BeefMeatCodes,
     BeefPreferenceCodes,
     Categories,
     ChickenMeats,
@@ -80,7 +79,7 @@ export const toPhoCode = (category: Categories, pho: Pho): PhoCode => {
 
     if (phoCode.meats.length === 0) phoCode.meats = ["BPN"];
     else phoCode.meats = phoCode.meats.filter(meat => meat !== "BPN");
-    phoCode.meatCodes = phoCode.meats.map(e => BeefMeatCodes[e as keyof typeof BeefMeatCodes]).join(',');
+    phoCode.meatCodes = phoCode.meats.join(',');
     phoCode.preferenceCodes = (phoCode.preferences || [])
         .map(e => BeefPreferenceCodes[e as keyof typeof BeefPreferenceCodes])
         .join(", ");

@@ -17,29 +17,6 @@ export enum BeefMeats {
     RIBS = "Xi"
 }
 
-export enum BeefMeatCodes {
-    RARE = "T",
-    LEAN = "C",
-    FATTY = "G`",
-    TENDON = "g",
-    TRIPE = "S",
-    BEEF_BALL = "BV",
-    RIBS = "Xi",
-
-    SPECIAL = "DB",
-    RARE_RECOMMENDED = "T",
-    RARE_BEEF_BALL = "T,BV",
-    RERE_LEAN_TRIPE = "T,C,S",
-    RERE_LEAN_FATTY = "T,C,G`",
-    RERE_LEAN_TENDON = "T,C,g",
-    RIBS_FATTY_BEEF_BALL = "Xi,G`,BV",
-
-    BEEF_STEW = "Pho BK",
-    BEEF_STEW_BREAD = "B.mì BK",
-    BEEF_STEW_EGG = "Egg Noodle BK",
-    BPN = "BPN",
-}
-
 export enum ChickenMeats {
     WHITE = "Ức",
     WING = "Cánh",
@@ -160,13 +137,13 @@ export enum TableStatus {
 }
 
 export const BEEF_MEAT = {
-    "T": 'Tái',
-    "C": 'Chín',
-    "G`": 'Gầu',
-    "g": 'Gân',
-    "S": 'Sách',
-    "BV": 'Bò viên',
-    "Xi": 'XiQ'
+    "T": { sort: 1, label: 'Tái' },
+    "C": { sort: 2, label: 'Chín' },
+    "G`": { sort: 3, label: 'Gầu' },
+    "g": { sort: 4, label: 'Gân' },
+    "S": { sort: 5, label: 'Sách' },
+    "BV": { sort: 6, label: 'Bò viên' },
+    "Xi": { sort: 0, label: 'XiQ'}
 }
 
 export const BEEF_COMBO = {
