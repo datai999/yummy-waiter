@@ -29,6 +29,8 @@ import {
 
 import { CheckButton } from '../my/my-component';
 import {
+    BEEF_COMBO,
+    BEEF_MEAT,
     BeefMeats,
     BeefMeatSideOrder,
     BeefMeatSideOrderCodes,
@@ -184,13 +186,27 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
             <StyledPaper sx={{ mb: 1, pb: 1 }}>
 
                 {props.category === Categories.BEEF && (
-                    <CheckButton
-                        multi={true}
-                        allOptions={Object.keys(BeefMeats)}
-                        options={pho.meats}
-                        createLabel={(key) => BeefMeats[key as keyof typeof BeefMeats]}
-                        callback={(meats) => setPho({ ...pho, meats })}
-                    />
+                    <>
+                        <CheckButton
+                            multi={false}
+                            allOptions={Object.keys(BEEF_COMBO)}
+                            options={[pho.combo as string]}
+                            createLabel={(key) => key}
+                            callback={(combo) => setPho({
+                                ...pho,
+                                combo: combo[0],
+                                meats: BEEF_COMBO[combo[0] as keyof typeof BEEF_COMBO]
+                            })}
+                        />
+                        <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
+                        <CheckButton
+                            multi={true}
+                            allOptions={Object.keys(BEEF_MEAT)}
+                            options={pho.meats}
+                            createLabel={(key) => BEEF_MEAT[key as keyof typeof BEEF_MEAT]}
+                            callback={(meats) => setPho({ ...pho, meats })}
+                        />
+                    </>
                 )}
 
                 {props.category === Categories.CHICKEN && (

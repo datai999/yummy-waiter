@@ -8,20 +8,16 @@ export enum Categories {
 }
 
 export enum BeefMeats {
-    SPECIAL = "DB",
     RARE = "Tái",
     LEAN = "Chín",
     FATTY = "Gầu",
     TENDON = "Gân",
     TRIPE = "Sách",
     BEEF_BALL = "Bò viên",
-    RIBS = "Xi",
-    BEEF_STEW = "Hủ tiếu BK",
-    BEEF_STEW_BREAD = "B.mì BK",
+    RIBS = "Xi"
 }
 
 export enum BeefMeatCodes {
-    SPECIAL = "DB",
     RARE = "T",
     LEAN = "C",
     FATTY = "G`",
@@ -29,8 +25,18 @@ export enum BeefMeatCodes {
     TRIPE = "S",
     BEEF_BALL = "BV",
     RIBS = "Xi",
+
+    SPECIAL = "DB",
+    RARE_RECOMMENDED = "T",
+    RARE_BEEF_BALL = "T,BV",
+    RERE_LEAN_TRIPE = "T,C,S",
+    RERE_LEAN_FATTY = "T,C,G`",
+    RERE_LEAN_TENDON = "T,C,g",
+    RIBS_FATTY_BEEF_BALL = "Xi,G`,BV",
+
     BEEF_STEW = "Pho BK",
     BEEF_STEW_BREAD = "B.mì BK",
+    BEEF_STEW_EGG = "Egg Noodle BK",
     BPN = "BPN",
 }
 
@@ -69,7 +75,8 @@ export enum BeefPreferenceCodes {
 
 export enum ChikenPreferences {
     NO_ONION = "Không hành",
-    NO_SKIN = "No skin",
+    NO_SKIN = "Không da",
+    NO_BONE = "Không xương",
     BAMBOO_SHOOTS = "Măng",
     DRY = "Khô",
 }
@@ -119,6 +126,7 @@ export enum BeefMeatSideOrderCodes {
 export enum ChickenSideOrder {
     BAMBO_SHOOTS = "Măng",
     WHOLE_CHICKEN = "Con gà",
+    HALF_CHICKEN = "Nửa con gà",
     EXTRA_WHITE = "Dĩa ức",
     EXTRA_WING = "Dĩa cánh",
     EXTRA_DARK = "Dĩa đùi"
@@ -149,6 +157,29 @@ export enum Dessert {
 export enum TableStatus {
     AVAILABLE = "AVAILABLE",
     ACTIVE = "ACTIVE"
+}
+
+export const BEEF_MEAT = {
+    "T": 'Tái',
+    "C": 'Chín',
+    "G`": 'Gầu',
+    "g": 'Gân',
+    "S": 'Sách',
+    "BV": 'Bò viên',
+    "Xi": 'XiQ'
+}
+
+export const BEEF_COMBO = {
+    "#1:DB": ['T', 'C', 'G`', 'g', 'S', 'BV'],
+    "#2:Tái": ['T'],
+    "#3:Tái,Bò viên": ['T', 'BV'],
+    "#4:Tái,Chín,Sách": ['T', 'C', 'S'],
+    "#5:Tái,Chín,Gầu": ['T', 'C', 'G`'],
+    "#6:Tái,Chín,gân": ['T', 'C', 'g'],
+    "#7:Xi,Gầu,Bò viên": ['Xi', 'G`', 'BV'],
+    "#8a:Hủ tiếu BK": ['Pho BK'],
+    "#8b:B.Mì BK": ['B.Mì BK'],
+    "#8c:Mì BK": ['Mì BK']
 }
 
 export const DefaultPho: Pho = {

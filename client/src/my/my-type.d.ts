@@ -1,6 +1,7 @@
 declare module 'myTypes' {
     type Pho = {
         id: string,
+        combo?: string,
         meats: string[],
         noodle: string,
         preferences?: string[],
