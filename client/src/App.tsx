@@ -47,6 +47,7 @@ export default function App() {
      *  + communicate between devices in LAN
      *  + remove confirmation
      *  - recommendation pho
+     *  - qty btn
      *  - count pho
      *  - multi item selection to edit
      *  - button edit all items

@@ -7,22 +7,6 @@ export enum Categories {
     DRINKS = "DRINKS"
 }
 
-export enum BeefMeats {
-    RARE = "Tái",
-    LEAN = "Chín",
-    FATTY = "Gầu",
-    TENDON = "Gân",
-    TRIPE = "Sách",
-    BEEF_BALL = "Bò viên",
-    RIBS = "Xi"
-}
-
-export enum ChickenMeats {
-    WHITE = "Ức",
-    WING = "Cánh",
-    DARK = "Đùi"
-}
-
 export enum Noodles {
     REGULAR = "BC",
     FRESH = "BT",
@@ -157,6 +141,12 @@ export const BEEF_COMBO = {
     "#8a:Hủ tiếu BK": ['Pho BK'],
     "#8b:B.Mì BK": ['B.Mì BK'],
     "#8c:Mì BK": ['Mì BK']
+}
+
+export const CHICKEN_COMBO = {
+    'Ức': ['U'],
+    'Cánh': ['C'],
+    'Đùi': ['D'],
 }
 
 export const DefaultPho: Pho = {

@@ -17,7 +17,6 @@ declare module 'myTypes' {
     }
 
     type PhoCode = Pho & {
-        meatCodes: string,
         noodleCode: string,
         preferenceCodes?: string,
     };

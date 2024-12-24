@@ -31,14 +31,13 @@ import { CheckButton } from '../my/my-component';
 import {
     BEEF_COMBO,
     BEEF_MEAT,
-    BeefMeats,
     BeefMeatSideOrder,
     BeefMeatSideOrderCodes,
     BeefPreferences,
     BeefSideOrder,
     BeefSideOrderCodes,
     Categories,
-    ChickenMeats,
+    CHICKEN_COMBO,
     ChickenSideOrder,
     ChikenPreferences,
     DefaultPho,
@@ -50,6 +49,7 @@ import {
 } from '../my/my-constants';
 import {
     generateId,
+    sortBeefMeat,
     toPhoCode,
 } from '../my/my-service';
 import { StyledPaper } from '../my/my-styled';
@@ -84,11 +84,13 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     }, [props.refreshState]);
 
     useEffect(() => {
-        const beefCombo = Object.entries(BEEF_COMBO).find(([key, value]) => {
-            if (value.length !== pho.meats.length) return false;
-            return value.sort().join(',') === pho.meats.sort().join(',');
-        });
-        setPho({ ...pho, combo: beefCombo ? beefCombo[0] : '' });
+        const meatCodes = pho.meats.sort(sortBeefMeat).join(',');
+        const combo = Object.entries(props.category === Categories.BEEF ? BEEF_COMBO : CHICKEN_COMBO)
+            .find(([key, value]) => {
+                if (value.length !== pho.meats.length) return false;
+                return value.sort(sortBeefMeat).join(',') === meatCodes;
+            });
+        setPho({ ...pho, combo: combo ? combo[0] : '' });
     }, [pho.meats]);
 
     const handleItem = (newItem: SelectedItem) => {
@@ -189,6 +191,8 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         setBags(nextSelected);
     }
 
+    console.log(pho);
+
     return (
         <>
             <StyledPaper sx={{ mb: 1, pb: 1 }}>
@@ -220,10 +224,14 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
                 {props.category === Categories.CHICKEN && (
                     <CheckButton
                         multi={false}
-                        allOptions={Object.keys(ChickenMeats)}
-                        options={pho.meats}
-                        createLabel={(key) => ChickenMeats[key as keyof typeof ChickenMeats]}
-                        callback={(meats) => setPho({ ...pho, meats })}
+                        allOptions={Object.keys(CHICKEN_COMBO)}
+                        options={[pho.combo as string]}
+                        createLabel={(key) => key}
+                        callback={(combo) => setPho({
+                            ...pho,
+                            combo: combo.length === 0 ? '' : combo[0],
+                            meats: combo.length === 0 ? [] : CHICKEN_COMBO[combo[0] as keyof typeof CHICKEN_COMBO]
+                        })}
                     />
                 )}
 
