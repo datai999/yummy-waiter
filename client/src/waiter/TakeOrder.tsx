@@ -8,7 +8,6 @@ import {
     NonPho,
     NonPhoCode,
     Pho,
-    PhoCode,
     SelectedItem,
 } from 'myTypes';
 import { FaChevronRight } from 'react-icons/fa';
@@ -31,20 +30,21 @@ import { CheckButton } from '../my/my-component';
 import {
     BEEF_COMBO,
     BEEF_MEAT,
+    BEEF_NOODLE,
+    BEEF_REFERENCES,
     BeefMeatSideOrder,
     BeefMeatSideOrderCodes,
-    BeefPreferences,
     BeefSideOrder,
     BeefSideOrderCodes,
     Categories,
     CHICKEN_COMBO,
+    CHICKEN_NOODLE,
+    CHICKEN_REFERENCES,
     ChickenSideOrder,
-    ChikenPreferences,
     DefaultPho,
     Dessert,
     Drinks,
     INIT_SELECTED_ITEM,
-    Noodles,
     TableStatus,
 } from '../my/my-constants';
 import {
@@ -98,11 +98,11 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         let newPho = { ...pho, id: id };
         if (Categories.BEEF === props.category) {
             newPho = toPhoCode(props.category, newPho);
-            newItem.beef.set(id, newPho as PhoCode);
+            newItem.beef.set(id, newPho as Pho);
             newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':add beef'];
         } else if (Categories.CHICKEN === props.category) {
             newPho = toPhoCode(props.category, newPho);
-            newItem.chicken.set(id, newPho as PhoCode);
+            newItem.chicken.set(id, newPho as Pho);
             newItem.chickenUpdated = [...newItem.chickenUpdated, new Date().toISOString() + ':add chicken'];
         } else if (Categories.SIDE_ORDERS === props.category) {
             if (nonPho.beefSide.length > 0) {
@@ -240,36 +240,30 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
                         <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
                         <CheckButton
                             multi={false}
-                            allOptions={Object.keys(Noodles)
-                                .filter(e => Categories.BEEF === props.category
-                                    ? ![Noodles.VERMICELL, Noodles.GLASS, Noodles.EGG].includes(Noodles[e as keyof typeof Noodles])
-                                    : e)}
+                            allOptions={Categories.BEEF === props.category ? BEEF_NOODLE : CHICKEN_NOODLE}
                             options={[pho.noodle]}
-                            createLabel={(key) => Noodles[key as keyof typeof Noodles]}
+                            createLabel={(key) => key}
                             callback={(noodles) => setPho({ ...pho, noodle: noodles[0] })}
                         />
                         <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
+                        {[Categories.BEEF, Categories.CHICKEN].filter(category => props.category === category)
+                            .map(category => {
+                                const references = Categories.BEEF === category ? BEEF_REFERENCES : CHICKEN_REFERENCES;
+                                return (
+                                    <CheckButton
+                                        key={category}
+                                        multi={true}
+                                        allOptions={Object.keys(references)}
+                                        options={pho.preferences}
+                                        createLabel={(key) => key}
+                                        callback={(preferences) => setPho({
+                                            ...pho, preferences
+                                        })}
+                                    />
+                                )
+                            })
+                        }
                     </>
-                )}
-
-                {props.category === Categories.BEEF && (
-                    <CheckButton
-                        multi={true}
-                        allOptions={Object.keys(BeefPreferences)}
-                        options={pho.preferences}
-                        createLabel={(key) => BeefPreferences[key as keyof typeof BeefPreferences]}
-                        callback={(preferences) => setPho({ ...pho, preferences })}
-                    />
-                )}
-
-                {props.category === Categories.CHICKEN && (
-                    <CheckButton
-                        multi={true}
-                        allOptions={Object.keys(ChikenPreferences)}
-                        options={pho.preferences}
-                        createLabel={(key) => ChikenPreferences[key as keyof typeof ChikenPreferences]}
-                        callback={(preferences) => setPho({ ...pho, preferences })}
-                    />
                 )}
 
                 {props.category === Categories.SIDE_ORDERS && (

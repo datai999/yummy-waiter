@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import {
     NonPhoCode,
-    PhoCode,
+    Pho,
     SelectedItem,
 } from 'myTypes';
 import {
@@ -25,7 +25,7 @@ import {
 } from '@mui/material';
 
 import { SideItemList } from '../my/my-component';
-import { Categories } from '../my/my-constants';
+import { BEEF_REFERENCES, Categories, CHICKEN_REFERENCES } from '../my/my-constants';
 import { generateId } from '../my/my-service';
 import {
     OrderItem,
@@ -69,7 +69,7 @@ interface PhoListProps {
     bag: number,
     category: Categories,
     phoId: String,
-    phos: Map<String, PhoCode>,
+    phos: Map<String, Pho>,
     sideOrders: Map<String, NonPhoCode>,
     showPho?: (bag: number, category: Categories, itemId: string) => void,
 }
@@ -83,7 +83,7 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
     };
 
     const copy = (itemId: string) => {
-        const copyItem = { ...phos.get(itemId), id: generateId() } as PhoCode;
+        const copyItem = { ...phos.get(itemId), id: generateId() } as Pho;
         phos.set(copyItem.id, copyItem);
         setRefresh(!refresh);
     }
@@ -105,6 +105,7 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
 
             <List dense sx={{ width: '100%', p: 0 }}>
                 {Array.from(phos.entries()).map(([id, item], index) => {
+                    const references = Categories.BEEF === category ? BEEF_REFERENCES : CHICKEN_REFERENCES;
                     return (
                         <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }} style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
                             <Button onClick={() => { if (showPho) remove(item.id) }} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
@@ -125,7 +126,8 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
                                         secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
                                         sx={{ p: 0, m: 0 }}
                                         primary={
-                                            `${item.meats.join(',')} (${item.noodleCode}) ${(item.preferenceCodes) ? `(${item.preferenceCodes})` : ''}`}
+                                            `${item.meats.join(',')} (${item.noodle}) ${(item.preferences || [])
+                                                .map(e => references[e as keyof typeof references])}`}
                                         secondary={item.note ? item.note : null}
                                     />
                                 </ListItemButton>

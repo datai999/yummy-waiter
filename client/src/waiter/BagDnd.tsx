@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-    PhoCode,
+    Pho,
     SelectedItem,
 } from 'myTypes';
 import { RiDragMove2Fill } from 'react-icons/ri';
@@ -73,11 +73,11 @@ const BagDnd = ({ bags, phoId, showPho }: Props) => {
 
         const selectedItem = bags.get(activeBag);
         if (category === Categories.BEEF) {
-            const item = selectedItem?.beef.get(itemId) as PhoCode;
+            const item = selectedItem?.beef.get(itemId) as Pho;
             selectedItem?.beef.delete(itemId);
             bags.get(overBag)?.beef.set(item?.id as string, item);
         } else if (category === Categories.CHICKEN) {
-            const item = selectedItem?.chicken.get(itemId) as PhoCode;
+            const item = selectedItem?.chicken.get(itemId) as Pho;
             selectedItem?.chicken.delete(itemId);
             bags.get(overBag)?.chicken.set(item?.id as string, item);
         }

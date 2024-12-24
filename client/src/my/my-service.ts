@@ -1,16 +1,12 @@
 import {
     Pho,
-    PhoCode,
     SelectedItem,
 } from 'myTypes';
 
 import {
     BEEF_MEAT,
-    BeefPreferenceCodes,
     Categories,
-    ChikenPreferences,
     INIT_SELECTED_ITEM,
-    Noodles,
     TableStatus,
 } from './my-constants';
 import { Table } from 'myTable';
@@ -67,25 +63,14 @@ export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTabl
     return toTable;
 }
 
-export const toPhoCode = (category: Categories, pho: Pho): PhoCode => {
-    const id = pho.id.length ? pho.id : generateId();
-    const phoCode = { ...pho, id: id } as PhoCode;
+export const toPhoCode = (category: Categories, pho: Pho): Pho => {
+    pho.id = pho.id.length ? pho.id : generateId();
 
-    phoCode.noodleCode = Noodles[phoCode.noodle as keyof typeof Noodles] as string;
+    if (Categories.CHICKEN === category) return pho;
 
-    if (Categories.CHICKEN === category) {
-        phoCode.preferenceCodes = (phoCode.preferences || [])
-            .map(e => ChikenPreferences[e as keyof typeof ChikenPreferences])
-            .join(", ");
-        return phoCode;
-    }
-
-    if (phoCode.meats.length === 0) phoCode.meats = ["BPN"];
-    else phoCode.meats = phoCode.meats.filter(meat => meat !== "BPN");
-    phoCode.preferenceCodes = (phoCode.preferences || [])
-        .map(e => BeefPreferenceCodes[e as keyof typeof BeefPreferenceCodes])
-        .join(", ");
-    return phoCode;
+    if (pho.meats.length === 0) pho.meats = ["BPN"];
+    else pho.meats = pho.meats.filter(meat => meat !== "BPN");
+    return pho;
 }
 
 export const selectedNotEmpty = (selectedItem: SelectedItem): boolean => {
