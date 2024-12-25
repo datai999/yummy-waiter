@@ -7,28 +7,6 @@ export enum Categories {
     DRINKS = "DRINKS"
 }
 
-export enum BeefSideOrder {
-    VINEGAR_ONION = "Hành dấm",
-    ROOT_ONION = "Hành trần",
-    FAT = "Chén béo",
-    XiQ = "Xí Quách",
-    EXTRA_NOODLE = "Chén bánh",
-    EXTRA_FRESH_NOODLE = "Chén BT",
-    EGG_YOLK = "Chén trứng",
-    BREAD = "Bánh mì"
-}
-
-export enum BeefSideOrderCodes {
-    VINEGAR_ONION = "HD",
-    ROOT_ONION = "HT",
-    FAT = "Béo",
-    XiQ = "XiQ",
-    EXTRA_NOODLE = "Ch.Bánh",
-    EXTRA_FRESH_NOODLE = "Ch.BT",
-    EGG_YOLK = "Ch.Egg",
-    BREAD = "B.Mì"
-}
-
 export enum BeefMeatSideOrder {
     RARE = "Dĩa Tái",
     RARE_SOUP = "Chén Tái",
@@ -118,24 +96,35 @@ export const BEEF_NOODLE = ['BC', 'BT', 'BS', 'BTS'];
 export const CHICKEN_NOODLE = ['BC', 'BT', 'BS', 'BTS', 'Bún', 'Miến', 'Mì'];
 
 export const BEEF_REFERENCES = {
-    'Không hành': 'No H',
-    'Không béo': 'No Béo',
-    'Ít bánh': '-b',
-    'Tái riêng': 'R',
+    '0h': 'Không hành',
+    '0Béo': 'Không béo',
+    '-b': 'Ít bánh',
+    'R': 'Tái riêng',
     'Giá sống': 'Giá sống',
     'HD': 'HD',
     'HT': 'HT',
-    'Béo': 'Béo',
+    'NB': 'NB',
 }
 export const CHICKEN_REFERENCES = {
-    'Không hành': 'No H',
-    'Không béo': 'No Béo',
+    '0h': 'Không hành',
+    '0Béo': 'Không béo',
     'Giá chín': 'Giá chín',
     'HD': 'HD',
     'HT': 'HT',
-    'No skin': '0skin',
-    'No bone': '0bone',
-    'Khô': 'K',
+    '0skin': 'No skin',
+    '0bone': 'No bone',
+    'K': 'Khô',
+}
+
+export const BEEF_SIDE = {
+    'HD': 'HD',
+    'HT': 'HT',
+    'NB': 'NB',
+    'XiQ': 'XisQ',
+    'Ch.Bánh': 'Ch.Bánh',
+    'Ch.BT': 'Ch.BT',
+    'Ch.Egg': 'Ch.Egg',
+    'Bread': 'Bread',
 }
 
 export const DefaultPho: Pho = {
@@ -143,7 +132,8 @@ export const DefaultPho: Pho = {
     meats: [],
     noodle: "BC",
     preferences: [],
-    note: ''
+    note: '',
+    count: 1
 }
 
 export const INIT_SELECTED_ITEM: SelectedItem = {

@@ -5,7 +5,6 @@ import React, {
 
 import _ from 'lodash';
 import {
-    NonPho,
     NonPhoCode,
     Pho,
     SelectedItem,
@@ -32,10 +31,9 @@ import {
     BEEF_MEAT,
     BEEF_NOODLE,
     BEEF_REFERENCES,
+    BEEF_SIDE,
     BeefMeatSideOrder,
     BeefMeatSideOrderCodes,
-    BeefSideOrder,
-    BeefSideOrderCodes,
     Categories,
     CHICKEN_COMBO,
     CHICKEN_NOODLE,
@@ -58,8 +56,18 @@ import { Table } from 'myTable';
 import { ChildWaiterProps } from './Waiter';
 import { SYNC_TYPE, syncServer } from '../my/my-ws';
 
+type NonPho = {
+    beefSide: string[],
+    beefSides: Map<string, NonPhoCode>,
+    beefMeatSide: string[],
+    chickenSide: string[],
+    drink: string[],
+    dessert: string[],
+}
+
 const defaultNonPho: NonPho = {
     beefSide: [],
+    beefSides: new Map(),
     beefMeatSide: [],
     chickenSide: [],
     dessert: [],
@@ -105,11 +113,8 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
             newItem.chicken.set(id, newPho as Pho);
             newItem.chickenUpdated = [...newItem.chickenUpdated, new Date().toISOString() + ':add chicken'];
         } else if (Categories.SIDE_ORDERS === props.category) {
-            if (nonPho.beefSide.length > 0) {
-                nonPho.beefSide.forEach((item, index) => {
-                    const newSideItem = { id: id + "_" + index, key: item, code: BeefSideOrderCodes[item as keyof typeof BeefSideOrderCodes], count: 1 } as NonPhoCode;
-                    newItem.beefSide.set(newSideItem.id, newSideItem);
-                });
+            if (nonPho.beefSides.size > 0) {
+                newItem.beefSide = nonPho.beefSides;
                 newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':add beef side'];
             }
             if (nonPho.beefMeatSide.length > 0) {
@@ -191,6 +196,18 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         setBags(nextSelected);
     }
 
+    const updateNonPho = (propertyKey: string, nonPhoCode: string) => {
+        const nextNonPho = { ...nonPho };
+        const property = nextNonPho[propertyKey as keyof NonPho] as Map<string, NonPhoCode>;
+        const nonPhoItem = {
+            id: generateId(),
+            code: nonPhoCode,
+            count: 1
+        }
+        property.set(nonPhoItem.id, nonPhoItem);
+        setNonPho(nextNonPho);
+    }
+
     console.log(pho);
 
     return (
@@ -255,7 +272,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
                                         multi={true}
                                         allOptions={Object.keys(references)}
                                         options={pho.preferences}
-                                        createLabel={(key) => key}
+                                        createLabel={(key) => references[key as keyof typeof references]}
                                         callback={(preferences) => setPho({
                                             ...pho, preferences
                                         })}
@@ -270,10 +287,10 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
                     <>
                         <CheckButton
                             multi={true}
-                            allOptions={Object.keys(BeefSideOrder)}
-                            options={nonPho.beefSide}
-                            createLabel={(key) => BeefSideOrder[key as keyof typeof BeefSideOrder]}
-                            callback={(newSideOrder) => setNonPho({ ...nonPho, beefSide: newSideOrder })}
+                            allOptions={Object.keys(BEEF_SIDE)}
+                            options={Array.from(nonPho.beefSides.values()).map(e => e.code)}
+                            createLabel={(key) => BEEF_SIDE[key as keyof typeof BEEF_SIDE]}
+                            callback={(newSideOrder) => updateNonPho('beefSides', newSideOrder[0])}
                         />
                         <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
                         <CheckButton

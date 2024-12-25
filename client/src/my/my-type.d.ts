@@ -6,20 +6,14 @@ declare module 'myTypes' {
         noodle: string,
         preferences?: string[],
         note?: string,
+        count: number,
     };
-
-    type NonPho = {
-        beefSide: string[],
-        beefMeatSide: string[],
-        chickenSide: string[],
-        drink: string[],
-        dessert: string[],
-    }
 
     type NonPhoCode = {
         id: string,
         key?: string,
         code: string,
+        note?: string,
         count: number,
     }
 
