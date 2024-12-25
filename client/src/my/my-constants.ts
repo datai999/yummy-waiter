@@ -120,7 +120,7 @@ export const BEEF_SIDE = {
     'HD': 'HD',
     'HT': 'HT',
     'NB': 'NB',
-    'XiQ': 'XisQ',
+    'XiQ': 'XiQ',
     'Ch.Bánh': 'Ch.Bánh',
     'Ch.BT': 'Ch.BT',
     'Ch.Egg': 'Ch.Egg',

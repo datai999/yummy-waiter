@@ -199,13 +199,17 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     const updateNonPho = (propertyKey: string, nonPhoCode: string) => {
         const nextNonPho = { ...nonPho };
         const property = nextNonPho[propertyKey as keyof NonPho] as Map<string, NonPhoCode>;
-        const nonPhoItem = {
-            id: generateId(),
-            code: nonPhoCode,
-            count: 1
+        if (property.has(nonPhoCode)) {
+            property.get(nonPhoCode)!.count++;
+        } else {
+            property.set(nonPhoCode, {
+                id: generateId(),
+                code: nonPhoCode,
+                count: 1
+            });
         }
-        property.set(nonPhoItem.id, nonPhoItem);
         setNonPho(nextNonPho);
+        addItem(0);
     }
 
     console.log(pho);
@@ -288,7 +292,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
                         <CheckButton
                             multi={true}
                             allOptions={Object.keys(BEEF_SIDE)}
-                            options={Array.from(nonPho.beefSides.values()).map(e => e.code)}
+                            options={[]}
                             createLabel={(key) => BEEF_SIDE[key as keyof typeof BEEF_SIDE]}
                             callback={(newSideOrder) => updateNonPho('beefSides', newSideOrder[0])}
                         />
