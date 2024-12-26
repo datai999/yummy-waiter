@@ -32,22 +32,28 @@ export default function App() {
     }
   }
 
+  // TODO: consider remove isWaiter
+  const overideOrderTable = (nextTable: Table | null) => {
+    setIsWaiter(true);
+    orderTable(nextTable);
+  }
+
   return (
     <>
-      {isWaiter
-        ? (<Waiter setIsWaiter={setIsWaiter} tables={tables} table={table!} orderTable={orderTable} />)
+      {isWaiter && table
+        ? (<Waiter setIsWaiter={setIsWaiter} tables={tables} table={table!} orderTable={overideOrderTable} />)
         : (<>
           <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
             <Header />
           </Box>
-          <TableManagerment tables={tables} orderTable={orderTable} /></>)}
+          <TableManagerment tables={tables} orderTable={overideOrderTable} /></>)}
     </>
     /**
      * waiter: 
      *  + communicate between devices in LAN
      *  + remove confirmation
-     *  - recommendation pho
-     *  - qty btn
+     *  + recommendation pho
+     *  - qty btn pho
      *  - count pho
      *  - multi item selection to edit
      *  - button edit all items
