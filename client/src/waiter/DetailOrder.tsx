@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
-    NonPhoCode,
-    Pho,
-    SelectedItem,
+    Pho
 } from 'myTypes';
 import {
     FaMinus,
@@ -32,6 +30,7 @@ import {
     StyledPaper,
 } from '../my/my-styled';
 import { Draggable } from './BagDnd';
+import { NonPho, SelectedItem } from '../my/my-class';
 
 interface Props {
     bag: number,
@@ -70,7 +69,7 @@ interface PhoListProps {
     category: Categories,
     phoId: String,
     phos: Map<String, Pho>,
-    sideOrders: Map<String, NonPhoCode>,
+    sideOrders: Map<String, NonPho>,
     showPho?: (bag: number, category: Categories, itemId: string) => void,
 }
 
@@ -146,8 +145,8 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
 
 const DrinkDessertList = ({ canEdit, drinks, desserts }: {
     canEdit: boolean,
-    drinks: Map<String, NonPhoCode>,
-    desserts: Map<String, NonPhoCode>,
+    drinks: Map<String, NonPho>,
+    desserts: Map<String, NonPho>,
 }) => {
     return (
         <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0 }}>

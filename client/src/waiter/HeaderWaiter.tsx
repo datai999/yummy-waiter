@@ -109,7 +109,7 @@ const WrapCategoryButton = ({ props }: {
         variant="contained"
         size={props.size == "small" ? "small" : props.size == "medium" ? "medium" : "large"}
     >
-        {props.category === Categories.SIDE_ORDERS ? "SIDE ORDER" : props.category}
+        {props.category}
     </CategoryButton>)
 }
 

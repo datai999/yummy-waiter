@@ -9,14 +9,6 @@ declare module 'myTypes' {
         count: number,
     };
 
-    type NonPhoCode = {
-        id: string,
-        key?: string,
-        code: string,
-        note?: string,
-        count: number,
-    }
-
     type SelectedItem = {
         beef: Map<string, Pho>,
         beefSide: Map<string, NonPhoCode>,

@@ -3,59 +3,8 @@ import { Pho, SelectedItem } from 'myTypes';
 export enum Categories {
     BEEF = "BEEF",
     CHICKEN = "CHICKEN",
-    SIDE_ORDERS = "SIDE_ORDERS",
+    // SIDE_ORDERS = "SIDE_ORDERS",
     DRINKS = "DRINKS"
-}
-
-export enum BeefMeatSideOrder {
-    RARE = "Dĩa Tái",
-    RARE_SOUP = "Chén Tái",
-    LEAN = "Chén Chín",
-    FATTY = "Chén Gầu",
-    TENDON = "Chén Gân",
-    TRIPE = "Chén Sách",
-    BEEF_BALL = "Chén Bò viên",
-}
-
-export enum BeefMeatSideOrderCodes {
-    RARE = "Dĩa T",
-    RARE_SOUP = "Ch.T",
-    LEAN = "Ch.C",
-    FATTY = "Ch.G`",
-    TENDON = "Ch.g",
-    TRIPE = "Ch.S",
-    BEEF_BALL = "Ch.BV",
-}
-
-export enum ChickenSideOrder {
-    BAMBO_SHOOTS = "Măng",
-    WHOLE_CHICKEN = "Con gà",
-    HALF_CHICKEN = "Nửa con gà",
-    EXTRA_WHITE = "Dĩa ức",
-    EXTRA_WING = "Dĩa cánh",
-    EXTRA_DARK = "Dĩa đùi"
-}
-
-export enum Drinks {
-    WATER = "Water",
-    ICE_WATER = "Ice-water",
-    HOT_WATER = "Hot-water",
-    ICE_TEA = "Ice-tea",
-    HOT_TEA = "Hot-tea",
-    COFFEE = "Coffee",
-    BLACK_COFEE = "Black-coffee",
-    COKE = "Coke",
-    DIET_COKE = "Diet-Coke",
-    SPRITE = "Sprite",
-}
-
-export enum Dessert {
-    TOFU = "Tofu regular",
-    TOFU_MATCHA = "Tofu matcha",
-    TOFU_GINGER = "Tofu ginger",
-    COCONUT_JELLY = "Coconut jelly",
-    MIXED_JELLY = "Mixed jelly",
-    THREE_COLOR = "3 màu"
 }
 
 export enum TableStatus {
@@ -64,23 +13,23 @@ export enum TableStatus {
 }
 
 export const BEEF_MEAT = {
-    "T": { sort: 1, label: 'Tái' },
-    "C": { sort: 2, label: 'Chín' },
-    "G`": { sort: 3, label: 'Gầu' },
-    "g": { sort: 4, label: 'Gân' },
-    "S": { sort: 5, label: 'Sách' },
-    "BV": { sort: 6, label: 'Bò viên' },
-    "Xi": { sort: 0, label: 'XiQ' }
+    "Tái": { sort: 1, code: 'T' },
+    "Chín": { sort: 2, code: 'C' },
+    "Gầu": { sort: 3, code: 'G`' },
+    "Gân": { sort: 4, code: 'g^' },
+    "Sách": { sort: 5, code: 'S' },
+    "BV": { sort: 6, code: 'BV' },
+    "Xi": { sort: 0, code: 'Xi' }
 }
 
 export const BEEF_COMBO = {
-    "#1:DB": ['T', 'C', 'G`', 'g', 'S', 'BV'],
-    "#2:Tái": ['T'],
-    "#3:Tái,Bò viên": ['T', 'BV'],
-    "#4:Tái,Chín,Sách": ['T', 'C', 'S'],
-    "#5:Tái,Chín,Gầu": ['T', 'C', 'G`'],
-    "#6:Tái,Chín,gân": ['T', 'C', 'g'],
-    "#7:Xi,Gầu,Bò viên": ['Xi', 'G`', 'BV'],
+    "#1:DB": ['Tái', 'Chín', 'Gầu', 'Gân', 'Sách', 'BV'],
+    "#2:Tái": ['Tái'],
+    "#3:Tái,Bò viên": ['Tái', 'BV'],
+    "#4:Tái,Chín,Sách": ['Tái', 'Chín', 'Sách'],
+    "#5:Tái,Chín,Gầu": ['Tái', 'Chín', 'Gầu'],
+    "#6:Tái,Chín,gân": ['Tái', 'Chín', 'Gân'],
+    "#7:Xi,Gầu,Bò viên": ['Xi', 'Gầu', 'BV'],
     "#8a:Hủ tiếu BK": ['Pho BK'],
     "#8b:B.Mì BK": ['B.Mì BK'],
     "#8c:Mì BK": ['Mì BK']
@@ -96,35 +45,74 @@ export const BEEF_NOODLE = ['BC', 'BT', 'BS', 'BTS'];
 export const CHICKEN_NOODLE = ['BC', 'BT', 'BS', 'BTS', 'Bún', 'Miến', 'Mì'];
 
 export const BEEF_REFERENCES = {
-    '0h': 'Không hành',
-    '0Béo': 'Không béo',
-    '-b': 'Ít bánh',
-    'R': 'Tái riêng',
-    'Giá sống': 'Giá sống',
-    'HD': 'HD',
-    'HT': 'HT',
-    'NB': 'NB',
+    'Không hành': '0h',
+    'Không béo': '0Béo',
+    'Ít bánh': '-b',
+    'Tái riêng': 'R'
 }
 export const CHICKEN_REFERENCES = {
-    '0h': 'Không hành',
-    '0Béo': 'Không béo',
-    'Giá chín': 'Giá chín',
-    'HD': 'HD',
-    'HT': 'HT',
-    '0skin': 'No skin',
-    '0bone': 'No bone',
-    'K': 'Khô',
+    'Không hành': '0h',
+    'Không da': '0Skin',
+    'Không xương': '0bone',
+    'Khô': 'K'
 }
 
 export const BEEF_SIDE = {
     'HD': 'HD',
     'HT': 'HT',
     'NB': 'NB',
+    'Giá sống': 'Giá sống',
     'XiQ': 'XiQ',
     'Ch.Bánh': 'Ch.Bánh',
     'Ch.BT': 'Ch.BT',
     'Ch.Egg': 'Ch.Egg',
     'Bread': 'Bread',
+    'Ch.Soup': 'Ch.Soup',
+    'Small.Soup': 'Small Soup',
+    'Large.Soup': 'Large Soup',
+}
+
+export const BEEF_MEAT_SIDE = {
+    'Dĩa Tái': "Dĩa T",
+    'Chén Tái': "Ch.T",
+    'Chén Chín': "Ch.C",
+    'Chén Gầu': "Ch.G`",
+    'Chén Gân': "Ch.g",
+    'Chén Sách': "Ch.S",
+    'Chén BV': "Ch.BV"
+}
+
+export const CHICKEN_SIDE = {
+    "Giá trụng": "Giá trụng",
+    'HD': 'HD',
+    "Extra bamboo": "Extra bamboo",
+    "Whole chicken": 'Whole chicken',
+    "Half chicken": 'Half chicken',
+    "Dĩa ức": 'Dia.U',
+    'Dĩa cánh': 'Dia.C',
+    'Dĩa đùi': 'Dia.D'
+}
+
+export const DRINK = {
+    'Water': 'Water',
+    'Ice-water': 'Ice-water',
+    'Hot-water': 'Hot-water',
+    'Ice-tea': 'Ice-tea',
+    'Hot-tea': 'Hot-tea',
+    'Coffee': 'Coffee',
+    'Black-coffee': 'Black-coffee',
+    'Coke': 'Coke',
+    'Diet-Coke': 'Diet-Coke',
+    'Sprite': 'Sprite'
+}
+
+export const DESSERT = {
+    'Tofu soybean': 'Tofu soybean',
+    'Tofu matcha': 'Tofu matcha',
+    'Tofu ginger': 'Tofu ginger',
+    'Coconut jelly': 'Coconut jelly',
+    'Mixed jelly': 'Mixed jelly',
+    'Three color': 'Three color'
 }
 
 export const DefaultPho: Pho = {

@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { NonPhoCode } from 'myTypes';
 import {
     FaMinus,
     FaPlus,
@@ -20,6 +19,7 @@ import {
     CategoryButton,
     OrderItem,
 } from './my-styled';
+import { NonPho } from './my-class';
 
 interface CheckButtonProps {
     multi: boolean,
@@ -83,13 +83,13 @@ export const CheckButton = ({ multi, allOptions, options = [], createLabel, call
 
 export const SideItemList = ({ canEdit, sideItems, doubleCol = true }: {
     canEdit: boolean;
-    sideItems: Map<String, NonPhoCode>,
+    sideItems: Map<String, NonPho>,
     doubleCol?: boolean,
 }) => {
     const [refresh, setRefresh] = useState<Boolean>(false);
 
     const copy = (itemId: String) => {
-        const newItem = { ...sideItems.get(itemId), id: generateId() } as NonPhoCode;
+        const newItem = { ...sideItems.get(itemId), id: generateId() } as NonPho;
         sideItems.set(newItem.id, newItem);
         setRefresh(!refresh);
     }
@@ -156,7 +156,7 @@ export const SideItemList = ({ canEdit, sideItems, doubleCol = true }: {
                                                     remove(key);
                                                     return;
                                                 }
-                                                const sideItem = sideItems.get(key) || {} as NonPhoCode;
+                                                const sideItem = sideItems.get(key) || {} as NonPho;
                                                 sideItem.count = num;
                                                 setRefresh(!refresh);
                                             }}
