@@ -1,6 +1,31 @@
-import { Pho } from "myTypes";
-import { generateId } from "./my-service";
-import { INIT_SELECTED_ITEM } from "./my-constants";
+import { generateId } from './my-service';
+
+export class Pho {
+    id: string;
+    combo?: string;
+    meats: string[];
+    noodle: string;
+    preferences?: string[];
+    note?: string;
+    count: number;
+
+    public constructor() {
+        this.id = '';
+        this.meats = [];
+        this.noodle = 'BC';
+        this.preferences = [];
+        this.note = '';
+        this.count = 1;
+    }
+
+    func = {
+        complete: () => {
+            this.id = this.id || generateId();
+            if (this.meats.length === 0) this.meats = ["BPN"];
+            else this.meats = this.meats.filter(meat => meat !== "BPN");
+        }
+    }
+}
 
 export class NonPho {
     id: string;

@@ -4,9 +4,6 @@ import React, {
 } from 'react';
 
 import _ from 'lodash';
-import {
-    Pho,
-} from 'myTypes';
 import { FaChevronRight } from 'react-icons/fa';
 import { GiPaperBagFolded } from 'react-icons/gi';
 
@@ -36,22 +33,17 @@ import {
     CHICKEN_NOODLE,
     CHICKEN_REFERENCES,
     CHICKEN_SIDE,
-    DefaultPho,
     DESSERT,
     DRINK,
     INIT_SELECTED_ITEM,
     TableStatus,
 } from '../my/my-constants';
-import {
-    generateId,
-    sortBeefMeat,
-    toPhoCode,
-} from '../my/my-service';
+import * as SERVICE from '../my/my-service';
 import { StyledPaper } from '../my/my-styled';
 import BagDnd from './BagDnd';
 import { ChildWaiterProps } from './Waiter';
 import { SYNC_TYPE, syncServer } from '../my/my-ws';
-import { NonPho, SelectedItem } from '../my/my-class';
+import { NonPho, Pho, SelectedItem } from '../my/my-class';
 
 const defaultNonPho = {
     beefSides: new Map<string, NonPho>(),
@@ -65,7 +57,7 @@ interface OrderTakeProps extends ChildWaiterProps {
 }
 
 const OrderTake = ({ props }: { props: OrderTakeProps }) => {
-    const [pho, setPho] = useState<Pho>(DefaultPho);
+    const [pho, setPho] = useState<Pho>(new Pho());
     const [nonPho, setNonPho] = useState(defaultNonPho);
 
     const [bags, setBags] = useState<Map<number, SelectedItem>>(props.table.bags);
@@ -73,39 +65,35 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
     useEffect(() => {
-        setPho(DefaultPho);
+        setPho(new Pho());
         setNonPho(defaultNonPho);
     }, [props.refreshState]);
 
     useEffect(() => {
-        const meatCodes = pho.meats.sort(sortBeefMeat).join(',');
+        const meatCodes = pho.meats.sort(SERVICE.sortBeefMeat).join(',');
         const combo = Object.entries(props.category === Categories.BEEF ? BEEF_COMBO : CHICKEN_COMBO)
             .find(([key, value]) => {
                 if (value.length !== pho.meats.length) return false;
-                return value.sort(sortBeefMeat).join(',') === meatCodes;
+                return value.sort(SERVICE.sortBeefMeat).join(',') === meatCodes;
             });
         setPho({ ...pho, combo: combo ? combo[0] : '' });
     }, [pho.meats]);
 
-    const handleItem = (newItem: SelectedItem) => {
-        const id = pho.id.length ? pho.id : generateId();
-        let newPho = { ...pho, id: id };
-        if (Categories.BEEF === props.category) {
-            newPho = toPhoCode(props.category, newPho);
-            newItem.beef.set(id, newPho as Pho);
-            newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':add beef'];
-        } else if (Categories.CHICKEN === props.category) {
-            newPho = toPhoCode(props.category, newPho);
-            newItem.chicken.set(id, newPho as Pho);
-            newItem.chickenUpdated = [...newItem.chickenUpdated, new Date().toISOString() + ':add chicken'];
-        }
-    };
-
     const addItem = (bag: number) => {
-        const dineIn = new Map(bags);
-        handleItem(dineIn.get(bag)!);
-        setBags(dineIn);
-        setPho(DefaultPho);
+        const cloneBags = new Map(bags);
+        const dineIn = cloneBags.get(bag)!;
+
+        pho.func.complete();
+        if (Categories.BEEF === props.category) {
+            dineIn.beef.set(pho.id, pho);
+            dineIn.beefUpdated = [...dineIn.beefUpdated, new Date().toISOString() + ':add beef'];
+        } else if (Categories.CHICKEN === props.category) {
+            dineIn.chicken.set(pho.id, pho);
+            dineIn.chickenUpdated = [...dineIn.chickenUpdated, new Date().toISOString() + ':add chicken'];
+        }
+
+        setBags(cloneBags);
+        setPho(new Pho());
         setNonPho(defaultNonPho);
     }
 
@@ -122,15 +110,15 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
 
     const showPho = (bag: number, category: Categories, selectedItemId: string) => {
         if (selectedItemId === null || selectedItemId.length === 0) {
-            setPho(DefaultPho);
+            setPho(new Pho());
             setNonPho(defaultNonPho);
             return;
         }
         props.setCategory(category);
         if (Categories.BEEF === category)
-            setPho({ ...bags.get(bag)?.beef.get(selectedItemId)! });
+            setPho(bags.get(bag)?.beef.get(selectedItemId)!);
         else if (Categories.CHICKEN === category)
-            setPho({ ...bags.get(bag)?.chicken.get(selectedItemId)! });
+            setPho(bags.get(bag)?.chicken.get(selectedItemId)!);
     }
 
     const addBag = () => {
@@ -224,7 +212,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
                                         key={category}
                                         multi={true}
                                         allOptions={Object.keys(references)}
-                                        options={pho.preferences}
+                                        options={pho.preferences || []}
                                         createLabel={(key) => key}
                                         callback={(preferences) => setPho({
                                             ...pho, preferences

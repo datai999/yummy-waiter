@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-    Pho
-} from 'myTypes';
-import {
     FaMinus,
     FaPlus,
 } from 'react-icons/fa';
@@ -30,7 +27,7 @@ import {
     StyledPaper,
 } from '../my/my-styled';
 import { Draggable } from './BagDnd';
-import { NonPho, SelectedItem } from '../my/my-class';
+import { NonPho, Pho, SelectedItem } from '../my/my-class';
 
 interface Props {
     bag: number,

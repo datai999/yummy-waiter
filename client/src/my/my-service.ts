@@ -1,9 +1,4 @@
 import {
-    Pho,
-    SelectedItem,
-} from 'myTypes';
-
-import {
     BEEF_MEAT,
     Categories,
     INIT_SELECTED_ITEM,
@@ -12,6 +7,7 @@ import {
 import { Table } from 'myTable';
 import _ from 'lodash';
 import { syncServer, SYNC_TYPE } from './my-ws';
+import { Pho, SelectedItem } from './my-class';
 
 const lodash = _;
 
@@ -61,16 +57,6 @@ export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTabl
     }
 
     return toTable;
-}
-
-export const toPhoCode = (category: Categories, pho: Pho): Pho => {
-    pho.id = pho.id.length ? pho.id : generateId();
-
-    if (Categories.CHICKEN === category) return pho;
-
-    if (pho.meats.length === 0) pho.meats = ["BPN"];
-    else pho.meats = pho.meats.filter(meat => meat !== "BPN");
-    return pho;
 }
 
 export const selectedNotEmpty = (selectedItem: SelectedItem): boolean => {

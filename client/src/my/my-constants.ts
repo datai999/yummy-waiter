@@ -1,4 +1,4 @@
-import { Pho, SelectedItem } from 'myTypes';
+import { SelectedItem } from "./my-class";
 
 export enum Categories {
     BEEF = "BEEF",
@@ -113,15 +113,6 @@ export const DESSERT = {
     'Coconut jelly': 'Coconut jelly',
     'Mixed jelly': 'Mixed jelly',
     'Three color': 'Three color'
-}
-
-export const DefaultPho: Pho = {
-    id: '',
-    meats: [],
-    noodle: "BC",
-    preferences: [],
-    note: '',
-    count: 1
 }
 
 export const INIT_SELECTED_ITEM: SelectedItem = {

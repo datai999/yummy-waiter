@@ -24,54 +24,50 @@ import { NonPho } from './my-class';
 interface CheckButtonProps {
     multi: boolean,
     allOptions: string[],
-    options?: string[],
+    options: string[],
     createLabel: (option: string) => string,
     callback: ([]) => void,
 }
 
-export const CheckButton = ({ multi, allOptions, options = [], createLabel, callback }: CheckButtonProps) => {
+const pCheckButton = ({ ...props }: CheckButtonProps) => {
+    const [options, setOptions] = useState<string[]>(props.options);
+
+    console.log(options);
+
+    useEffect(() => {
+        setOptions(props.options)
+    }, [props.options])
+
+    const onClick = (option: string) => {
+        const newOptions = options.includes(option)
+            ? options.filter((e) => e !== option)
+            : props.multi ? [...options, option] : [option];
+        setOptions([...newOptions]);
+        props.callback(newOptions);
+    }
+
     return (
         <>
             <Grid2 container spacing={1} sx={{ display: { xs: 'none', sm: 'flex', md: 'flex', lg: 'flex' }, mb: 1 }}>
-                {allOptions.map((option) => (
+                {props.allOptions.map((option) => (
                     <Grid2 key={option}>
                         <CategoryButton
                             variant='outlined'
                             size='large'
-                            onClick={() => {
-                                if (!multi) {
-                                    if (options?.includes(option))
-                                        callback([]);
-                                    else callback([option]);
-                                    return;
-                                }
-                                const newOptions = options.includes(option)
-                                    ? options.filter((e) => e !== option)
-                                    : [...options, option];
-                                callback(newOptions);
-                            }}
+                            onClick={() => onClick(option)}
                             selected={options?.includes(option)}
                         >
-                            {createLabel(option)}
+                            {props.createLabel(option)}
                         </CategoryButton>
                     </Grid2>
                 ))}
             </Grid2>
             <Grid2 container spacing={1} sx={{ display: { xs: 'flex', sm: 'none', md: 'none', lg: 'none' }, mb: 1 }}>
-                {allOptions.map((option) => (
+                {props.allOptions.map((option) => (
                     <Grid2 key={option}>
                         <Chip
-                            label={createLabel(option)}
-                            onClick={() => {
-                                if (!multi) {
-                                    callback([option]);
-                                    return;
-                                }
-                                const newOptions = options.includes(option)
-                                    ? options.filter((e) => e !== option)
-                                    : [...options, option];
-                                callback(newOptions);
-                            }}
+                            label={props.createLabel(option)}
+                            onClick={() => onClick(option)}
                             color={options?.includes(option) ? "primary" : "default"}
                         />
                     </Grid2>
@@ -80,6 +76,9 @@ export const CheckButton = ({ multi, allOptions, options = [], createLabel, call
         </>
     );
 }
+export const CheckButton = React.memo(pCheckButton,
+    (prev: CheckButtonProps, next: CheckButtonProps) =>
+        prev.options.sort().join(',') === next.options.sort().join(','));
 
 export const SideItemList = ({ canEdit, sideItems, doubleCol = true }: {
     canEdit: boolean;

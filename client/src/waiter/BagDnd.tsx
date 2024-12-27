@@ -1,9 +1,4 @@
 import React from 'react';
-
-import {
-    Pho,
-    SelectedItem,
-} from 'myTypes';
 import { RiDragMove2Fill } from 'react-icons/ri';
 
 import {
@@ -27,6 +22,7 @@ import { Categories } from '../my/my-constants';
 import { StyledPaper } from '../my/my-styled';
 import theme from '../theme';
 import OrderSummary from './DetailOrder';
+import { Pho, SelectedItem } from '../my/my-class';
 
 interface Props {
     bags: Map<number, SelectedItem>,
