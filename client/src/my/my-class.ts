@@ -1,22 +1,14 @@
+import { Categories, TableStatus } from './my-constants';
 import { generateId } from './my-service';
 
 export class Pho {
-    id: string;
+    id: string = '';
     combo?: string;
-    meats: string[];
-    noodle: string;
+    meats: string[] = [];
+    noodle: string = 'BC';
     preferences?: string[];
     note?: string;
-    count: number;
-
-    public constructor() {
-        this.id = '';
-        this.meats = [];
-        this.noodle = 'BC';
-        this.preferences = [];
-        this.note = '';
-        this.count = 1;
-    }
+    count: number = 1;
 
     func = {
         complete: () => {
@@ -29,7 +21,6 @@ export class Pho {
 
 export class NonPho {
     id: string;
-    key?: string;
     code: string;
     note?: string;
     count: number;
@@ -38,6 +29,34 @@ export class NonPho {
         this.id = generateId();
         this.code = code;
         this.count = 1;
+    }
+}
+
+export class CategoryItem {
+    pho: Map<string, Pho> = new Map();
+    nonPho: Map<string, NonPho> = new Map();
+    action: string[] = [];
+}
+
+export class Table {
+    id: string;
+    status: TableStatus = TableStatus.AVAILABLE;
+    orderTime: Date | null = null;
+    timer: number = 0;
+    bags: Map<number, Map<string, CategoryItem>> = new Map();
+
+    public constructor(id: string) {
+        this.id = id;
+        this.func.newBag();
+        this.func.newBag();
+    }
+
+    func = {
+        newBag: () => this.bags.set(this.bags.size, new Map([
+            [Categories.BEEF, new CategoryItem()],
+            [Categories.CHICKEN, new CategoryItem()],
+            [Categories.DRINKS, new CategoryItem()]
+        ]))
     }
 }
 

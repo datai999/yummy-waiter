@@ -14,9 +14,9 @@ import {
 import YummyLogo from '../assets/yummy.png';
 import { Categories, TableStatus } from '../my/my-constants';
 import { CategoryButton } from '../my/my-styled';
-import { Table } from 'myTable';
 import { ChildWaiterProps } from './Waiter';
 import { changeTable } from '../my/my-service';
+import { Table } from '../my/my-class';
 
 const LogoImage = styled("img")({
     width: "60px",

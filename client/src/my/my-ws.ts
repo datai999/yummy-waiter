@@ -1,4 +1,4 @@
-import { Table } from "myTable";
+import { Table } from "./my-class";
 import { JSON_replacer, JSON_reviver } from "./my-util";
 
 let websocket: WebSocket;

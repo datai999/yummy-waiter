@@ -27,34 +27,40 @@ import {
     StyledPaper,
 } from '../my/my-styled';
 import { Draggable } from './BagDnd';
-import { NonPho, Pho, SelectedItem } from '../my/my-class';
+import { CategoryItem, NonPho, Pho } from '../my/my-class';
 
 interface Props {
     bag: number,
-    selectedItems: SelectedItem,
+    categoryItems: Map<String, CategoryItem>,
     phoId: String;
     showPho?: (bag: number, category: Categories, itemId: string) => void;
 };
 
-const OrderSummary = ({ bag, selectedItems, phoId, showPho }: Props) => {
+const OrderSummary = ({ bag, categoryItems, phoId, showPho }: Props) => {
     const [refresh, setRefresh] = useState<Boolean>(false);
+
+    const selectedItems = {
+        beef: categoryItems.get(Categories.BEEF)!,
+        chicken: categoryItems.get(Categories.CHICKEN)!,
+        drink: categoryItems.get(Categories.DRINKS)!,
+    }
 
     return (
         <>
             <Grid2 container spacing={2}>
-                {selectedItems.beef.size + selectedItems.beefSide.size > 0 && (
+                {selectedItems.beef.pho.size + selectedItems.beef.nonPho.size > 0 && (
                     <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: showPho ? 4 : 'grow' }} >
-                        <PhoList bag={bag} category={Categories.BEEF} phoId={phoId} phos={selectedItems.beef} sideOrders={selectedItems.beefSide}
+                        <PhoList bag={bag} category={Categories.BEEF} phoId={phoId} phos={selectedItems.beef.pho} sideOrders={selectedItems.beef.nonPho}
                             showPho={showPho} />
                     </Grid2>)}
-                {selectedItems.chicken.size + selectedItems.chickenSide.size > 0 && (
+                {selectedItems.chicken.pho.size + selectedItems.chicken.nonPho.size > 0 && (
                     <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: showPho ? 4 : 'grow' }} >
-                        <PhoList bag={bag} category={Categories.CHICKEN} phoId={phoId} phos={selectedItems.chicken} sideOrders={selectedItems.chickenSide}
+                        <PhoList bag={bag} category={Categories.CHICKEN} phoId={phoId} phos={selectedItems.beef.pho} sideOrders={selectedItems.chicken.nonPho}
                             showPho={showPho} />
                     </Grid2>)}
-                {selectedItems.drink.size + selectedItems.dessert.size > 0 && (
+                {selectedItems.drink.nonPho.size > 0 && (
                     <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: showPho ? 4 : 'grow' }} >
-                        <DrinkDessertList canEdit={Boolean(showPho)} drinks={selectedItems.drink} desserts={selectedItems.dessert} />
+                        <DrinkDessertList canEdit={Boolean(showPho)} drinks={selectedItems.drink.nonPho} desserts={new Map()} />
                     </Grid2>)}
             </Grid2>
         </ >

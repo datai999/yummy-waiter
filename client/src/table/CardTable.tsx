@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import { Table } from 'myTable';
-
 import styled from '@emotion/styled';
 import {
   Box,
@@ -19,6 +17,7 @@ import { FiAlertCircle, FiCheckCircle, FiClock } from 'react-icons/fi';
 import { TableStatus } from '../my/my-constants';
 import OrderSummary from '../waiter/DetailOrder';
 import { StyledPaper } from '../my/my-styled';
+import { Table } from '../my/my-class';
 
 const StyledCard = styled(Card)(({ status }: { status: TableStatus }) => ({
   minHeight: "100px",
@@ -163,7 +162,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
                 <OrderSummary
                   key={index}
                   bag={key}
-                  selectedItems={item}
+                  categoryItems={item}
                   phoId={"null"} />
                 {index < table.bags.size - 1 && (<Divider sx={{ pt: 1, pb: 1 }} />)}
               </Box>))

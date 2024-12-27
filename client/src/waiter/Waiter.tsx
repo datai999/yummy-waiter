@@ -5,7 +5,7 @@ import { Box } from '@mui/material';
 import { Categories } from '../my/my-constants';
 import Header from './HeaderWaiter';
 import OrderTake from './TakeOrder';
-import { Table } from 'myTable';
+import { Table } from '../my/my-class';
 
 interface WaiterProps {
     setIsWaiter: (isWaiter: boolean) => void,

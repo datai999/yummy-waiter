@@ -22,10 +22,10 @@ import { Categories } from '../my/my-constants';
 import { StyledPaper } from '../my/my-styled';
 import theme from '../theme';
 import OrderSummary from './DetailOrder';
-import { Pho, SelectedItem } from '../my/my-class';
+import { CategoryItem, Pho } from '../my/my-class';
 
 interface Props {
-    bags: Map<number, SelectedItem>,
+    bags: Map<number, Map<string, CategoryItem>>,
     phoId: String;
     showPho: (bag: number, category: Categories, itemId: string) => void,
 };
@@ -67,16 +67,11 @@ const BagDnd = ({ bags, phoId, showPho }: Props) => {
         const overBag = Number(String(over.id).slice(-1));
         if (activeBag === overBag) return;
 
-        const selectedItem = bags.get(activeBag);
-        if (category === Categories.BEEF) {
-            const item = selectedItem?.beef.get(itemId) as Pho;
-            selectedItem?.beef.delete(itemId);
-            bags.get(overBag)?.beef.set(item?.id as string, item);
-        } else if (category === Categories.CHICKEN) {
-            const item = selectedItem?.chicken.get(itemId) as Pho;
-            selectedItem?.chicken.delete(itemId);
-            bags.get(overBag)?.chicken.set(item?.id as string, item);
-        }
+        const activeCategoryItem = bags.get(activeBag)?.get(category)!;
+        const overCategoryItem = bags.get(overBag)?.get(category)!;
+        const item = activeCategoryItem.pho.get(itemId) as Pho;
+        activeCategoryItem.pho.delete(itemId);
+        overCategoryItem.pho.set(item?.id as string, item);
         setRefresh(!refresh);
     }
 
@@ -99,7 +94,7 @@ const BagDnd = ({ bags, phoId, showPho }: Props) => {
                             <OrderSummary
                                 key={index}
                                 bag={key}
-                                selectedItems={item}
+                                categoryItems={item}
                                 phoId={phoId} showPho={showPho}
                             />
 

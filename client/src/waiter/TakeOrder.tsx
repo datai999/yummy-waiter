@@ -43,7 +43,7 @@ import { StyledPaper } from '../my/my-styled';
 import BagDnd from './BagDnd';
 import { ChildWaiterProps } from './Waiter';
 import { SYNC_TYPE, syncServer } from '../my/my-ws';
-import { NonPho, Pho, SelectedItem } from '../my/my-class';
+import { CategoryItem, NonPho, Pho } from '../my/my-class';
 
 const defaultNonPho = {
     beefSides: new Map<string, NonPho>(),
@@ -60,7 +60,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     const [pho, setPho] = useState<Pho>(new Pho());
     const [nonPho, setNonPho] = useState(defaultNonPho);
 
-    const [bags, setBags] = useState<Map<number, SelectedItem>>(props.table.bags);
+    const [bags, setBags] = useState<Map<number, Map<string, CategoryItem>>>(props.table.bags);
 
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
@@ -83,14 +83,10 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         const cloneBags = new Map(bags);
         const dineIn = cloneBags.get(bag)!;
 
+        const categoryItems = dineIn.get(props.category);
         pho.func.complete();
-        if (Categories.BEEF === props.category) {
-            dineIn.beef.set(pho.id, pho);
-            dineIn.beefUpdated = [...dineIn.beefUpdated, new Date().toISOString() + ':add beef'];
-        } else if (Categories.CHICKEN === props.category) {
-            dineIn.chicken.set(pho.id, pho);
-            dineIn.chickenUpdated = [...dineIn.chickenUpdated, new Date().toISOString() + ':add chicken'];
-        }
+        categoryItems?.pho.set(pho.id, pho);
+        categoryItems?.action.push(new Date().toISOString() + ':add pho');
 
         setBags(cloneBags);
         setPho(new Pho());
@@ -115,16 +111,11 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
             return;
         }
         props.setCategory(category);
-        if (Categories.BEEF === category)
-            setPho(bags.get(bag)?.beef.get(selectedItemId)!);
-        else if (Categories.CHICKEN === category)
-            setPho(bags.get(bag)?.chicken.get(selectedItemId)!);
+        setPho(bags.get(bag)?.get(props.category)?.pho.get(selectedItemId)!);
     }
 
     const addBag = () => {
-        const nextSelected = new Map(bags);
-        nextSelected.set(bags.size, _.cloneDeep(INIT_SELECTED_ITEM));
-        setBags(nextSelected);
+        props.table.func.newBag();
     }
 
     const updateNonPho = (propertyKey: string, nonPhoCode: string) => {
@@ -136,19 +127,20 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
             property.set(nonPhoCode, new NonPho(nonPhoCode));
         }
         setNonPho(nextNonPho);
-        const dineIn = new Map(bags);
-        const newItem = dineIn.get(0)!;
+
+        const cloneBags = new Map(bags);
+        const dineIn = cloneBags.get(0)!;
+        const categoryItems = dineIn.get(props.category)!;
+
         if (nextNonPho.beefSides.size > 0) {
-            newItem.beefSide = nextNonPho.beefSides;
-            newItem.beefUpdated = [...newItem.beefUpdated, new Date().toISOString() + ':add beef side'];
+            categoryItems.nonPho = nextNonPho.beefSides;
+
         }
         if (nextNonPho.chickenSides.size > 0) {
-            newItem.chickenSide = nextNonPho.chickenSides;
-            newItem.chickenUpdated = [...newItem.chickenUpdated, new Date().toISOString() + ':add chicken side'];
+            categoryItems.nonPho = nextNonPho.chickenSides;
         }
-        newItem.drink = nextNonPho.drink;
-        newItem.dessert = nextNonPho.dessert;
-        setBags(dineIn);
+        categoryItems.action.push(new Date().toISOString() + ':add nonPho');
+        setBags(cloneBags);
     }
 
     return (

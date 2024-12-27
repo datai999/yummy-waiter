@@ -1,13 +1,11 @@
 import {
     BEEF_MEAT,
     Categories,
-    INIT_SELECTED_ITEM,
     TableStatus,
 } from './my-constants';
-import { Table } from 'myTable';
 import _ from 'lodash';
 import { syncServer, SYNC_TYPE } from './my-ws';
-import { Pho, SelectedItem } from './my-class';
+import { Pho, SelectedItem, Table } from './my-class';
 
 const lodash = _;
 
@@ -24,14 +22,7 @@ export const sortBeefMeat = (a: string, b: string) =>
 export const generateTables = () =>
     new Map(Array.from({ length: 21 }, (_, index) => {
         const id = String(index > 19 ? 'TOGO ' + (index - 19) : 'Table ' + (index < 12 ? index + 1 : index + 2));
-        return [id, {
-            id: id,
-            status: TableStatus.AVAILABLE,
-            orderTime: null,
-            bags: new Map([
-                [0, lodash.cloneDeep(INIT_SELECTED_ITEM)], [1, lodash.cloneDeep(INIT_SELECTED_ITEM)]
-            ])
-        } as Table]
+        return [id, new Table(id)]
     }));
 
 export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTableId: string): Table | null => {
@@ -47,9 +38,7 @@ export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTabl
         toTable.bags.set(index, selectedItem);
     });
 
-    fromTable.status = TableStatus.AVAILABLE;
-    fromTable.orderTime = null;
-    fromTable.bags = new Map([[0, lodash.cloneDeep(INIT_SELECTED_ITEM)], [1, lodash.cloneDeep(INIT_SELECTED_ITEM)]]);
+    fromTable = new Table(fromTable.id);
 
     if (toTable.status === TableStatus.ACTIVE) {
         const data = { [fromTable.id]: fromTable, [toTableId]: toTable };

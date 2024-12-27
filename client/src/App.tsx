@@ -4,9 +4,9 @@ import Header from './table/Header';
 import TableManagerment from './table/ManagementTable';
 import Waiter from './waiter/Waiter';
 import { Box } from '@mui/material';
-import { Table } from 'myTable';
 import { generateTables } from './my/my-service';
 import initWsClient from './my/my-ws';
+import { Table } from './my/my-class';
 
 export default function App() {
   const [isWaiter, setIsWaiter] = useState<Boolean>(false);

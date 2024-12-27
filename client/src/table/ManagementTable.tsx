@@ -3,7 +3,6 @@ import React, {
   useState,
 } from 'react';
 
-import { Table } from 'myTable';
 import {
   FiAlertCircle,
   FiCheckCircle,
@@ -25,6 +24,7 @@ import {
 import { styled } from '@mui/system';
 import CardTable from './CardTable';
 import { TableStatus } from '../my/my-constants';
+import { Table } from '../my/my-class';
 
 const ModalContent = styled(Box)({
   position: "absolute",
