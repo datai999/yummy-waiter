@@ -9,14 +9,6 @@ export class Pho {
     preferences?: string[];
     note?: string;
     count: number = 1;
-
-    func = {
-        complete: () => {
-            this.id = this.id || generateId();
-            if (this.meats.length === 0) this.meats = ["BPN"];
-            else this.meats = this.meats.filter(meat => meat !== "BPN");
-        }
-    }
 }
 
 export class NonPho {

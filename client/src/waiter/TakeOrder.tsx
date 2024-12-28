@@ -77,6 +77,9 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
                 if (value.length !== pho.meats.length) return false;
                 return value.sort(SERVICE.sortBeefMeat).join(',') === meatCodes;
             });
+        if (!combo) {
+            setPho({ ...pho, combo: '' });
+        }
         if (combo && combo[0] !== pho.combo) {
             setPho({ ...pho, combo: combo[0] });
         }
@@ -87,7 +90,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         const dineIn = cloneBags.get(bag)!;
 
         const categoryItems = dineIn.get(props.category);
-        pho.func.complete();
+        SERVICE.completePho(pho);
         categoryItems?.pho.set(pho.id, pho);
         categoryItems?.action.push(new Date().toISOString() + ':add pho');
 
