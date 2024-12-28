@@ -55,7 +55,7 @@ const OrderSummary = ({ bag, categoryItems, phoId, showPho }: Props) => {
                     </Grid2>)}
                 {selectedItems.chicken.pho.size + selectedItems.chicken.nonPho.size > 0 && (
                     <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: showPho ? 4 : 'grow' }} >
-                        <PhoList bag={bag} category={Categories.CHICKEN} phoId={phoId} phos={selectedItems.beef.pho} sideOrders={selectedItems.chicken.nonPho}
+                        <PhoList bag={bag} category={Categories.CHICKEN} phoId={phoId} phos={selectedItems.chicken.pho} sideOrders={selectedItems.chicken.nonPho}
                             showPho={showPho} />
                     </Grid2>)}
                 {selectedItems.drink.nonPho.size > 0 && (
