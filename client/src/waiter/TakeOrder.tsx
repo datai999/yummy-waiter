@@ -70,13 +70,16 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     }, [props.refreshState]);
 
     useEffect(() => {
-        const meatCodes = pho.meats.sort(SERVICE.sortBeefMeat).join(',');
+        pho.meats.sort(SERVICE.sortBeefMeat);
+        const meatCodes = pho.meats.join(',');
         const combo = Object.entries(props.category === Categories.BEEF ? BEEF_COMBO : CHICKEN_COMBO)
             .find(([key, value]) => {
                 if (value.length !== pho.meats.length) return false;
                 return value.sort(SERVICE.sortBeefMeat).join(',') === meatCodes;
             });
-        setPho({ ...pho, combo: combo ? combo[0] : '' });
+        if (combo && combo[0] !== pho.combo) {
+            setPho({ ...pho, combo: combo[0] });
+        }
     }, [pho.meats]);
 
     const addItem = (bag: number) => {
@@ -92,6 +95,8 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         setPho(new Pho());
         setNonPho(defaultNonPho);
     }
+
+    console.log(pho);
 
     const confirmOrder = () => {
         if (props.table.status === TableStatus.AVAILABLE) {

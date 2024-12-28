@@ -32,8 +32,6 @@ interface CheckButtonProps {
 const pCheckButton = ({ ...props }: CheckButtonProps) => {
     const [options, setOptions] = useState<string[]>(props.options);
 
-    console.log(options);
-
     useEffect(() => {
         setOptions(props.options)
     }, [props.options])
@@ -78,7 +76,7 @@ const pCheckButton = ({ ...props }: CheckButtonProps) => {
 }
 export const CheckButton = React.memo(pCheckButton,
     (prev: CheckButtonProps, next: CheckButtonProps) =>
-        prev.options.sort().join(',') === next.options.sort().join(','));
+        [...prev.options].sort().join(',') === [...next.options].sort().join(','));
 
 export const SideItemList = ({ canEdit, sideItems, doubleCol = true }: {
     canEdit: boolean;
