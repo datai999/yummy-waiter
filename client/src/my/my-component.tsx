@@ -77,7 +77,7 @@ const pCheckButton = ({ ...props }: CheckButtonProps) => {
 export const CheckButton = React.memo(pCheckButton,
     (prev: CheckButtonProps, next: CheckButtonProps) =>
         [...prev.options].sort().join(',') === [...next.options].sort().join(',')
-        || [...prev.allOptions].sort().join(',') === [...next.allOptions].sort().join(',')
+        && [...prev.allOptions].sort().join(',') === [...next.allOptions].sort().join(',')
 );
 
 export const SideItemList = ({ canEdit, sideItems, doubleCol = true }: {

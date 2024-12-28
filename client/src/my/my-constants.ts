@@ -115,6 +115,31 @@ export const DESSERT = {
     'Three color': 'Three color'
 }
 
+export const CATEGORY = {
+    'BEEF': {
+        'pho': {
+            'combo': BEEF_COMBO,
+            'meat': BEEF_MEAT,
+            'noodle': BEEF_NOODLE,
+            'reference': BEEF_REFERENCES
+        },
+        'nonPho': [BEEF_SIDE, BEEF_MEAT_SIDE]
+    },
+    'CHICKEN': {
+        'pho': {
+            'combo': CHICKEN_COMBO,
+            'meat': null,
+            'noodle': CHICKEN_NOODLE,
+            'reference': CHICKEN_REFERENCES
+        },
+        'nonPho': [CHICKEN_SIDE]
+    },
+    'DRINK': {
+        'pho': null,
+        'nonPho': [DRINK]
+    }
+}
+
 export const INIT_SELECTED_ITEM: SelectedItem = {
     beef: new Map(),
     beefSide: new Map(),
