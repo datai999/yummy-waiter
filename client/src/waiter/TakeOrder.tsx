@@ -38,6 +38,7 @@ interface OrderTakeProps extends ChildWaiterProps {
 const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     const [refresh, setRefresh] = useState(false)
     const [pho, setPho] = useState<Pho>(new Pho());
+    const [currentBag, setCurrentBag] = useState<number>(0);
 
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
@@ -65,6 +66,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
             return;
         }
         props.setCategory(category);
+        setCurrentBag(bag);
         setPho(bags.get(bag)?.get(props.category)?.pho.get(selectedItemId)!);
     }
 
@@ -78,6 +80,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
             <TakePho
                 category={props.category}
                 bags={bags}
+                currentBag={currentBag}
                 pho={pho}
                 onSubmit={() => {
                     setPho(new Pho());

@@ -12,6 +12,7 @@ import * as SERVICE from '../my/my-service';
 interface TakePhoProps {
     category: string,
     bags: Map<number, Map<string, CategoryItem>>,
+    currentBag: number,
     pho: Pho,
     onSubmit: (pho: Pho) => void
 }
@@ -55,7 +56,7 @@ const pTakePho = (props: TakePhoProps) => {
 
     const addItem = (bag: number) => {
         const cloneBags = new Map(props.bags);
-        const dineIn = cloneBags.get(bag)!;
+        const dineIn = cloneBags.get(pho.id?.length > 0 ? props.currentBag : bag)!;
         const categoryItems = dineIn.get(props.category);
 
         SERVICE.completePho(pho);
