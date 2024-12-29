@@ -1,4 +1,5 @@
 import React, {
+    useEffect,
     useState,
 } from 'react';
 import { CategoryItem, NonPho, Pho } from '../my/my-class';
@@ -12,10 +13,16 @@ interface TakeNonPhoProps {
     onSubmit: () => void
 }
 
+const getNonPho = (props: TakeNonPhoProps) => props.bags.get(0)!.get(props.category)?.nonPho!;
+
 const TakeNonPho = (props: TakeNonPhoProps) => {
-    const [nonPho, setNonPho] = useState<Map<string, NonPho>>(new Map());
+    const [nonPho, setNonPho] = useState<Map<string, NonPho>>(getNonPho(props));
 
     const nonPhos = CATEGORY[props.category as keyof typeof CATEGORY]!.nonPho;
+
+    useEffect(() => {
+        setNonPho(getNonPho(props));
+    }, [props.category])
 
     const addItem = (nonPhoKey: string) => {
         const nextNonPho = new Map(nonPho);

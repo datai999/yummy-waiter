@@ -139,16 +139,3 @@ export const CATEGORY = {
         'nonPho': [DRINK, DESSERT]
     }
 }
-
-export const INIT_SELECTED_ITEM: SelectedItem = {
-    beef: new Map(),
-    beefSide: new Map(),
-    beefUpdated: [],
-
-    chicken: new Map(),
-    chickenSide: new Map(),
-    chickenUpdated: [],
-
-    drink: new Map(),
-    dessert: new Map(),
-};

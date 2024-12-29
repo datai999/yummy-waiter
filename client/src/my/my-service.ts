@@ -1,6 +1,5 @@
 import {
     BEEF_MEAT,
-    Categories,
     TableStatus,
 } from './my-constants';
 import _ from 'lodash';
