@@ -56,8 +56,8 @@ const pTakePho = (props: TakePhoProps) => {
     const addItem = (bag: number) => {
         const cloneBags = new Map(props.bags);
         const dineIn = cloneBags.get(bag)!;
-
         const categoryItems = dineIn.get(props.category);
+
         SERVICE.completePho(pho);
 
         categoryItems?.pho.set(pho.id, pho);

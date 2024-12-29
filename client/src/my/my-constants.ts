@@ -134,9 +134,9 @@ export const CATEGORY = {
         },
         'nonPho': [CHICKEN_SIDE]
     },
-    'DRINK': {
+    'DRINKS': {
         'pho': null,
-        'nonPho': [DRINK]
+        'nonPho': [DRINK, DESSERT]
     }
 }
 

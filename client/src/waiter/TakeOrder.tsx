@@ -18,30 +18,18 @@ import {
     Typography,
 } from '@mui/material';
 
-import { CheckButton } from '../my/my-component';
 import {
-    BEEF_MEAT_SIDE,
-    BEEF_SIDE,
     Categories,
     CATEGORY,
-    CHICKEN_SIDE,
-    DESSERT,
-    DRINK,
     TableStatus,
 } from '../my/my-constants';
 import { StyledPaper } from '../my/my-styled';
 import BagDnd from './BagDnd';
 import { ChildWaiterProps } from './Waiter';
 import { SYNC_TYPE, syncServer } from '../my/my-ws';
-import { CategoryItem, NonPho, Pho } from '../my/my-class';
+import { Pho } from '../my/my-class';
 import TakePho from './TakePho';
-
-const defaultNonPho = {
-    beefSides: new Map<string, NonPho>(),
-    chickenSides: new Map<string, NonPho>(),
-    drink: new Map<string, NonPho>(),
-    dessert: new Map<string, NonPho>(),
-}
+import TakeNonPho from './TakeNonPho';
 
 interface OrderTakeProps extends ChildWaiterProps {
     refreshState: boolean
@@ -50,15 +38,14 @@ interface OrderTakeProps extends ChildWaiterProps {
 const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     const [refresh, setRefresh] = useState(false)
     const [pho, setPho] = useState<Pho>(new Pho());
-    const [nonPho, setNonPho] = useState(defaultNonPho);
-
-    const [bags, setBags] = useState<Map<number, Map<string, CategoryItem>>>(props.table.bags);
 
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
+    const bags = props.table.bags;
+    const category = CATEGORY[props.category as keyof typeof CATEGORY];
+
     useEffect(() => {
         setPho(new Pho());
-        setNonPho(defaultNonPho);
     }, [props.refreshState]);
 
     const confirmOrder = () => {
@@ -75,7 +62,6 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     const showPho = (bag: number, category: Categories, selectedItemId: string) => {
         if (selectedItemId === null || selectedItemId.length === 0) {
             setPho(new Pho());
-            setNonPho(defaultNonPho);
             return;
         }
         props.setCategory(category);
@@ -84,96 +70,31 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
 
     const addBag = () => {
         props.table.func.newBag();
-    }
-
-    const updateNonPho = (propertyKey: string, nonPhoCode: string) => {
-        const nextNonPho = { ...nonPho };
-        const property = nextNonPho[propertyKey as keyof typeof nextNonPho] as Map<string, NonPho>;
-        if (property.has(nonPhoCode)) {
-            property.get(nonPhoCode)!.count++;
-        } else {
-            property.set(nonPhoCode, new NonPho(nonPhoCode));
-        }
-        setNonPho(nextNonPho);
-
-        const cloneBags = new Map(bags);
-        const dineIn = cloneBags.get(0)!;
-        const categoryItems = dineIn.get(props.category)!;
-
-        if (nextNonPho.beefSides.size > 0) {
-            categoryItems.nonPho = nextNonPho.beefSides;
-
-        }
-        if (nextNonPho.chickenSides.size > 0) {
-            categoryItems.nonPho = nextNonPho.chickenSides;
-        }
-        categoryItems.action.push(new Date().toISOString() + ':add nonPho');
-        setBags(cloneBags);
+        setRefresh(!refresh);
     }
 
     return (<>
-        {Object.keys(CATEGORY).filter(category => props.category === category)
-            .map(category => (
-                <TakePho
-                    key={category}
-                    category={category}
-                    bags={bags}
-                    pho={pho}
-                    onSubmit={() => {
-                        setPho(new Pho());
-                        setRefresh(!refresh);
-                    }}
-                />))}
+        {category?.pho && (
+            <TakePho
+                category={props.category}
+                bags={bags}
+                pho={pho}
+                onSubmit={() => {
+                    setPho(new Pho());
+                    setRefresh(!refresh);
+                }}
+            />
+        )}
 
-        <StyledPaper>
-            {props.category === Categories.BEEF && (
-                <>
-                    <CheckButton
-                        multi={true}
-                        allOptions={Object.keys(BEEF_SIDE)}
-                        options={[]}
-                        createLabel={(key) => key}
-                        callback={(newSideOrder) => updateNonPho('beefSides', newSideOrder[0])}
-                    />
-                    <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
-                    <CheckButton
-                        multi={true}
-                        allOptions={Object.keys(BEEF_MEAT_SIDE)}
-                        options={[]}
-                        createLabel={(key) => key}
-                        callback={(newSideOrder) => updateNonPho('beefSides', newSideOrder[0])}
-                    />
-                </>
-            )}
-            {props.category === Categories.CHICKEN && (
-                <CheckButton
-                    multi={true}
-                    allOptions={Object.keys(CHICKEN_SIDE)}
-                    options={[]}
-                    createLabel={(key) => key}
-                    callback={(newSideOrder) => updateNonPho('chickenSides', newSideOrder[0])}
-                />
-            )}
-            {props.category === Categories.DRINKS && (
-                <>
-                    <CheckButton
-                        multi={true}
-                        allOptions={Object.keys(DRINK)}
-                        options={[]}
-                        createLabel={(key) => key}
-                        callback={(newSideOrder) => updateNonPho('drink', newSideOrder[0])}
-                    />
-                    <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
-                    <CheckButton
-                        multi={true}
-                        allOptions={Object.keys(DESSERT)}
-                        options={[]}
-                        createLabel={(key) => key}
-                        callback={(newSideOrder) => updateNonPho('dessert', newSideOrder[0])}
-                    />
-                </>
-            )}
-        </StyledPaper>
+        {category?.nonPho && (
+            <TakeNonPho
+                category={props.category}
+                bags={bags}
+                onSubmit={() => {
+                    setRefresh(!refresh);
+                }}
+            />
+        )}
 
         <StyledPaper sx={{ mt: 0, p: 0 }}>
             <BagDnd bags={bags} phoId={pho.id} showPho={showPho} />
