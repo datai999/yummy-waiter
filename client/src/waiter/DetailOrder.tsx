@@ -17,6 +17,7 @@ import {
     ListItemButton,
     ListItemText,
     Typography,
+    useMediaQuery,
 } from '@mui/material';
 
 import { SideItemList } from '../my/my-component';
@@ -39,6 +40,8 @@ interface Props {
 const OrderSummary = ({ bag, categoryItems, phoId, showPho }: Props) => {
     const [refresh, setRefresh] = useState<Boolean>(false);
 
+    const mdResponsive = showPho ? useMediaQuery('(min-width:1200px)') ? 12 : 4 : 'grow';
+
     const selectedItems = {
         beef: categoryItems.get(Categories.BEEF)!,
         chicken: categoryItems.get(Categories.CHICKEN)!,
@@ -49,17 +52,17 @@ const OrderSummary = ({ bag, categoryItems, phoId, showPho }: Props) => {
         <>
             <Grid2 container spacing={2}>
                 {selectedItems.beef.pho.size + selectedItems.beef.nonPho.size > 0 && (
-                    <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: showPho ? 4 : 'grow' }} >
+                    <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: mdResponsive }} >
                         <PhoList bag={bag} category={Categories.BEEF} phoId={phoId} phos={selectedItems.beef.pho} sideOrders={selectedItems.beef.nonPho}
                             showPho={showPho} />
                     </Grid2>)}
                 {selectedItems.chicken.pho.size + selectedItems.chicken.nonPho.size > 0 && (
-                    <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: showPho ? 4 : 'grow' }} >
+                    <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: mdResponsive }} >
                         <PhoList bag={bag} category={Categories.CHICKEN} phoId={phoId} phos={selectedItems.chicken.pho} sideOrders={selectedItems.chicken.nonPho}
                             showPho={showPho} />
                     </Grid2>)}
                 {selectedItems.drink.nonPho.size > 0 && (
-                    <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: showPho ? 4 : 'grow' }} >
+                    <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: mdResponsive }} >
                         <DrinkDessertList canEdit={Boolean(showPho)} drinks={selectedItems.drink.nonPho} desserts={new Map()} />
                     </Grid2>)}
             </Grid2>
@@ -142,7 +145,7 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
                 })}
             </List>
             {phos.size > 0 && sideOrders.size > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
-            <SideItemList canEdit={Boolean(showPho)} sideItems={sideOrders} />
+            <SideItemList canEdit={Boolean(showPho)} sideItems={sideOrders} doubleCol={false} />
         </StyledPaper>);
 }
 
@@ -168,11 +171,11 @@ const DrinkDessertList = ({ canEdit, drinks, desserts }: {
             <Grid2 container columnSpacing={2}>
                 {drinks.size > 0 &&
                     <Grid2 size={desserts.size ? 6 : 12}  >
-                        <SideItemList canEdit={canEdit} sideItems={drinks} doubleCol={!desserts.size} />
+                        <SideItemList canEdit={canEdit} sideItems={drinks} doubleCol={false} />
                     </Grid2>}
                 {desserts.size > 0 &&
                     <Grid2 size={drinks.size ? 6 : 12}  >
-                        <SideItemList canEdit={canEdit} sideItems={desserts} doubleCol={!drinks.size} />
+                        <SideItemList canEdit={canEdit} sideItems={desserts} doubleCol={false} />
                     </Grid2>}
             </Grid2>
 

@@ -15,7 +15,9 @@ import {
     DialogContent,
     DialogTitle,
     Divider,
+    Grid2,
     Typography,
+    useMediaQuery,
 } from '@mui/material';
 
 import {
@@ -74,6 +76,58 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         props.table.func.newBag();
         setRefresh(!refresh);
     }
+
+    if (useMediaQuery('(min-width:1200px)')) return (
+        <Grid2 container spacing={1} sx={{ display: { xs: 'none', sm: 'none', md: 'flex', lg: 'flex' }, mb: 1 }}>
+            <Grid2 size={{ md: 9 }} >
+                {category?.pho && (
+                    <TakePho
+                        category={props.category}
+                        bags={bags}
+                        currentBag={currentBag}
+                        pho={pho}
+                        onSubmit={() => {
+                            setPho(new Pho());
+                            setRefresh(!refresh);
+                        }}
+                    />
+                )}
+                {category?.nonPho && (
+                    <TakeNonPho
+                        category={props.category}
+                        bags={bags}
+                        onSubmit={() => {
+                            setRefresh(!refresh);
+                        }}
+                    />
+                )}
+            </Grid2>
+            <Grid2 size={{ md: 'grow' }}>
+                <BagDnd bags={bags} phoId={pho.id} showPho={showPho} />
+                <Box display="flex"
+                    justifyContent="center"
+                    alignItems="center">
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={addBag}
+                        sx={{ mr: '3%' }}
+                    >
+                        Add bag <GiPaperBagFolded style={{ fontSize: 20, marginLeft: 8 }} />
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => confirmOrder()}
+                        disabled={false}
+                        sx={{ ml: '3%' }}
+                    >
+                        Place Order <FaChevronRight style={{ marginLeft: 8 }} />
+                    </Button>
+                </Box>
+            </Grid2>
+        </Grid2 >
+    );
 
     return (<>
         {category?.pho && (
