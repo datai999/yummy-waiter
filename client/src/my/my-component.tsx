@@ -26,14 +26,20 @@ interface CheckButtonProps {
     allOptions: string[],
     options: string[],
     createLabel: (option: string) => string,
-    callback: ([]) => void,
+    callback: (next: string[]) => void,
 }
 
+// TODO: improve performance
+// const checkButtonPropsEqual = (prev: CheckButtonProps, next: CheckButtonProps) =>
+//     [...prev.options].sort().join(',') === [...next.options].sort().join(',')
+//     && [...prev.allOptions].sort().join(',') === [...next.allOptions].sort().join(',')
+//     && true;
+const checkButtonPropsEqual = () => false;
 const pCheckButton = ({ ...props }: CheckButtonProps) => {
-    const [options, setOptions] = useState<string[]>(props.options);
+    const [options, setOptions] = useState<string[]>([...props.options]);
 
     useEffect(() => {
-        setOptions(props.options)
+        setOptions([...props.options])
     }, [props.options])
 
     const onClick = (option: string) => {
@@ -41,7 +47,7 @@ const pCheckButton = ({ ...props }: CheckButtonProps) => {
             ? options.filter((e) => e !== option)
             : props.multi ? [...options, option] : [option];
         setOptions([...newOptions]);
-        props.callback(newOptions);
+        props.callback([...newOptions]);
     }
 
     return (
@@ -74,11 +80,7 @@ const pCheckButton = ({ ...props }: CheckButtonProps) => {
         </>
     );
 }
-export const CheckButton = React.memo(pCheckButton,
-    (prev: CheckButtonProps, next: CheckButtonProps) =>
-        [...prev.options].sort().join(',') === [...next.options].sort().join(',')
-        && [...prev.allOptions].sort().join(',') === [...next.allOptions].sort().join(',')
-);
+export const CheckButton = React.memo(pCheckButton, checkButtonPropsEqual);
 
 export const SideItemList = ({ canEdit, sideItems, doubleCol = true }: {
     canEdit: boolean;

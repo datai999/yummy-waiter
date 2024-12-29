@@ -61,8 +61,6 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         setNonPho(defaultNonPho);
     }, [props.refreshState]);
 
-    console.log(pho);
-
     const confirmOrder = () => {
         if (props.table.status === TableStatus.AVAILABLE) {
             props.table.status = TableStatus.ACTIVE;
@@ -117,9 +115,14 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         {Object.keys(CATEGORY).filter(category => props.category === category)
             .map(category => (
                 <TakePho
+                    key={category}
                     category={category}
                     bags={bags}
-                    onSubmit={() => setRefresh(!refresh)}
+                    pho={pho}
+                    onSubmit={() => {
+                        setPho(new Pho());
+                        setRefresh(!refresh);
+                    }}
                 />))}
 
         <StyledPaper>

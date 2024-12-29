@@ -5,12 +5,24 @@ import React, {
 import { StyledPaper } from '../my/my-styled';
 import { Divider, Grid2, TextField, Button } from '@mui/material';
 import { CheckButton } from '../my/my-component';
-import { BEEF_MEAT, CATEGORY } from '../my/my-constants';
+import { CATEGORY } from '../my/my-constants';
 import { CategoryItem, Pho } from '../my/my-class';
 import * as SERVICE from '../my/my-service';
 
-const TakePho = (props: { category: string, bags: Map<number, Map<string, CategoryItem>>, onSubmit: () => void }) => {
-    const [pho, setPho] = useState<Pho>(new Pho());
+interface TakePhoProps {
+    category: string,
+    bags: Map<number, Map<string, CategoryItem>>,
+    pho: Pho,
+    onSubmit: (pho: Pho) => void
+}
+
+const arePropsEqual = (prev: TakePhoProps, next: TakePhoProps) => {
+    return prev.category === next.category
+        && prev.pho.id === next.pho.id;
+}
+
+const pTakePho = (props: TakePhoProps) => {
+    const [pho, setPho] = useState<Pho>({ ...props.pho });
 
     const category = CATEGORY[props.category as keyof typeof CATEGORY]!;
     const combos = category.pho!.combo;
@@ -19,19 +31,22 @@ const TakePho = (props: { category: string, bags: Map<number, Map<string, Catego
     const references = category.pho!.reference;
 
     useEffect(() => {
-        console.log('meat');
+        setPho({ ...props.pho } as Pho);
+    }, [props.pho.id])
+
+    useEffect(() => {
         if (!meats) return;
-        console.log('meat2');
+        if (pho.meats.length > 1 && pho.meats.includes('BPN'))
+            pho.meats = pho.meats.filter(meat => meat !== "BPN");
         pho.meats.sort(SERVICE.sortBeefMeat);
         const meatCodes = pho.meats.join(',');
-        console.log(meatCodes);
         const combo = Object.entries(combos)
             .find(([key, value]) => {
                 if (value.length !== pho.meats.length) return false;
                 return value.sort(SERVICE.sortBeefMeat).join(',') === meatCodes;
             });
         if (!combo) {
-            setPho({ ...pho, combo: '' });
+            setPho({ ...pho, combo: undefined });
         }
         if (combo && combo[0] !== pho.combo) {
             setPho({ ...pho, combo: combo[0] });
@@ -48,8 +63,8 @@ const TakePho = (props: { category: string, bags: Map<number, Map<string, Catego
         categoryItems?.pho.set(pho.id, pho);
         categoryItems?.action.push(new Date().toISOString() + ':add pho');
 
+        props.onSubmit(pho);
         setPho(new Pho());
-        props.onSubmit();
     }
 
     return (
@@ -70,7 +85,7 @@ const TakePho = (props: { category: string, bags: Map<number, Map<string, Catego
                 <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
                 <CheckButton
                     multi={true}
-                    allOptions={Object.keys(BEEF_MEAT)}
+                    allOptions={Object.keys(meats)}
                     options={pho.meats}
                     createLabel={(key) => key}
                     callback={(meats) => setPho({ ...pho, meats })}
@@ -132,4 +147,5 @@ const TakePho = (props: { category: string, bags: Map<number, Map<string, Catego
     )
 }
 
+const TakePho = React.memo(pTakePho, arePropsEqual);
 export default TakePho;

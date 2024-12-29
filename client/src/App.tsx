@@ -15,7 +15,8 @@ export default function App() {
   const [refresh, setRefresh] = useState<Boolean>(false);
 
   useEffect(() => {
-    return initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables);
+    initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables);
+    orderTable(tables.get('Table 1')!);
   }, []);
 
   useEffect(() => {
@@ -53,16 +54,17 @@ export default function App() {
      *  + communicate between devices in LAN
      *  + remove confirmation
      *  + recommendation pho
+     *  - UI like aldelo
+     *  - order history
      *  - qty btn pho
      *  - count pho
      *  - multi item selection to edit
      *  - button edit all items
-     *  - UI line by line
-     *  - order history
      *  - user login
      *  - user manager
      *  - action by
      *  - void after 5min must accept by manager
+     *  - UI for customer fill phone
      * kitchen: select part of bill, print bill & system change status to waiter
      * chicken: update number of chicken meats to waiter
      * 
