@@ -29,6 +29,7 @@ export const completePho = (pho: Pho) => {
     pho.meats = pho.meats.length === 0
         ? ["BPN"]
         : pho.meats.filter(meat => meat !== "BPN");
+    if (pho.meats.length === 6) pho.meats = ['DB'];
 }
 
 export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTableId: string): Table | null => {

@@ -40,7 +40,7 @@ interface Props {
 const OrderSummary = ({ bag, categoryItems, phoId, showPho }: Props) => {
     const [refresh, setRefresh] = useState<Boolean>(false);
 
-    const mdResponsive = showPho ? useMediaQuery('(min-width:1200px)') ? 12 : 4 : 'grow';
+    const mdResponsive = showPho ? useMediaQuery('(min-width:900px)') ? 12 : 4 : 'grow';
 
     const selectedItems = {
         beef: categoryItems.get(Categories.BEEF)!,

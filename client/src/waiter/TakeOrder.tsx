@@ -77,7 +77,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         setRefresh(!refresh);
     }
 
-    if (useMediaQuery('(min-width:1200px)')) return (
+    if (useMediaQuery('(min-width:900px)')) return (
         <Grid2 container spacing={1} sx={{ display: { xs: 'none', sm: 'none', md: 'flex', lg: 'flex' }, mb: 1 }}>
             <Grid2 size={{ md: 9 }} >
                 {category?.pho && (
