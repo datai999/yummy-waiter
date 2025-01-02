@@ -28,6 +28,7 @@ import {
 } from '../my/my-styled';
 import { Draggable } from './BagDnd';
 import { CategoryItem, NonPho, Pho } from '../my/my-class';
+import { MENU } from '../my/my-constants';
 
 interface Props {
     bag: number,
@@ -41,31 +42,22 @@ const OrderSummary = ({ bag, categoryItems, phoId, showPho }: Props) => {
 
     const mdResponsive = showPho ? useMediaQuery('(min-width:900px)') ? 12 : 4 : 'grow';
 
-    const selectedItems = {
-        beef: categoryItems.get('BEEF')!,
-        chicken: categoryItems.get('CHICKEN')!,
-        drink: categoryItems.get('DRINKS')!,
-    }
-
     return (
-        <>
-            <Grid2 container spacing={2}>
-                {selectedItems.beef.pho.size + selectedItems.beef.nonPho.size > 0 && (
-                    <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: mdResponsive }} >
-                        <PhoList bag={bag} category={'BEEF'} phoId={phoId} phos={selectedItems.beef.pho} sideOrders={selectedItems.beef.nonPho}
+        <Grid2 container spacing={2}>
+            {Object.keys(MENU)
+                .filter(category => {
+                    // if (!MENU[category as keyof typeof MENU].pho) return false;
+                    const categoryItem = categoryItems.get(category)!;
+                    return categoryItem.pho.size + categoryItem.nonPho.size > 0;
+                })
+                .map(category => (
+                    <Grid2 key={category} size={{ xs: 12, sm: showPho ? 6 : 12, md: mdResponsive }} >
+                        <PhoList bag={bag} category={category} phoId={phoId} phos={categoryItems.get(category)!.pho} sideOrders={categoryItems.get(category)!.nonPho}
                             showPho={showPho} />
-                    </Grid2>)}
-                {selectedItems.chicken.pho.size + selectedItems.chicken.nonPho.size > 0 && (
-                    <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: mdResponsive }} >
-                        <PhoList bag={bag} category={'CHICKEN'} phoId={phoId} phos={selectedItems.chicken.pho} sideOrders={selectedItems.chicken.nonPho}
-                            showPho={showPho} />
-                    </Grid2>)}
-                {selectedItems.drink.nonPho.size > 0 && (
-                    <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: mdResponsive }} >
-                        <DrinkDessertList canEdit={Boolean(showPho)} drinks={selectedItems.drink.nonPho} desserts={new Map()} />
-                    </Grid2>)}
-            </Grid2>
-        </ >
+                    </Grid2>
+                ))
+            }
+        </Grid2>
     )
 }
 
@@ -103,6 +95,7 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
                     {category}
                     {category === 'BEEF' && <PiCow style={{ fontSize: 25, marginLeft: 6 }} />}
                     {category === 'CHICKEN' && <GiChicken style={{ fontSize: 25, marginLeft: 6 }} />}
+                    {category === 'DRINK' && <RiDrinks2Line style={{ fontSize: 25, marginLeft: 6 }} />}
                 </Badge>
             </Typography>
             <Divider />
@@ -145,39 +138,6 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
             {phos.size > 0 && sideOrders.size > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
             <SideItemList canEdit={Boolean(showPho)} sideItems={sideOrders} doubleCol={false} />
         </StyledPaper>);
-}
-
-const DrinkDessertList = ({ canEdit, drinks, desserts }: {
-    canEdit: boolean,
-    drinks: Map<String, NonPho>,
-    desserts: Map<String, NonPho>,
-}) => {
-    return (
-        <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0 }}>
-            <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} >
-                <Badge badgeContent={drinks.size + desserts.size} color="primary" anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                    sx={{ mb: 0, pb: 0, ml: 1 }}>
-                    DRINK & DESSERTS
-                    <RiDrinks2Line style={{ fontSize: 25, marginLeft: 6 }} />
-                </Badge>
-            </Typography>
-            <Divider />
-
-            <Grid2 container columnSpacing={2}>
-                {drinks.size > 0 &&
-                    <Grid2 size={desserts.size ? 6 : 12}  >
-                        <SideItemList canEdit={canEdit} sideItems={drinks} doubleCol={false} />
-                    </Grid2>}
-                {desserts.size > 0 &&
-                    <Grid2 size={drinks.size ? 6 : 12}  >
-                        <SideItemList canEdit={canEdit} sideItems={desserts} doubleCol={false} />
-                    </Grid2>}
-            </Grid2>
-
-        </StyledPaper >);
 }
 
 export default OrderSummary;

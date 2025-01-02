@@ -132,7 +132,7 @@ export const MENU = {
         },
         'nonPho': [CHICKEN_SIDE]
     },
-    'DRINKS': {
+    'DRINK': {
         'pho': null,
         'nonPho': [DRINK, DESSERT]
     }
