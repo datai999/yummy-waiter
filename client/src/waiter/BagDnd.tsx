@@ -18,7 +18,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { Categories } from '../my/my-constants';
 import { StyledPaper } from '../my/my-styled';
 import theme from '../theme';
 import OrderSummary from './DetailOrder';
@@ -27,7 +26,7 @@ import { CategoryItem, Pho } from '../my/my-class';
 interface Props {
     bags: Map<number, Map<string, CategoryItem>>,
     phoId: String;
-    showPho: (bag: number, category: Categories, itemId: string) => void,
+    showPho: (bag: number, category: string, itemId: string) => void,
 };
 const BagDnd = ({ bags, phoId, showPho }: Props) => {
     const [refresh, setRefresh] = React.useState(false);

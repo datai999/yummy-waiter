@@ -21,8 +21,7 @@ import {
 } from '@mui/material';
 
 import {
-    Categories,
-    CATEGORY,
+    MENU,
     TableStatus,
 } from '../my/my-constants';
 import { StyledPaper } from '../my/my-styled';
@@ -45,7 +44,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
     const bags = props.table.bags;
-    const category = CATEGORY[props.category as keyof typeof CATEGORY];
+    const category = MENU[props.category as keyof typeof MENU];
 
     useEffect(() => {
         setPho(new Pho());
@@ -62,7 +61,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         props.setIsWaiter(false);
     };
 
-    const showPho = (bag: number, category: Categories, selectedItemId: string) => {
+    const showPho = (bag: number, category: string, selectedItemId: string) => {
         if (selectedItemId === null || selectedItemId.length === 0) {
             setPho(new Pho());
             return;
@@ -154,7 +153,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
         )}
 
         <StyledPaper sx={{ mt: 0, p: 0 }}>
-            <BagDnd bags={bags} phoId={pho.id} showPho={showPho} />
+            <BagDnd bags={bags} phoId={pho?.id} showPho={showPho} />
             <Box display="flex"
                 justifyContent="center"
                 alignItems="center">

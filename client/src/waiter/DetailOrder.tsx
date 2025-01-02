@@ -21,7 +21,6 @@ import {
 } from '@mui/material';
 
 import { SideItemList } from '../my/my-component';
-import { BEEF_REFERENCES, Categories, CHICKEN_REFERENCES } from '../my/my-constants';
 import { generateId } from '../my/my-service';
 import {
     OrderItem,
@@ -34,7 +33,7 @@ interface Props {
     bag: number,
     categoryItems: Map<String, CategoryItem>,
     phoId: String;
-    showPho?: (bag: number, category: Categories, itemId: string) => void;
+    showPho?: (bag: number, category: string, itemId: string) => void;
 };
 
 const OrderSummary = ({ bag, categoryItems, phoId, showPho }: Props) => {
@@ -43,9 +42,9 @@ const OrderSummary = ({ bag, categoryItems, phoId, showPho }: Props) => {
     const mdResponsive = showPho ? useMediaQuery('(min-width:900px)') ? 12 : 4 : 'grow';
 
     const selectedItems = {
-        beef: categoryItems.get(Categories.BEEF)!,
-        chicken: categoryItems.get(Categories.CHICKEN)!,
-        drink: categoryItems.get(Categories.DRINKS)!,
+        beef: categoryItems.get('BEEF')!,
+        chicken: categoryItems.get('CHICKEN')!,
+        drink: categoryItems.get('DRINKS')!,
     }
 
     return (
@@ -53,12 +52,12 @@ const OrderSummary = ({ bag, categoryItems, phoId, showPho }: Props) => {
             <Grid2 container spacing={2}>
                 {selectedItems.beef.pho.size + selectedItems.beef.nonPho.size > 0 && (
                     <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: mdResponsive }} >
-                        <PhoList bag={bag} category={Categories.BEEF} phoId={phoId} phos={selectedItems.beef.pho} sideOrders={selectedItems.beef.nonPho}
+                        <PhoList bag={bag} category={'BEEF'} phoId={phoId} phos={selectedItems.beef.pho} sideOrders={selectedItems.beef.nonPho}
                             showPho={showPho} />
                     </Grid2>)}
                 {selectedItems.chicken.pho.size + selectedItems.chicken.nonPho.size > 0 && (
                     <Grid2 size={{ xs: 12, sm: showPho ? 6 : 12, md: mdResponsive }} >
-                        <PhoList bag={bag} category={Categories.CHICKEN} phoId={phoId} phos={selectedItems.chicken.pho} sideOrders={selectedItems.chicken.nonPho}
+                        <PhoList bag={bag} category={'CHICKEN'} phoId={phoId} phos={selectedItems.chicken.pho} sideOrders={selectedItems.chicken.nonPho}
                             showPho={showPho} />
                     </Grid2>)}
                 {selectedItems.drink.nonPho.size > 0 && (
@@ -72,11 +71,11 @@ const OrderSummary = ({ bag, categoryItems, phoId, showPho }: Props) => {
 
 interface PhoListProps {
     bag: number,
-    category: Categories,
+    category: string,
     phoId: String,
     phos: Map<String, Pho>,
     sideOrders: Map<String, NonPho>,
-    showPho?: (bag: number, category: Categories, itemId: string) => void,
+    showPho?: (bag: number, category: string, itemId: string) => void,
 }
 
 const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListProps) => {
@@ -102,15 +101,14 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
                 }}
                     sx={{ mb: 0, pb: 0, ml: 1 }}>
                     {category}
-                    {category === Categories.BEEF && <PiCow style={{ fontSize: 25, marginLeft: 6 }} />}
-                    {category === Categories.CHICKEN && <GiChicken style={{ fontSize: 25, marginLeft: 6 }} />}
+                    {category === 'BEEF' && <PiCow style={{ fontSize: 25, marginLeft: 6 }} />}
+                    {category === 'CHICKEN' && <GiChicken style={{ fontSize: 25, marginLeft: 6 }} />}
                 </Badge>
             </Typography>
             <Divider />
 
             <List dense sx={{ width: '100%', p: 0 }}>
                 {Array.from(phos.entries()).map(([id, item], index) => {
-                    const references = Categories.BEEF === category ? BEEF_REFERENCES : CHICKEN_REFERENCES;
                     return (
                         <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }} style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
                             <Button onClick={() => { if (showPho) remove(item.id) }} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>

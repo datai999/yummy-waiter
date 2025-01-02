@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 
 import { Box } from '@mui/material';
 
-import { Categories } from '../my/my-constants';
 import Header from './HeaderWaiter';
 import OrderTake from './TakeOrder';
 import { Table } from '../my/my-class';
+import { MENU } from '../my/my-constants';
 
 interface WaiterProps {
     setIsWaiter: (isWaiter: boolean) => void,
@@ -15,15 +15,15 @@ interface WaiterProps {
 }
 
 export interface ChildWaiterProps extends WaiterProps {
-    category: Categories,
-    setCategory: (category: Categories) => void
+    category: string,
+    setCategory: (category: string) => void
 }
 
 export default function Waiter(props: WaiterProps) {
-    const [category, setCategory] = useState(Categories.BEEF);
+    const [category, setCategory] = useState(Object.keys(MENU)[0]);
     const [refreshState, setRefreshState] = useState(true);
 
-    const setRefreshCategory = (category: Categories) => {
+    const setRefreshCategory = (category: string) => {
         setCategory(category);
         setRefreshState(!refreshState);
     }

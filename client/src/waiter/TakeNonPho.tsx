@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 import { CategoryItem, NonPho, Pho } from '../my/my-class';
 import { CheckButton } from '../my/my-component';
-import { CATEGORY } from '../my/my-constants';
+import { MENU } from '../my/my-constants';
 import { StyledPaper } from '../my/my-styled';
 
 interface TakeNonPhoProps {
@@ -18,7 +18,7 @@ const getNonPho = (props: TakeNonPhoProps) => props.bags.get(0)!.get(props.categ
 const TakeNonPho = (props: TakeNonPhoProps) => {
     const [nonPho, setNonPho] = useState<Map<string, NonPho>>(getNonPho(props));
 
-    const nonPhos = CATEGORY[props.category as keyof typeof CATEGORY]!.nonPho;
+    const nonPhos = MENU[props.category as keyof typeof MENU]!.nonPho;
 
     useEffect(() => {
         setNonPho(getNonPho(props));

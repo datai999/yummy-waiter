@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 
 import YummyLogo from '../assets/yummy.png';
-import { Categories, TableStatus } from '../my/my-constants';
+import { MENU, TableStatus } from '../my/my-constants';
 import { CategoryButton } from '../my/my-styled';
 import { ChildWaiterProps } from './Waiter';
 import { changeTable } from '../my/my-service';
@@ -63,7 +63,7 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
                     </Typography>
                 </Grid2>
                 <Grid2 size={{ md: 6 }} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
-                    {Object.values(Categories).map((category) => (
+                    {Object.keys(MENU).map((category) => (
                         <WrapCategoryButton key={category} props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'medium' }} />
                     ))}
                 </Grid2>
@@ -76,7 +76,7 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
                 <Divider textAlign="left" sx={{ mb: 0 }}></Divider>
                 <Grid2 container spacing={2} alignItems="center">
                     <Grid2 size={{ sm: 8, }}>
-                        {Object.values(Categories).map((category) => (
+                        {Object.keys(MENU).map((category) => (
                             <WrapCategoryButton key={category} props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'large' }} />
                         ))}
                     </Grid2>
@@ -88,7 +88,7 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
 
             <Box sx={{ display: { xs: 'block', sm: 'none', md: 'none' }, flexWrap: "wrap" }}>
                 <Divider textAlign="left" sx={{ mb: 0 }}></Divider>
-                {Object.values(Categories).map((category) => (
+                {Object.keys(MENU).map((category) => (
                     <WrapCategoryButton key={category} props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'small' }} />
                 ))}
             </Box>
@@ -98,14 +98,14 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
 const WrapCategoryButton = ({ props }: {
     props: {
         size: string,
-        selectedCategory: Categories,
-        category: Categories, setCategory: React.Dispatch<Categories>
+        selectedCategory: string,
+        category: string, setCategory: React.Dispatch<string>
     }
 }) => {
     return (<CategoryButton
         key={props.category}
-        selected={props.selectedCategory === Categories[props.category as keyof typeof Categories]}
-        onClick={() => props.setCategory(Categories[props.category as keyof typeof Categories])}
+        selected={props.selectedCategory === props.category}
+        onClick={() => props.setCategory(props.category)}
         variant="contained"
         size={props.size == "small" ? "small" : props.size == "medium" ? "medium" : "large"}
     >

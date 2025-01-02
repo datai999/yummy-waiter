@@ -5,7 +5,7 @@ import React, {
 import { StyledPaper } from '../my/my-styled';
 import { Divider, Grid2, TextField, Button } from '@mui/material';
 import { CheckButton } from '../my/my-component';
-import { CATEGORY } from '../my/my-constants';
+import { MENU } from '../my/my-constants';
 import { CategoryItem, Pho } from '../my/my-class';
 import * as SERVICE from '../my/my-service';
 
@@ -26,7 +26,7 @@ const pTakePho = (props: TakePhoProps) => {
     const [pho, setPho] = useState<Pho>({ ...props.pho });
     const [note, setNote] = useState(props.pho.note);
 
-    const category = CATEGORY[props.category as keyof typeof CATEGORY]!;
+    const category = MENU[props.category as keyof typeof MENU]!;
     const combos = category.pho!.combo;
     const meats = category.pho!.meat;
     const noodles = category.pho!.noodle;

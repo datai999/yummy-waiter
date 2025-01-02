@@ -1,12 +1,3 @@
-import { SelectedItem } from "./my-class";
-
-export enum Categories {
-    BEEF = "BEEF",
-    CHICKEN = "CHICKEN",
-    // SIDE_ORDERS = "SIDE_ORDERS",
-    DRINKS = "DRINKS"
-}
-
 export enum TableStatus {
     AVAILABLE = "AVAILABLE",
     ACTIVE = "ACTIVE"
@@ -48,7 +39,8 @@ export const BEEF_REFERENCES = {
     'Không hành': '0h',
     'Không béo': '0Béo',
     'Ít bánh': '-b',
-    'Tái riêng': 'R'
+    'Tái riêng': 'R',
+    'Tái băm': 'Bam'
 }
 export const CHICKEN_REFERENCES = {
     'Không hành': '0h',
@@ -121,7 +113,7 @@ export const DESSERT = {
     'Mixed jelly': 'Mixed jelly',
 }
 
-export const CATEGORY = {
+export const MENU = {
     'BEEF': {
         'pho': {
             'combo': BEEF_COMBO,

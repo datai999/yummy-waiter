@@ -1,4 +1,4 @@
-import { Categories, TableStatus } from './my-constants';
+import { MENU, TableStatus } from './my-constants';
 import { generateId } from './my-service';
 
 export class Pho {
@@ -44,11 +44,9 @@ export class Table {
     }
 
     func = {
-        newBag: () => this.bags.set(this.bags.size, new Map([
-            [Categories.BEEF, new CategoryItem()],
-            [Categories.CHICKEN, new CategoryItem()],
-            [Categories.DRINKS, new CategoryItem()]
-        ]))
+        newBag: () => this.bags.set(
+            this.bags.size,
+            new Map(Object.keys(MENU).map(category => [category, new CategoryItem()])))
     }
 }
 
