@@ -21,7 +21,7 @@ import {
 import { StyledPaper } from '../my/my-styled';
 import theme from '../theme';
 import OrderSummary from './DetailOrder';
-import { CategoryItem, Pho } from '../my/my-class';
+import { CategoryItem, NonPho, Pho } from '../my/my-class';
 
 interface Props {
     bags: Map<number, Map<string, CategoryItem>>,
@@ -59,18 +59,27 @@ const BagDnd = ({ bags, phoId, showPho }: Props) => {
         if (!over) return;
 
         const ids = String(active.id).split('_');
-        const activeBag = Number(ids[1])
-        const category = ids[2];
-        const itemId = ids[3];
+        const type = ids[1];
+        const activeBag = Number(ids[2])
+        const category = ids[3];
+        const itemId = ids[4];
 
         const overBag = Number(String(over.id).slice(-1));
         if (activeBag === overBag) return;
 
         const activeCategoryItem = bags.get(activeBag)?.get(category)!;
         const overCategoryItem = bags.get(overBag)?.get(category)!;
-        const item = activeCategoryItem.pho.get(itemId) as Pho;
-        activeCategoryItem.pho.delete(itemId);
-        overCategoryItem.pho.set(item?.id as string, item);
+
+        if (type === 'pho') {
+            const item = activeCategoryItem.pho.get(itemId) as Pho;
+            activeCategoryItem.pho.delete(itemId);
+            overCategoryItem.pho.set(item?.id as string, item);
+        } else {
+            const item = activeCategoryItem.nonPho.get(itemId) as NonPho;
+            activeCategoryItem.nonPho.delete(itemId);
+            overCategoryItem.nonPho.set(item?.id as string, item);
+        }
+
         setRefresh(!refresh);
     }
 

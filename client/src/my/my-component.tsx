@@ -20,6 +20,7 @@ import {
     OrderItem,
 } from './my-styled';
 import { NonPho } from './my-class';
+import { Draggable } from '../waiter/BagDnd';
 
 interface CheckButtonProps {
     multi: boolean,
@@ -82,7 +83,9 @@ const pCheckButton = ({ ...props }: CheckButtonProps) => {
 }
 export const CheckButton = React.memo(pCheckButton, checkButtonPropsEqual);
 
-export const SideItemList = ({ canEdit, sideItems, doubleCol = true }: {
+export const SideItemList = ({ bag, category, canEdit, sideItems, doubleCol = true }: {
+    bag: number,
+    category: string,
     canEdit: boolean;
     sideItems: Map<String, NonPho>,
     doubleCol?: boolean,
@@ -118,52 +121,54 @@ export const SideItemList = ({ canEdit, sideItems, doubleCol = true }: {
                                     style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
                                     <FaMinus style={{ fontSize: 12 }} />
                                 </Button>
-                                <ListItemText
-                                    id={key as string}
-                                    primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
-                                    secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
-                                    sx={{ p: 0, m: 0 }}
-                                    primary={
-                                        <TextField id={key as string} margin="none" size='small'
-                                            type='number'
-                                            inputProps={{ inputMode: 'numeric', style: { paddingLeft: 0, fontSize: 16, fontWeight: 600 } }}
-                                            InputProps={{
-                                                type: "number",
-                                                sx: {
-                                                    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                                                        display: 'none'
+                                <Draggable id={`nonPho_${bag}_${category}_${key}`} enable={canEdit}>
+                                    <ListItemText
+                                        id={key as string}
+                                        primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
+                                        secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
+                                        sx={{ p: 0, m: 0 }}
+                                        primary={
+                                            <TextField id={key as string} margin="none" size='small'
+                                                type='number'
+                                                inputProps={{ inputMode: 'numeric', style: { paddingLeft: 0, fontSize: 16, fontWeight: 600 } }}
+                                                InputProps={{
+                                                    type: "number",
+                                                    sx: {
+                                                        '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                                            display: 'none'
+                                                        },
+                                                        '& input[type=number]': {
+                                                            MozAppearance: 'textfield'
+                                                        },
+                                                    }
+                                                }}
+                                                fullWidth={true}
+                                                sx={{
+                                                    p: 0, m: 0,
+                                                    input: {
+                                                        color: 'primary',
+                                                        "&::placeholder": {
+                                                            opacity: 1,
+                                                        },
                                                     },
-                                                    '& input[type=number]': {
-                                                        MozAppearance: 'textfield'
-                                                    },
-                                                }
-                                            }}
-                                            fullWidth={true}
-                                            sx={{
-                                                p: 0, m: 0,
-                                                input: {
-                                                    color: 'primary',
-                                                    "&::placeholder": {
-                                                        opacity: 1,
-                                                    },
-                                                },
-                                                "& fieldset": { border: 'none' },
-                                            }}
-                                            placeholder={`${value.count > 1 ? value.count : ''} ${value.code}`}
-                                            value={''}
-                                            onChange={(e) => {
-                                                const num = Number(e.target.value.slice(-1));
-                                                if (num === 0) {
-                                                    remove(key);
-                                                    return;
-                                                }
-                                                const sideItem = sideItems.get(key) || {} as NonPho;
-                                                sideItem.count = num;
-                                                setRefresh(!refresh);
-                                            }}
-                                        />
-                                    }
-                                />
+                                                    "& fieldset": { border: 'none' },
+                                                }}
+                                                placeholder={`${value.count > 1 ? value.count : ''} ${value.code}`}
+                                                value={''}
+                                                onChange={(e) => {
+                                                    const num = Number(e.target.value.slice(-1));
+                                                    if (num === 0) {
+                                                        remove(key);
+                                                        return;
+                                                    }
+                                                    const sideItem = sideItems.get(key) || {} as NonPho;
+                                                    sideItem.count = num;
+                                                    setRefresh(!refresh);
+                                                }}
+                                            />
+                                        }
+                                    />
+                                </Draggable>
                                 {canEdit && (
                                     <Button onClick={() => copy(key)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
                                         <FaPlus style={{ fontSize: 26 }} />

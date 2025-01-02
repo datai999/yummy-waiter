@@ -107,7 +107,7 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
                             <Button onClick={() => { if (showPho) remove(item.id) }} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
                                 <FaMinus style={{ fontSize: 12 }} />
                             </Button>
-                            <Draggable id={`${bag}_${category}_${id}`} enable={Boolean(showPho)}>
+                            <Draggable id={`pho_${bag}_${category}_${id}`} enable={Boolean(showPho)}>
                                 <ListItemButton onClick={() => {
                                     if (showPho) {
                                         if (phoId === item.id)
@@ -136,7 +136,7 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
                 })}
             </List>
             {phos.size > 0 && sideOrders.size > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
-            <SideItemList canEdit={Boolean(showPho)} sideItems={sideOrders} doubleCol={false} />
+            <SideItemList bag={bag} category={category} canEdit={Boolean(showPho)} sideItems={sideOrders} doubleCol={false} />
         </StyledPaper>);
 }
 
