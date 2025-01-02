@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 import { StyledPaper } from '../my/my-styled';
 import { Divider, Grid2, TextField, Button } from '@mui/material';
-import { CheckButton } from '../my/my-component';
+import { CheckButton, NumberInput } from '../my/my-component';
 import { MENU } from '../my/my-constants';
 import { CategoryItem, Pho } from '../my/my-class';
 import * as SERVICE from '../my/my-service';
@@ -126,25 +126,7 @@ const pTakePho = (props: TakePhoProps) => {
 
             <Grid2 container spacing={2} alignItems="center">
                 <Grid2 size={{ xs: 3, sm: 1, md: 1 }}>
-                    <TextField
-                        label="Qty"
-                        margin="none" size='small'
-                        type="number"
-                        sx={{
-                            p: 0, m: 0,
-                            input: {
-                                color: 'primary',
-                                "&::placeholder": {
-                                    opacity: 1,
-                                },
-                            },
-                        }}
-                        value={pho.qty}
-                        onChange={(e) => {
-                            const num = Number(e.target.value.slice(-1));
-                            setPho({ ...pho, qty: num });
-                        }}
-                    />
+                    <NumberInput value={pho.qty} onChange={num => { setPho({ ...pho, qty: num }); }} label='Qty' />
                 </Grid2>
                 <Grid2 size={{ xs: 9, sm: 6, md: 5 }}  >
                     <TextField

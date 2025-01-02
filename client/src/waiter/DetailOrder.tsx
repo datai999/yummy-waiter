@@ -87,7 +87,7 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
     return (
         <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0, minWidth: '600' }}>
             <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} >
-                <Badge badgeContent={phos.size} color="primary" anchorOrigin={{
+                <Badge badgeContent={Array.from(phos.values()).reduce((preQty, cur) => preQty + cur.qty, 0)} color="primary" anchorOrigin={{
                     vertical: 'top',
                     horizontal: 'right',
                 }}

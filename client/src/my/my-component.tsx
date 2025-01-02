@@ -83,6 +83,53 @@ const pCheckButton = ({ ...props }: CheckButtonProps) => {
 }
 export const CheckButton = React.memo(pCheckButton, checkButtonPropsEqual);
 
+export const NumberInput = (props: {
+    value: any,
+    onChange: (num: number) => void,
+    nonBorder?: boolean
+    placeholder?: string,
+    label?: string,
+    pl?: number
+}) => {
+
+    const style = { fontSize: 16, fontWeight: 600 };
+    const plStyle = props.pl && props.pl < 0 ? style : { ...style, paddingLeft: props.pl };
+
+    return (<TextField margin="none" size='small'
+        type='number'
+        label={props.label}
+        inputProps={{ inputMode: 'numeric', style: plStyle, }}
+        InputProps={{
+            type: "number",
+            sx: {
+                '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                    display: 'none'
+                },
+                '& input[type=number]': {
+                    MozAppearance: 'textfield'
+                },
+            }
+        }}
+        fullWidth={true}
+        sx={{
+            p: 0, m: 0,
+            input: {
+                color: 'primary',
+                "&::placeholder": {
+                    opacity: 1,
+                },
+            },
+            "& fieldset": { border: props.nonBorder ? 'none' : '' },
+        }}
+        placeholder={props.placeholder}
+        value={props.value}
+        onChange={(e) => {
+            const num = Number(e.target.value.slice(-1));
+            props.onChange(num);
+        }}
+    />)
+}
+
 export const SideItemList = ({ bag, category, canEdit, sideItems, doubleCol = true }: {
     bag: number,
     category: string,
@@ -127,46 +174,21 @@ export const SideItemList = ({ bag, category, canEdit, sideItems, doubleCol = tr
                                         primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
                                         secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
                                         sx={{ p: 0, m: 0 }}
-                                        primary={
-                                            <TextField id={key as string} margin="none" size='small'
-                                                type='number'
-                                                inputProps={{ inputMode: 'numeric', style: { paddingLeft: 0, fontSize: 16, fontWeight: 600 } }}
-                                                InputProps={{
-                                                    type: "number",
-                                                    sx: {
-                                                        '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                                                            display: 'none'
-                                                        },
-                                                        '& input[type=number]': {
-                                                            MozAppearance: 'textfield'
-                                                        },
-                                                    }
-                                                }}
-                                                fullWidth={true}
-                                                sx={{
-                                                    p: 0, m: 0,
-                                                    input: {
-                                                        color: 'primary',
-                                                        "&::placeholder": {
-                                                            opacity: 1,
-                                                        },
-                                                    },
-                                                    "& fieldset": { border: 'none' },
-                                                }}
-                                                placeholder={`${value.count > 1 ? value.count : ''} ${value.code}`}
-                                                value={''}
-                                                onChange={(e) => {
-                                                    const num = Number(e.target.value.slice(-1));
-                                                    if (num === 0) {
-                                                        remove(key);
-                                                        return;
-                                                    }
-                                                    const sideItem = sideItems.get(key) || {} as NonPho;
-                                                    sideItem.count = num;
-                                                    setRefresh(!refresh);
-                                                }}
-                                            />
-                                        }
+                                        primary={<NumberInput
+                                            value={''}
+                                            placeholder={`${value.count > 1 ? value.count : ''} ${value.code}`}
+                                            onChange={num => {
+                                                if (num === 0) {
+                                                    remove(key);
+                                                    return;
+                                                }
+                                                const sideItem = sideItems.get(key) || {} as NonPho;
+                                                sideItem.count = num;
+                                                setRefresh(!refresh);
+                                            }}
+                                            nonBorder={true}
+                                            pl={0}
+                                        />}
                                     />
                                 </Draggable>
                                 {canEdit && (
