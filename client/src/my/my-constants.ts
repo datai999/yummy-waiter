@@ -31,7 +31,7 @@ export const BEEF_COMBO = {
     "#6:Tái,Chín,gân": ['Tái', 'Chín', 'Gân'],
     "#7:Xi,Gầu,Bò viên": ['Xi', 'Gầu', 'BV'],
     "#8a:Hủ tiếu BK": ['Pho BK'],
-    "#8b:B.Mì BK": ['B.Mì BK'],
+    "#8b:Bánh Mì BK": ['B.Mì BK'],
     "#8c:Mì BK": ['Mì BK']
 }
 

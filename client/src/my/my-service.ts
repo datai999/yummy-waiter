@@ -26,10 +26,8 @@ export const generateTables = () =>
 
 export const completePho = (pho: Pho) => {
     pho.id = pho.id.length > 0 ? pho.id : generateId();
-    pho.meats = pho.meats.length === 0
-        ? ["BPN"]
-        : pho.meats.filter(meat => meat !== "BPN");
-    if (pho.meats.length === 6) pho.meats = ['DB'];
+    if (pho.meats.length === 0)
+        pho.meats = ["BPN"];
 }
 
 export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTableId: string): Table | null => {

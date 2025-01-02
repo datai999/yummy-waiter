@@ -24,6 +24,7 @@ const arePropsEqual = (prev: TakePhoProps, next: TakePhoProps) => {
 
 const pTakePho = (props: TakePhoProps) => {
     const [pho, setPho] = useState<Pho>({ ...props.pho });
+    const [note, setNote] = useState(props.pho.note);
 
     const category = CATEGORY[props.category as keyof typeof CATEGORY]!;
     const combos = category.pho!.combo;
@@ -33,6 +34,7 @@ const pTakePho = (props: TakePhoProps) => {
 
     useEffect(() => {
         setPho({ ...props.pho } as Pho);
+        setNote(props.pho.note);
     }, [props.pho.id, props.category])
 
     useEffect(() => {
@@ -59,13 +61,22 @@ const pTakePho = (props: TakePhoProps) => {
         const dineIn = cloneBags.get(pho.id?.length > 0 ? props.currentBag : bag)!;
         const categoryItems = dineIn.get(props.category);
 
+        pho.note = note;
         SERVICE.completePho(pho);
 
-        categoryItems?.pho.set(pho.id, pho);
+        if (bag > 0 && props.currentBag === 0) {
+            categoryItems?.pho.delete(pho.id);
+            const togocategoryItems = cloneBags.get(bag)!.get(props.category);
+            togocategoryItems?.pho.set(pho.id, pho);
+        } else {
+            categoryItems?.pho.set(pho.id, pho);
+        }
+
         categoryItems?.action.push(new Date().toISOString() + ':add pho');
 
         props.onSubmit(pho);
         setPho(new Pho());
+        setNote('');
     }
 
     return (
@@ -119,8 +130,10 @@ const pTakePho = (props: TakePhoProps) => {
                         fullWidth
                         label="Special Notes"
                         size='small'
-                        value={pho.note}
-                        onChange={(e) => setPho({ ...pho, note: e.target.value })}
+                        value={note}
+                        onChange={(e) => {
+                            setNote(e.target.value);
+                        }}
                     />
                 </Grid2>
                 <Grid2 size={{ xs: 'auto', sm: 2, md: 2 }}  >
