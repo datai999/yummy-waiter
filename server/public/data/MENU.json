@@ -1,0 +1,58 @@
+{
+    "BEEF": {
+        "pho": {
+            "combo":{
+                "#1:DB": ["Tái", "Chín", "Gầu", "Gân", "Sách", "BV"],
+                "#2:Tái": ["Tái"],
+                "#3:Tái,Bò viên": ["Tái", "BV"],
+                "#4:Tái,Chín,Sách": ["Tái", "Chín", "Sách"],
+                "#5:Tái,Chín,Gầu": ["Tái", "Chín", "Gầu"],
+                "#6:Tái,Chín,gân": ["Tái", "Chín", "Gân"],
+                "#7:Xi,Gầu,Bò viên": ["Xi", "Gầu", "BV"],
+                "#8a:Hủ tiếu BK": ["Pho BK"],
+                "#8b:Bánh Mì BK": ["B.Mì BK"],
+                "#8c:Mì BK": ["Mì BK"]
+            },
+            "meat":{
+                "Tái": { "sort": 1, "code": "T" },
+                "Chín": { "sort": 2, "code": "C" },
+                "Gầu": { "sort": 3, "code": "G`" },
+                "Gân": { "sort": 4, "code": "g^" },
+                "Sách": { "sort": 5, "code": "S" },
+                "BV": { "sort": 6, "code": "BV" },
+                "Xi": { "sort": 0, "code": "Xi" }
+            },
+            "noodle":["BC", "BT", "BS", "BTS"],
+            "reference":{
+                "Không hành": "0h",
+                "Không béo": "0Béo",
+                "Ít bánh": "-b",
+                "Tái riêng": "R",
+                "Tái băm": "Bam"
+            }
+        },
+        "nonPho": ["BEEF_SIDE","BEEF_MEAT_SIDE"]
+    },
+    "CHICKEN": {
+        "pho": {
+            "combo": {
+                "Ức": ["U"],
+                "Cánh": ["C"],
+                "Đùi": ["D"]
+            },
+            "meat": null,
+            "noodle": ["BC", "BT", "BS", "BTS", "Bún", "Miến", "Mì"],
+            "reference": {
+                "Không hành": "0h",
+                "Không da": "0Skin",
+                "Không xương": "0bone",
+                "Khô": "K"
+            }
+        },
+        "nonPho": ["CHICKEN_SIDE"]
+    },
+    "DRINK": {
+        "pho": null,
+        "nonPho": ["DRINK", "DESSERT"]
+    }
+}
