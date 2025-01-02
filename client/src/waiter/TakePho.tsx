@@ -33,7 +33,7 @@ const pTakePho = (props: TakePhoProps) => {
 
     useEffect(() => {
         setPho({ ...props.pho } as Pho);
-    }, [props.pho.id])
+    }, [props.pho.id, props.category])
 
     useEffect(() => {
         if (!meats) return;

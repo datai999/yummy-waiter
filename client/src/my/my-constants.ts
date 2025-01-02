@@ -70,6 +70,7 @@ export const BEEF_SIDE = {
     'Ch.Soup': 'Ch.Soup',
     'Small.Soup': 'Small Soup',
     'Large.Soup': 'Large Soup',
+    'Egg rolls': 'Egg rolls',
 }
 
 export const BEEF_MEAT_SIDE = {
@@ -87,7 +88,9 @@ export const CHICKEN_SIDE = {
     'HD': 'HD',
     "Extra bamboo": "Extra bamboo",
     "Whole chicken": 'Whole chicken',
+    "Whole chicken: Chop": 'Whole chicken: Chop',
     "Half chicken": 'Half chicken',
+    "Half chicken: Chop": 'Half chicken: Chop',
     "Dĩa ức": 'Dia.U',
     'Dĩa cánh': 'Dia.C',
     'Dĩa đùi': 'Dia.D'
@@ -110,9 +113,12 @@ export const DESSERT = {
     'Tofu soybean': 'Tofu soybean',
     'Tofu matcha': 'Tofu matcha',
     'Tofu ginger': 'Tofu ginger',
+    'Chè 3M': 'Chè 3M',
+    'Chè Yummy': 'Chè Yummy',
+    'Chè SSBL': 'Chè SSBL',
+    'FLan': 'Flan',
     'Coconut jelly': 'Coconut jelly',
     'Mixed jelly': 'Mixed jelly',
-    'Three color': 'Three color'
 }
 
 export const CATEGORY = {
