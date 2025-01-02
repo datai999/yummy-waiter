@@ -8,7 +8,7 @@ export class Pho {
     noodle: string = 'BC';
     preferences?: string[];
     note?: string;
-    count: number = 1;
+    qty: number = 1;
 }
 
 export class NonPho {

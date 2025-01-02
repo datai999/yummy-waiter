@@ -56,8 +56,8 @@ export default function App() {
      *  + recommendation pho
      *  - UI like aldelo
      *  - order history
-     *  - qty btn pho
-     *  - count pho
+     *  + qty btn pho
+     *  + count pho
      *  - multi item selection to edit
      *  - button edit all items
      *  - user login

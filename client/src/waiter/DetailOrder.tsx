@@ -131,7 +131,7 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
                                         secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
                                         sx={{ p: 0, m: 0 }}
                                         primary={
-                                            `${item.meats.length === 6 ? 'DB' : item.meats} (${item.noodle}) ${(item.preferences || [])}`}
+                                            `${item.qty < 2 ? '' : item.qty + ' '}${item.meats.length === 6 ? 'DB' : item.meats} (${item.noodle}) ${(item.preferences || [])}`}
                                         secondary={item.note ? item.note : null}
                                     />
                                 </ListItemButton>
