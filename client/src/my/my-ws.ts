@@ -6,7 +6,8 @@ let clienId: string;
 
 export enum SYNC_TYPE {
     MESSAGE,
-    REQUEST,
+    USERS,
+    ACTIVE_TABLES,
     TABLE
 }
 
@@ -25,17 +26,20 @@ const initWsClient = (username: string, onSyncTables: (tables: Map<String, Table
 
     websocket.onopen = () => {
         console.log('WebSocket is connected');
-        websocket.send(JSON.stringify({
-            senter: clienId,
-            type: SYNC_TYPE[SYNC_TYPE.REQUEST],
-            payload: "TABLES_ACTIVE",
-        }));
+        // websocket.send(JSON.stringify({
+        //     senter: clienId,
+        //     type: SYNC_TYPE[SYNC_TYPE.REQUEST],
+        //     payload: "TABLES_ACTIVE",
+        // }));
     };
 
     websocket.onmessage = (evt) => {
         const data = JSON.parse(evt.data, JSON_reviver);
-        console.log(`[${new Date().toLocaleTimeString()}]<${data.senter}><${data.type}>:Received message`);
-        if (data.type === SYNC_TYPE[SYNC_TYPE.REQUEST]) {
+        // console.info(`[${new Date().toLocaleTimeString()}]<${data.senter}><${data.type}>:Received message`);
+        if (data.type === SYNC_TYPE[SYNC_TYPE.USERS]) {
+            console.log(data.payload);
+        }
+        if (data.type === SYNC_TYPE[SYNC_TYPE.ACTIVE_TABLES]) {
             onSyncTables(new Map(Object.entries(data.payload)));
         }
         if (data.type === SYNC_TYPE[SYNC_TYPE.TABLE]) {

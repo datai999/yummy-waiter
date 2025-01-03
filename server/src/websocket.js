@@ -1,5 +1,7 @@
 const WebSocket = require('ws');
 
+const { loadUsers } = require("./userService")
+
 let wss;
 
 const initWsServer = () => {
@@ -25,6 +27,18 @@ const onConnection = (ws, req) => {
     var userID = parseInt(req.url.substr(1), 10);
     users[userID] = ws;
 
+    sendMessageTo(ws, JSON.stringify({
+        senter: "SERVER",
+        type: "USERS",
+        payload: loadUsers()
+    }));
+
+    sendMessageTo(ws, JSON.stringify({
+        senter: "SERVER",
+        type: 'ACTIVE_TABLES',
+        payload: activeTables
+    }));
+
     ws.on('message', (message, isBinary) => {
         const messageConvert = isBinary ? message : message.toString();
         const data = JSON.parse(messageConvert);
@@ -32,11 +46,6 @@ const onConnection = (ws, req) => {
                                 ${data.type !== 'MESSAGE' ? '' : `:${data.payload}`}`);
 
         if (data.type === 'REQUEST') {
-            sendMessageTo(ws, JSON.stringify({
-                senter: "SERVER",
-                type: 'REQUEST',
-                payload: activeTables
-            }));
         }
         if (data.type === 'TABLE') {
             updateActiveTable(data.payload);
