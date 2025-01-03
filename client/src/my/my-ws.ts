@@ -5,8 +5,8 @@ let websocket: WebSocket;
 let clienId: string;
 
 export enum SYNC_TYPE {
-    MESSAGE,
     USERS,
+    MENU,
     ACTIVE_TABLES,
     TABLE
 }
@@ -37,7 +37,10 @@ const initWsClient = (username: string, onSyncTables: (tables: Map<String, Table
         const data = JSON.parse(evt.data, JSON_reviver);
         // console.info(`[${new Date().toLocaleTimeString()}]<${data.senter}><${data.type}>:Received message`);
         if (data.type === SYNC_TYPE[SYNC_TYPE.USERS]) {
-            console.log(data.payload);
+            localStorage.setItem("users", JSON.stringify(data.payload));
+        }
+        if (data.type === SYNC_TYPE[SYNC_TYPE.MENU]) {
+            localStorage.setItem("menu", JSON.stringify(data.payload));
         }
         if (data.type === SYNC_TYPE[SYNC_TYPE.ACTIVE_TABLES]) {
             onSyncTables(new Map(Object.entries(data.payload)));

@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-const readFile = (filePath) => {
+const readJsonFile = (filePath) => {
     const data = fs.readFileSync(filePath, 'utf8', (err, data) => {
         if (err) {
             console.error({ "error": err });
@@ -10,8 +10,6 @@ const readFile = (filePath) => {
     return JSON.parse(data);
 }
 
-const loadUsers = () => readFile('./public/data/users.json');
-
 module.exports = {
-    loadUsers
+    readJsonFile
 }

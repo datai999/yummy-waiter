@@ -1,6 +1,7 @@
 const WebSocket = require('ws');
 
-const { loadUsers } = require("./userService")
+const { loadUsers } = require("./service/userService");
+const { loadMenu } = require('./service/menuService');
 
 let wss;
 
@@ -31,6 +32,12 @@ const onConnection = (ws, req) => {
         senter: "SERVER",
         type: "USERS",
         payload: loadUsers()
+    }));
+
+    sendMessageTo(ws, JSON.stringify({
+        senter: "SERVER",
+        type: "MENU",
+        payload: loadMenu()
     }));
 
     sendMessageTo(ws, JSON.stringify({
