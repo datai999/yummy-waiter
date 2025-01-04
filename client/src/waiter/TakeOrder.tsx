@@ -32,7 +32,7 @@ import { StyledPaper } from '../my/my-styled';
 import BagDnd from './BagDnd';
 import { ChildWaiterProps } from './Waiter';
 import { SYNC_TYPE, syncServer } from '../my/my-ws';
-import { Pho } from '../my/my-class';
+import { Pho, TrackedItem } from '../my/my-class';
 import TakePho from './TakePho';
 import TakeNonPho from './TakeNonPho';
 import { AuthContext, TableContext } from '../App';
@@ -47,8 +47,33 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
 
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
-    const bags = useRef(_.cloneDeep(table.bags)).current;
     const category = MENU[props.category as keyof typeof MENU];
+    const bags = useRef(_.cloneDeep(table.bags)).current;
+
+    useEffect(() => {
+        bags.forEach(bag => bag.forEach(categoryItem => {
+            categoryItem.pho.push(new TrackedItem(auth));
+            categoryItem.nonPho.push(new TrackedItem(auth));
+        }));
+    }, [])
+
+    const submitPho = (bag: number, newPho: Pho) => {
+        const targetBag = bags.get(newPho.id?.length > 0 ? currentBag : bag)!;
+        const categoryItems = targetBag.get(props.category)!;
+
+        if (bag > 0 && currentBag === 0) {
+            categoryItems?.lastPhos().delete(newPho.id);
+            const togocategoryItems = bags.get(bag)!.get(props.category);
+            togocategoryItems?.lastPhos().set(pho.id, newPho);
+        } else {
+            categoryItems.lastPhos().set(newPho.id, newPho);
+        }
+
+        categoryItems?.action.push(new Date().toISOString() + ':add pho');
+
+        setPho(new Pho());
+        setRefresh(!refresh);
+    }
 
     const confirmOrder = () => {
         if (table.status === TableStatus.AVAILABLE) {
@@ -67,7 +92,7 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
         }
         props.setCategory(category);
         setCurrentBag(bag);
-        setPho(bags.get(bag)?.get(props.category)?.pho.get(selectedItemId)!);
+        setPho(bags.get(bag)?.get(props.category)?.lastPhos().get(selectedItemId)!);
     }
 
     const addBag = () => {
@@ -81,13 +106,8 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
                 {category?.pho && (
                     <TakePho
                         category={props.category}
-                        bags={bags}
-                        currentBag={currentBag}
                         pho={pho}
-                        onSubmit={() => {
-                            setPho(new Pho());
-                            setRefresh(!refresh);
-                        }}
+                        submitPho={submitPho}
                     />
                 )}
                 {category?.nonPho && (
@@ -144,13 +164,8 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
         {category?.pho && (
             <TakePho
                 category={props.category}
-                bags={bags}
-                currentBag={currentBag}
                 pho={pho}
-                onSubmit={() => {
-                    setPho(new Pho());
-                    setRefresh(!refresh);
-                }}
+                submitPho={submitPho}
             />
         )}
 

@@ -37,23 +37,20 @@ interface Props {
     showPho?: (bag: number, category: string, itemId: string) => void;
 };
 
-const OrderSummary = ({ bag, categoryItems, phoId, showPho }: Props) => {
-    const [refresh, setRefresh] = useState<Boolean>(false);
-
-    const mdResponsive = showPho ? useMediaQuery('(min-width:900px)') ? 12 : 4 : 'grow';
+const OrderSummary = (props: Props) => {
+    const mdResponsive = props.showPho ? useMediaQuery('(min-width:900px)') ? 12 : 4 : 'grow';
 
     return (
         <Grid2 container spacing={2}>
             {Object.keys(MENU)
                 .filter(category => {
                     // if (!MENU[category as keyof typeof MENU].pho) return false;
-                    const categoryItem = categoryItems.get(category)!;
-                    return categoryItem.pho.size + categoryItem.nonPho.size > 0;
+                    const categoryItem = props.categoryItems.get(category)!;
+                    return categoryItem.lastPhos().size + categoryItem.lastNonPhos().size > 0;
                 })
                 .map(category => (
-                    <Grid2 key={category} size={{ xs: 12, sm: showPho ? 6 : 12, md: mdResponsive }} >
-                        <PhoList bag={bag} category={category} phoId={phoId} phos={categoryItems.get(category)!.pho} sideOrders={categoryItems.get(category)!.nonPho}
-                            showPho={showPho} />
+                    <Grid2 key={category} size={{ xs: 12, sm: props.showPho ? 6 : 12, md: mdResponsive }} >
+                        <PhoList parentProps={props} category={category} />
                     </Grid2>
                 ))
             }
@@ -61,17 +58,16 @@ const OrderSummary = ({ bag, categoryItems, phoId, showPho }: Props) => {
     )
 }
 
-interface PhoListProps {
-    bag: number,
-    category: string,
-    phoId: String,
-    phos: Map<String, Pho>,
-    sideOrders: Map<String, NonPho>,
-    showPho?: (bag: number, category: string, itemId: string) => void,
-}
-
-const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListProps) => {
+const PhoList = (props: { parentProps: Props, category: string }) => {
     const [refresh, setRefresh] = useState<Boolean>(false);
+
+    const category = props.category;
+    const bag = props.parentProps.bag;
+    const phoId = props.parentProps.phoId;
+    const showPho = props.parentProps.showPho;
+    const categoryItems = props.parentProps.categoryItems.get(category);
+    const phos = categoryItems?.lastPhos()!;
+    const nonPhos = categoryItems?.lastNonPhos()!;
 
     const remove = (itemId: string) => {
         phos.delete(itemId);
@@ -135,8 +131,8 @@ const PhoList = ({ bag, category, phoId, phos, sideOrders, showPho }: PhoListPro
                     );
                 })}
             </List>
-            {phos.size > 0 && sideOrders.size > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
-            <SideItemList bag={bag} category={category} canEdit={Boolean(showPho)} sideItems={sideOrders} doubleCol={false} />
+            {phos.size > 0 && nonPhos.size > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
+            <SideItemList bag={bag} category={category} canEdit={Boolean(showPho)} sideItems={nonPhos} doubleCol={false} />
         </StyledPaper>);
 }
 

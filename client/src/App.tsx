@@ -9,17 +9,20 @@ import initWsClient from './my/my-ws';
 import { Table } from './my/my-class';
 import Login from './user/Login';
 
+interface IAuthContext {
+  auth: any, logout: () => void
+}
 interface ITableContext {
   table: Table, orderTable: (table: null | Table) => void
 }
 
-export const AuthContext = createContext({ auth: null, logout: () => { } });
+export const AuthContext = createContext<IAuthContext>({ auth: {}, logout: () => { } });
 export const TableContext = createContext<ITableContext>({} as ITableContext);
 
 const tables = generateTables();
 
 export default function App() {
-  const [auth, setAuth] = useState<any>();
+  const [auth, setAuth] = useState<any>({ name: "Tai", code: 0, permission: [] });
   const [table, orderTable] = useState<Table | null>(null);
   const [refresh, setRefresh] = useState<Boolean>(false);
 

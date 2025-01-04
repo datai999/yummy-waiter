@@ -13,7 +13,7 @@ interface TakeNonPhoProps {
     onSubmit: () => void
 }
 
-const getNonPho = (props: TakeNonPhoProps) => props.bags.get(0)!.get(props.category)?.nonPho!;
+const getNonPho = (props: TakeNonPhoProps) => props.bags.get(0)!.get(props.category)?.lastNonPhos()!;
 
 const TakeNonPho = (props: TakeNonPhoProps) => {
     const [nonPho, setNonPho] = useState<Map<string, NonPho>>(getNonPho(props));
@@ -37,7 +37,8 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
         const dineIn = cloneBags.get(0)!;
         const categoryItems = dineIn.get(props.category)!;
 
-        categoryItems.nonPho = nextNonPho;
+        // TODO
+        categoryItems.nonPho.slice(-1)[0].items = nextNonPho;
         categoryItems.action.push(new Date().toISOString() + ':add nonPho');
 
         props.onSubmit();

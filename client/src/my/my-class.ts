@@ -24,10 +24,28 @@ export class NonPho {
     }
 }
 
+export class TrackedItem<T> {
+    time?: Date;
+    staff: string;
+    items: Map<string, T> = new Map();
+
+    public constructor(staff: any) {
+        this.staff = staff.code + '_' + staff.name;
+    }
+}
+
 export class CategoryItem {
-    pho: Map<string, Pho> = new Map();
-    nonPho: Map<string, NonPho> = new Map();
+    pho: TrackedItem<Pho>[] = [];
+    nonPho: TrackedItem<NonPho>[] = [];
     action: string[] = [];
+
+    public lastPhos(): Map<string, Pho> {
+        return this.pho.length === 0 ? new Map() : this.pho[this.pho.length - 1].items;
+    }
+
+    public lastNonPhos(): Map<string, NonPho> {
+        return this.nonPho.length === 0 ? new Map() : this.nonPho[this.nonPho.length - 1].items;
+    }
 }
 
 export class Table {

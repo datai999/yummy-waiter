@@ -71,18 +71,17 @@ const BagDnd = ({ bags, phoId, showPho }: Props) => {
         const overCategoryItem = bags.get(overBag)?.get(category)!;
 
         if (type === 'pho') {
-            const item = activeCategoryItem.pho.get(itemId) as Pho;
-            activeCategoryItem.pho.delete(itemId);
-            overCategoryItem.pho.set(item?.id as string, item);
+            const item = activeCategoryItem.lastPhos().get(itemId) as Pho;
+            activeCategoryItem.lastPhos().delete(itemId);
+            overCategoryItem.lastPhos().set(item?.id as string, item);
         } else {
-            const item = activeCategoryItem.nonPho.get(itemId) as NonPho;
-            activeCategoryItem.nonPho.delete(itemId);
-            overCategoryItem.nonPho.set(item?.id as string, item);
+            const item = activeCategoryItem.lastNonPhos().get(itemId) as NonPho;
+            activeCategoryItem.lastNonPhos().delete(itemId);
+            overCategoryItem.lastNonPhos().set(item?.id as string, item);
         }
 
         setRefresh(!refresh);
     }
-
 
     return (
         <DndContext

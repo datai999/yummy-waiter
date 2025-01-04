@@ -24,7 +24,7 @@ export default function Login(props: {
             const user = users[code];
             if (!user) {
                 alert('Access code is invalid');
-            } else props.setAuth(user);
+            } else props.setAuth({ ...user, code: code });
             setCode('');
         }
         else setCode(code + key);

@@ -6,15 +6,13 @@ import { StyledPaper } from '../my/my-styled';
 import { Divider, Grid2, TextField, Button } from '@mui/material';
 import { CheckButton, NumberInput } from '../my/my-component';
 import { MENU } from '../my/my-constants';
-import { CategoryItem, Pho } from '../my/my-class';
+import { Pho } from '../my/my-class';
 import * as SERVICE from '../my/my-service';
 
 interface TakePhoProps {
     category: string,
-    bags: Map<number, Map<string, CategoryItem>>,
-    currentBag: number,
     pho: Pho,
-    onSubmit: (pho: Pho) => void
+    submitPho: (bag: number, pho: Pho) => void
 }
 
 const arePropsEqual = (prev: TakePhoProps, next: TakePhoProps) => {
@@ -57,23 +55,9 @@ const pTakePho = (props: TakePhoProps) => {
     }, [pho.meats]);
 
     const addItem = (bag: number) => {
-        const dineIn = props.bags.get(pho.id?.length > 0 ? props.currentBag : bag)!;
-        const categoryItems = dineIn.get(props.category);
-
         pho.note = note;
         SERVICE.completePho(pho);
-
-        if (bag > 0 && props.currentBag === 0) {
-            categoryItems?.pho.delete(pho.id);
-            const togocategoryItems = props.bags.get(bag)!.get(props.category);
-            togocategoryItems?.pho.set(pho.id, pho);
-        } else {
-            categoryItems?.pho.set(pho.id, pho);
-        }
-
-        categoryItems?.action.push(new Date().toISOString() + ':add pho');
-
-        props.onSubmit(pho);
+        props.submitPho(bag, pho);
         setPho(new Pho());
         setNote('');
     }
