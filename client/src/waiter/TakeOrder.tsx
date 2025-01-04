@@ -8,6 +8,7 @@ import React, {
 import _ from 'lodash';
 import { FaChevronRight } from 'react-icons/fa';
 import { GiPaperBagFolded } from 'react-icons/gi';
+import { MdTableRestaurant } from "react-icons/md";
 
 import {
     Box,
@@ -18,6 +19,7 @@ import {
     DialogTitle,
     Divider,
     Grid2,
+    Stack,
     Typography,
     useMediaQuery,
 } from '@mui/material';
@@ -37,7 +39,7 @@ import { AuthContext, TableContext } from '../App';
 
 const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
     const { auth, logout } = useContext(AuthContext);
-    const { table } = useContext(TableContext);
+    const { table, orderTable } = useContext(TableContext);
 
     const [refresh, setRefresh] = useState(false)
     const [pho, setPho] = useState<Pho>(new Pho());
@@ -45,7 +47,7 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
 
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
-    const bags= useRef(_.cloneDeep(table.bags)).current;
+    const bags = useRef(_.cloneDeep(table.bags)).current;
     const category = MENU[props.category as keyof typeof MENU];
 
     const confirmOrder = () => {
@@ -56,7 +58,6 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
         table.bags = bags;
         syncServer(SYNC_TYPE.TABLE, { [table.id]: table });
         setOpenConfirmDialog(false);
-        logout();
     };
 
     const showPho = (bag: number, category: string, selectedItemId: string) => {
@@ -101,27 +102,40 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
             </Grid2>
             <Grid2 size={{ md: 'grow' }}>
                 <BagDnd bags={bags} phoId={pho.id} showPho={showPho} />
-                <Box display="flex"
-                    justifyContent="center"
-                    alignItems="center">
+                <Stack direction="row" spacing={1} >
                     <Button
                         variant="contained"
                         color="primary"
                         onClick={addBag}
-                        sx={{ mr: '3%' }}
                     >
-                        Add bag <GiPaperBagFolded style={{ fontSize: 20, marginLeft: 8 }} />
+                        Add bag
+                        {/* <GiPaperBagFolded style={{ fontSize: 20, marginLeft: 8 }} /> */}
                     </Button>
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => confirmOrder()}
+                        onClick={() => {
+                            confirmOrder();
+                            orderTable(null);
+                        }}
                         disabled={false}
-                        sx={{ ml: '3%' }}
                     >
-                        Place Order <FaChevronRight style={{ marginLeft: 8 }} />
+                        Next table
+                        {/* <MdTableRestaurant style={{ marginLeft: 8 }} /> */}
                     </Button>
-                </Box>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                            confirmOrder();
+                            logout();
+                        }}
+                        disabled={false}
+                    >
+                        Place Order
+                        {/* <FaChevronRight style={{ marginLeft: 8 }} /> */}
+                    </Button>
+                </Stack>
             </Grid2>
         </Grid2 >
     );
