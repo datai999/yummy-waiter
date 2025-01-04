@@ -63,6 +63,7 @@ export default function App() {
      *  + communicate between devices in LAN
      *  + remove confirmation
      *  + recommendation pho
+     *  - order detail sperate by times modify (time + acter)
      *  - UI like aldelo
      *  - order history
      *  - select table by UI

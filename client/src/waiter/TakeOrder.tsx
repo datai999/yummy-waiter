@@ -1,6 +1,7 @@
 import React, {
     useContext,
     useEffect,
+    useRef,
     useState,
 } from 'react';
 
@@ -44,7 +45,7 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
 
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
-    const bags = table.bags;
+    const bags= useRef(_.cloneDeep(table.bags)).current;
     const category = MENU[props.category as keyof typeof MENU];
 
     const confirmOrder = () => {
@@ -52,6 +53,7 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
             table.status = TableStatus.ACTIVE;
             table.orderTime = new Date();
         }
+        table.bags = bags;
         syncServer(SYNC_TYPE.TABLE, { [table.id]: table });
         setOpenConfirmDialog(false);
         logout();

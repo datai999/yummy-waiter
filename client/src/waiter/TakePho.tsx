@@ -57,8 +57,7 @@ const pTakePho = (props: TakePhoProps) => {
     }, [pho.meats]);
 
     const addItem = (bag: number) => {
-        const cloneBags = new Map(props.bags);
-        const dineIn = cloneBags.get(pho.id?.length > 0 ? props.currentBag : bag)!;
+        const dineIn = props.bags.get(pho.id?.length > 0 ? props.currentBag : bag)!;
         const categoryItems = dineIn.get(props.category);
 
         pho.note = note;
@@ -66,7 +65,7 @@ const pTakePho = (props: TakePhoProps) => {
 
         if (bag > 0 && props.currentBag === 0) {
             categoryItems?.pho.delete(pho.id);
-            const togocategoryItems = cloneBags.get(bag)!.get(props.category);
+            const togocategoryItems = props.bags.get(bag)!.get(props.category);
             togocategoryItems?.pho.set(pho.id, pho);
         } else {
             categoryItems?.pho.set(pho.id, pho);
