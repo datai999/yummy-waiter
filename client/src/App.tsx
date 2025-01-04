@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 
 import Header from './table/Header';
 import TableManagerment from './table/ManagementTable';
@@ -9,50 +9,55 @@ import initWsClient from './my/my-ws';
 import { Table } from './my/my-class';
 import Login from './user/Login';
 
+interface ITableContext {
+  table: Table, orderTable: (table: null | Table) => void
+}
+
+export const AuthContext = createContext({ auth: null, logout: () => { } });
+export const TableContext = createContext<ITableContext>({} as ITableContext);
+
+const tables = generateTables();
+
 export default function App() {
-  const [isWaiter, setIsWaiter] = useState<Boolean>(false);
-  const [tables, setTables] = useState<Map<String, Table>>(generateTables);
+  const [auth, setAuth] = useState<any>();
   const [table, orderTable] = useState<Table | null>(null);
   const [refresh, setRefresh] = useState<Boolean>(false);
-  const [user, setUser] = useState();
 
   useEffect(() => {
     initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables);
-    orderTable(tables.get('Table 1')!);
+    // orderTable(tables.get('Table 1')!);
   }, []);
-
-  useEffect(() => {
-    if (table)
-      setIsWaiter(true);
-  }, [table]);
 
   const onSyncTables = (syncTables: Map<String, Table>) => {
     syncTables.forEach(syncTable => {
       tables.set(syncTable.id, syncTable);
     });
-    if (!isWaiter) {
+    if (!table) {
       setRefresh((cur: Boolean) => !cur);
     }
   }
 
-  // TODO: consider remove isWaiter
-  const overideOrderTable = (nextTable: Table | null) => {
-    setIsWaiter(true);
-    orderTable(nextTable);
+  const logout = () => {
+    orderTable(null);
+    setAuth(null);
   }
 
-  if (!user) return (<Login setUser={setUser} />)
+  if (!auth) return (<Login setAuth={setAuth} />)
 
-  return (
-    <>
-      {isWaiter && table
-        ? (<Waiter setIsWaiter={setIsWaiter} tables={tables} table={table!} orderTable={overideOrderTable} />)
-        : (<>
-          <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
-            <Header />
-          </Box>
-          <TableManagerment tables={tables} orderTable={overideOrderTable} /></>)}
-    </>
+  return (<AuthContext.Provider value={{ auth, logout }}>
+    {table
+      ? (<TableContext.Provider value={{ table, orderTable }}>
+        <Waiter tables={tables} />
+      </TableContext.Provider>
+      )
+      : (<>
+        <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
+          <Header />
+        </Box>
+        <TableManagerment tables={tables} orderTable={orderTable} />
+      </>)}
+
+  </AuthContext.Provider>
     /**
      * waiter: 
      *  + communicate between devices in LAN

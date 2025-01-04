@@ -44,6 +44,7 @@ export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTabl
     });
 
     fromTable = new Table(fromTable.id);
+    tables.set(fromTable.id, fromTable);
 
     if (toTable.status === TableStatus.ACTIVE) {
         const data = { [fromTable.id]: fromTable, [toTableId]: toTable };

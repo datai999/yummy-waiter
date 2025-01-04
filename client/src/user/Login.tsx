@@ -11,7 +11,7 @@ const LogoImage = styled("img")({
 });
 
 export default function Login(props: {
-    setUser: (user: any) => void
+    setAuth: (user: any) => void
 }) {
 
     const [code, setCode] = useState('');
@@ -24,7 +24,7 @@ export default function Login(props: {
             const user = users[code];
             if (!user) {
                 alert('Access code is invalid');
-            } else props.setUser(user);
+            } else props.setAuth(user);
             setCode('');
         }
         else setCode(code + key);

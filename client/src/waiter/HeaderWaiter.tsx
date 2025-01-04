@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import {
     Box,
@@ -17,6 +17,7 @@ import { CategoryButton } from '../my/my-styled';
 import { ChildWaiterProps } from './Waiter';
 import { changeTable } from '../my/my-service';
 import { Table } from '../my/my-class';
+import { TableContext } from '../App';
 
 const LogoImage = styled("img")({
     width: "60px",
@@ -42,10 +43,12 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 
 
 const Header = ({ props }: { props: ChildWaiterProps }) => {
+    const { orderTable } = useContext(TableContext);
+
     return (
         <StyledPaper>
             <Grid2 container spacing={2} alignItems="center">
-                <Grid2 size={{ xs: 2, sm: 1, md: 1 }} onClick={() => props.setIsWaiter(false)}>
+                <Grid2 size={{ xs: 2, sm: 1, md: 1 }} onClick={() => orderTable(null)}>
                     <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} />
                     <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} />
                 </Grid2>
@@ -114,19 +117,21 @@ const WrapCategoryButton = ({ props }: {
 }
 
 const TableSelections = ({ props, size }: { props: ChildWaiterProps, size: string }) => {
+    const { table, orderTable } = useContext(TableContext);
+
     let tableIdAvailable = Array.from(props.tables.values())
         .filter((table: Table) => table.status === TableStatus.AVAILABLE && table.id.startsWith("Table"))
         .map(table => table.id);
 
-    if (!tableIdAvailable.includes(props.table.id))
-        tableIdAvailable = [props.table.id, ...tableIdAvailable];
+    if (!tableIdAvailable.includes(table.id))
+        tableIdAvailable = [table.id, ...tableIdAvailable];
 
     return (<Select
         fullWidth
-        value={props.table.id}
+        value={table.id}
         onChange={(e) => {
-            const toTable = changeTable(props.tables, props.table, e.target.value) as Table;
-            props.orderTable(toTable);
+            const toTable = changeTable(props.tables, table, e.target.value) as Table;
+            orderTable(toTable);
         }}
         displayEmpty
         size={size === "small" ? "small" : "medium"}

@@ -1,4 +1,5 @@
 import React, {
+    useContext,
     useEffect,
     useState,
 } from 'react';
@@ -31,34 +32,29 @@ import { SYNC_TYPE, syncServer } from '../my/my-ws';
 import { Pho } from '../my/my-class';
 import TakePho from './TakePho';
 import TakeNonPho from './TakeNonPho';
+import { AuthContext, TableContext } from '../App';
 
-interface OrderTakeProps extends ChildWaiterProps {
-    refreshState: boolean
-}
+const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
+    const { auth, logout } = useContext(AuthContext);
+    const { table } = useContext(TableContext);
 
-const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     const [refresh, setRefresh] = useState(false)
     const [pho, setPho] = useState<Pho>(new Pho());
     const [currentBag, setCurrentBag] = useState<number>(0);
 
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
-    const bags = props.table.bags;
+    const bags = table.bags;
     const category = MENU[props.category as keyof typeof MENU];
 
-    useEffect(() => {
-        setPho(new Pho());
-    }, [props.refreshState]);
-
     const confirmOrder = () => {
-        if (props.table.status === TableStatus.AVAILABLE) {
-            props.table.status = TableStatus.ACTIVE;
-            props.table.orderTime = new Date();
+        if (table.status === TableStatus.AVAILABLE) {
+            table.status = TableStatus.ACTIVE;
+            table.orderTime = new Date();
         }
-        syncServer(SYNC_TYPE.TABLE, { [props.table.id]: props.table });
+        syncServer(SYNC_TYPE.TABLE, { [table.id]: table });
         setOpenConfirmDialog(false);
-        props.orderTable(null);
-        props.setIsWaiter(false);
+        logout();
     };
 
     const showPho = (bag: number, category: string, selectedItemId: string) => {
@@ -72,7 +68,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
     }
 
     const addBag = () => {
-        props.table.func.newBag();
+        table.func.newBag();
         setRefresh(!refresh);
     }
 
@@ -181,7 +177,7 @@ const OrderTake = ({ props }: { props: OrderTakeProps }) => {
             <DialogTitle>Confirm Order</DialogTitle>
             <DialogContent>
                 <Typography>
-                    Are you sure you want to place the order for Table {props.table.id}?
+                    Are you sure you want to place the order for Table {table.id}?
                 </Typography>
             </DialogContent>
             <DialogActions>
