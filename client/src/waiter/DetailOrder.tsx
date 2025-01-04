@@ -10,6 +10,7 @@ import { RiDrinks2Line } from 'react-icons/ri';
 
 import {
     Badge,
+    Box,
     Button,
     Divider,
     Grid2,
@@ -20,7 +21,6 @@ import {
     useMediaQuery,
 } from '@mui/material';
 
-import { SideItemList } from '../my/my-component';
 import { generateId } from '../my/my-service';
 import {
     OrderItem,
@@ -29,6 +29,7 @@ import {
 import { Draggable } from './BagDnd';
 import { CategoryItem, NonPho, Pho } from '../my/my-class';
 import { MENU } from '../my/my-constants';
+import { NumberInput } from '../my/my-component';
 
 interface Props {
     bag: number,
@@ -69,11 +70,13 @@ const PhoList = (props: { parentProps: Props, category: string }) => {
     const phos = categoryItems?.lastPhos()!;
     const nonPhos = categoryItems?.lastNonPhos()!;
 
+    // TODO
     const remove = (itemId: string) => {
         phos.delete(itemId);
         setRefresh(!refresh);
     };
 
+    // TODO
     const copy = (itemId: string) => {
         const copyItem = { ...phos.get(itemId), id: generateId() } as Pho;
         phos.set(copyItem.id, copyItem);
@@ -95,45 +98,126 @@ const PhoList = (props: { parentProps: Props, category: string }) => {
                 </Badge>
             </Typography>
             <Divider />
+            {categoryItems?.pho.map(trackPho => {
+                const phos = trackPho.items;
+                return (
+                    <Box key={trackPho.time?.toLocaleString()}>
+                        {`${trackPho.time?.toLocaleTimeString() || ''}:${trackPho.staff}`}
+                        <List dense sx={{ width: '100%', p: 0 }}>
+                            {Array.from(phos.entries()).map(([id, item], index) => {
+                                return (
+                                    <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }} style={{ backgroundColor: `${index % 1 === 1 ? '#f3f3f3' : null}` }}>
+                                        <Button onClick={() => { if (showPho) remove(item.id) }} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
+                                            <FaMinus style={{ fontSize: 12 }} />
+                                        </Button>
+                                        <Draggable id={`pho_${bag}_${category}_${id}`} enable={Boolean(showPho)}>
+                                            <ListItemButton onClick={() => {
+                                                if (showPho) {
+                                                    if (phoId === item.id)
+                                                        showPho(bag, category, "");
+                                                    else
+                                                        showPho(bag, category, item.id);
+                                                }
+                                            }} dense sx={{ p: 0, m: 0 }}>
+                                                <ListItemText
+                                                    id={item.id}
+                                                    primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
+                                                    secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
+                                                    sx={{ p: 0, m: 0 }}
+                                                    primary={
+                                                        `${item.qty < 2 ? '' : item.qty + ' '}${item.meats.length === 6 ? 'DB' : item.meats} (${item.noodle}) ${(item.preferences || [])}`}
+                                                    secondary={item.note ? item.note : null}
+                                                />
+                                            </ListItemButton>
+                                        </Draggable>
+                                        {showPho &&
+                                            <Button onClick={() => copy(item.id)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                                                <FaPlus style={{ fontSize: 26 }} />
+                                            </Button>}
+                                    </OrderItem>
+                                );
+                            })}
+                        </List>
+                    </Box>
+                )
+            })}
+            {phos.size > 0 && nonPhos.size > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
+            <NonPhoList bag={bag} category={category} canEdit={Boolean(showPho)} sideItems={nonPhos} doubleCol={false} />
+        </StyledPaper>);
+}
 
-            <List dense sx={{ width: '100%', p: 0 }}>
-                {Array.from(phos.entries()).map(([id, item], index) => {
+const NonPhoList = ({ bag, category, canEdit, sideItems, doubleCol = true }: {
+    bag: number,
+    category: string,
+    canEdit: boolean;
+    sideItems: Map<String, NonPho>,
+    doubleCol?: boolean,
+}) => {
+    const [refresh, setRefresh] = useState<Boolean>(false);
+
+    const copy = (itemId: String) => {
+        const newItem = { ...sideItems.get(itemId), id: generateId() } as NonPho;
+        sideItems.set(newItem.id, newItem);
+        setRefresh(!refresh);
+    }
+
+    const remove = (itemId: String) => {
+        sideItems.delete(itemId);
+        setRefresh(!refresh);
+    };
+
+    return (
+        <List dense sx={{ width: '100%', p: 0 }}>
+            <Grid2 container columnSpacing={2}>
+                {Array.from(sideItems.entries()).map(([key, value], index) => {
                     return (
-                        <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }} style={{ backgroundColor: `${index % 2 === 1 ? '#f3f3f3' : null}` }}>
-                            <Button onClick={() => { if (showPho) remove(item.id) }} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
-                                <FaMinus style={{ fontSize: 12 }} />
-                            </Button>
-                            <Draggable id={`pho_${bag}_${category}_${id}`} enable={Boolean(showPho)}>
-                                <ListItemButton onClick={() => {
-                                    if (showPho) {
-                                        if (phoId === item.id)
-                                            showPho(bag, category, "");
-                                        else
-                                            showPho(bag, category, item.id);
-                                    }
-                                }} dense sx={{ p: 0, m: 0 }}>
+                        <Grid2 key={index} size={doubleCol ? 6 : 12}  >
+                            <OrderItem key={key as string} sx={{ display: 'flex' }}
+                                style={{
+                                    backgroundColor: `${(doubleCol
+                                        ? (index % 4 === 2 || index % 4 === 3)
+                                        : (index % 2 === 1))
+                                        ? '#f3f3f3' : null}`
+                                }}>
+                                <Button onClick={() => { if (canEdit) remove(key) }}
+                                    sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }}
+                                    style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
+                                    <FaMinus style={{ fontSize: 12 }} />
+                                </Button>
+                                <Draggable id={`nonPho_${bag}_${category}_${key}`} enable={canEdit}>
                                     <ListItemText
-                                        id={item.id}
+                                        id={key as string}
                                         primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
                                         secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
                                         sx={{ p: 0, m: 0 }}
-                                        primary={
-                                            `${item.qty < 2 ? '' : item.qty + ' '}${item.meats.length === 6 ? 'DB' : item.meats} (${item.noodle}) ${(item.preferences || [])}`}
-                                        secondary={item.note ? item.note : null}
+                                        primary={<NumberInput
+                                            value={''}
+                                            placeholder={`${value.count > 1 ? value.count : ''} ${value.code}`}
+                                            onChange={num => {
+                                                if (num === 0) {
+                                                    remove(key);
+                                                    return;
+                                                }
+                                                const sideItem = sideItems.get(key) || {} as NonPho;
+                                                sideItem.count = num;
+                                                setRefresh(!refresh);
+                                            }}
+                                            nonBorder={true}
+                                            pl={0}
+                                        />}
                                     />
-                                </ListItemButton>
-                            </Draggable>
-                            {showPho &&
-                                <Button onClick={() => copy(item.id)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
-                                    <FaPlus style={{ fontSize: 26 }} />
-                                </Button>}
-                        </OrderItem>
+                                </Draggable>
+                                {canEdit && (
+                                    <Button onClick={() => copy(key)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                                        <FaPlus style={{ fontSize: 26 }} />
+                                    </Button>)}
+                            </OrderItem>
+                        </Grid2>
                     );
                 })}
-            </List>
-            {phos.size > 0 && nonPhos.size > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
-            <SideItemList bag={bag} category={category} canEdit={Boolean(showPho)} sideItems={nonPhos} doubleCol={false} />
-        </StyledPaper>);
+            </Grid2 >
+        </List>
+    );
 }
 
 export default OrderSummary;

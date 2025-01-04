@@ -30,7 +30,7 @@ export class TrackedItem<T> {
     items: Map<string, T> = new Map();
 
     public constructor(staff: any) {
-        this.staff = staff.code + '_' + staff.name;
+        this.staff = staff.name;
     }
 }
 

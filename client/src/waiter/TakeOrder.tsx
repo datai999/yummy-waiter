@@ -80,6 +80,18 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
             table.status = TableStatus.ACTIVE;
             table.orderTime = new Date();
         }
+        bags.forEach(bag => bag.forEach(categoryItem => {
+            const lastPho = categoryItem.pho.pop()!;
+            if (lastPho.items.size > 0) {
+                lastPho.time = new Date();
+                categoryItem.pho.push(lastPho);
+            }
+            const lastNonPho = categoryItem.nonPho.pop()!;
+            if (lastNonPho.items.size > 0) {
+                lastNonPho.time = new Date();
+                categoryItem.nonPho.push(lastNonPho);
+            }
+        }));
         table.bags = bags;
         syncServer(SYNC_TYPE.TABLE, { [table.id]: table });
         setOpenConfirmDialog(false);
