@@ -7,12 +7,14 @@ import { Box } from '@mui/material';
 import { generateTables } from './my/my-service';
 import initWsClient from './my/my-ws';
 import { Table } from './my/my-class';
+import Login from './user/Login';
 
 export default function App() {
   const [isWaiter, setIsWaiter] = useState<Boolean>(false);
   const [tables, setTables] = useState<Map<String, Table>>(generateTables);
   const [table, orderTable] = useState<Table | null>(null);
   const [refresh, setRefresh] = useState<Boolean>(false);
+  const [user, setUser] = useState();
 
   useEffect(() => {
     initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables);
@@ -39,6 +41,8 @@ export default function App() {
     orderTable(nextTable);
   }
 
+  if (!user) return (<Login setUser={setUser} />)
+
   return (
     <>
       {isWaiter && table
@@ -56,11 +60,12 @@ export default function App() {
      *  + recommendation pho
      *  - UI like aldelo
      *  - order history
+     *  - select table by UI
      *  + qty btn pho
      *  + count pho
      *  - multi item selection to edit
      *  - button edit all items
-     *  - user login
+     *  + user login
      *  - user manager
      *  - action by
      *  - void after 5min must accept by manager

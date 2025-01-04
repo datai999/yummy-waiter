@@ -10,7 +10,25 @@ const LogoImage = styled("img")({
     marginLeft: '-40px'
 });
 
-export default function Login() {
+export default function Login(props: {
+    setUser: (user: any) => void
+}) {
+
+    const [code, setCode] = useState('');
+
+    const users = JSON.parse(localStorage.getItem('users')!);
+
+    const inputKey = (key: string) => {
+        if (key === 'x') setCode('');
+        else if (key === '->') {
+            const user = users[code];
+            if (!user) {
+                alert('Access code is invalid');
+            } else props.setUser(user);
+            setCode('');
+        }
+        else setCode(code + key);
+    }
 
     return (<Box
         display="flex"
@@ -26,12 +44,12 @@ export default function Login() {
                 </Typography>
             </Stack>
             <Grid2 container spacing={1} sx={{ maxWidth: 500 }}>
-                {['7', '8', '9', '4', '5', '6', '1', '2', '3', 'x', '0', 'v'].map(key =>
+                {['7', '8', '9', '4', '5', '6', '1', '2', '3', 'x', '0', '->'].map(key =>
                     <Grid2 key={key} size={4}>
                         <Button
                             variant="outlined"
                             color="primary"
-                            // onClick={() => addItem(0)}
+                            onClick={() => inputKey(key)}
                             fullWidth
                             sx={{ minHeight: 70, maxHeight: 5, borderRadius: '32px' }}
                         >
