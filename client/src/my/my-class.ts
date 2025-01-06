@@ -16,12 +16,12 @@ export class Pho {
 export class NonPho {
     id: string;
     code: string;
-    count: number;
+    qty: number;
 
     public constructor(code: string) {
         this.id = generateId();
         this.code = code;
-        this.count = 1;
+        this.qty = 1;
     }
 }
 

@@ -27,7 +27,7 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
     const addItem = (nonPhoKey: string) => {
         const nextNonPho = new Map(nonPho);
         if (nextNonPho.has(nonPhoKey)) {
-            nextNonPho.get(nonPhoKey)!.count++;
+            nextNonPho.get(nonPhoKey)!.qty++;
         } else {
             nextNonPho.set(nonPhoKey, new NonPho(nonPhoKey));
         }
