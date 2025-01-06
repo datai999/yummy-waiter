@@ -46,7 +46,7 @@ export class TrackedPho extends TrackedItem {
 export class TrackedNonPho extends TrackedItem {
     @Transform(value => new Map(Object.entries(value.value).map(([key, item]) => [key, plainToClass(NonPho, item)])
     ), { toClassOnly: true })
-    items: Map<string, NonPho> = new Map();
+    items: Map<string, NonPho> = new Map(); // TODO: key
 }
 
 export class CategoryItem {

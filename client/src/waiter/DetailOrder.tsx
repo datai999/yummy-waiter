@@ -67,7 +67,7 @@ const PhoList = (props: { parentProps: Props, category: string }) => {
     const phoId = props.parentProps.phoId;
     const showPho = props.parentProps.showPho;
     const categoryItems = props.parentProps.categoryItems.get(category)!;
-    
+
     // TODO:
     const phoQty = Array.from(categoryItems.lastPhos().values()).reduce((preQty, cur) => preQty + cur.qty, 0);
     const nonPhoQty = Array.from(categoryItems.lastNonPhos().values()).reduce((preQty, cur) => preQty + cur.qty, 0);
@@ -142,6 +142,7 @@ const TrackedItemsList = (props: {
     onClick: (item: string) => void
     renderPrimaryContent: (item: any) => ReactNode,
 }) => {
+    const [refresh, setRefresh] = useState<Boolean>(false);
 
     const category = props.category;
     const bag = props.parentProps.bag;
@@ -149,14 +150,14 @@ const TrackedItemsList = (props: {
     const showPho = props.parentProps.showPho;
 
     const remove = (itemId: string) => {
-        // phos.delete(itemId);
-        // setRefresh(!refresh);
+        props.items.delete(itemId);
+        setRefresh(!refresh);
     };
 
-    const copy = (itemId: string) => {
-        // const copyItem = { ...phos.get(itemId), id: generateId() } as Pho;
-        // phos.set(copyItem.id, copyItem);
-        // setRefresh(!refresh);
+    const copy = (item: any) => {
+        const copyItem = { ...item, id: generateId() };
+        props.items.set(copyItem.id, copyItem);
+        setRefresh(!refresh);
     }
 
     return (<Box key={props.trackedItem.time?.toLocaleString()}>
@@ -181,7 +182,7 @@ const TrackedItemsList = (props: {
                             </ListItemButton>
                         </Draggable>
                         {showPho &&
-                            <Button onClick={() => copy(item.id)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                            <Button onClick={() => copy(item)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
                                 <FaPlus style={{ fontSize: 26 }} />
                             </Button>}
                     </OrderItem>
