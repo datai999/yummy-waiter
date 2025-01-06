@@ -32,7 +32,7 @@ import { StyledPaper } from '../my/my-styled';
 import BagDnd from './BagDnd';
 import { ChildWaiterProps } from './Waiter';
 import { SYNC_TYPE, syncServer } from '../my/my-ws';
-import { Pho, TrackedItem } from '../my/my-class';
+import { Pho, TrackedNonPho, TrackedPho } from '../my/my-class';
 import TakePho from './TakePho';
 import TakeNonPho from './TakeNonPho';
 import { AuthContext, TableContext } from '../App';
@@ -52,8 +52,8 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
 
     useEffect(() => {
         bags.forEach(bag => bag.forEach(categoryItem => {
-            categoryItem.pho.push(new TrackedItem(auth));
-            categoryItem.nonPho.push(new TrackedItem(auth));
+            categoryItem.pho.push(new TrackedPho(auth));
+            categoryItem.nonPho.push(new TrackedNonPho(auth));
         }));
     }, [])
 
@@ -108,7 +108,7 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
     }
 
     const addBag = () => {
-        table.func.newBag();
+        table.newBag();
         setRefresh(!refresh);
     }
 

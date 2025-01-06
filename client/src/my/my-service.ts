@@ -4,7 +4,7 @@ import {
 } from './my-constants';
 import _ from 'lodash';
 import { syncServer, SYNC_TYPE } from './my-ws';
-import { Pho, SelectedItem, Table } from './my-class';
+import { Pho, Table } from './my-class';
 
 const lodash = _;
 
@@ -52,14 +52,4 @@ export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTabl
     }
 
     return toTable;
-}
-
-export const selectedNotEmpty = (selectedItem: SelectedItem): boolean => {
-    return selectedItem.beef.size > 0
-        || selectedItem.beefSide.size > 0
-        || selectedItem.chicken.size > 0
-        || selectedItem.chickenSide.size > 0
-        || selectedItem.drink.size > 0
-        || selectedItem.dessert.size > 0
-        ;
 }

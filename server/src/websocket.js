@@ -18,8 +18,38 @@ module.exports = {
 
 const users = {};
 const activeTables = {
-    "Table 6": { "id": "Table 6", "status": "ACTIVE", "orderTime": "2024-12-22T19:39:18.726Z", "bags": { "dataType": "Map", "value": [[0, { "beef": { "dataType": "Map", "value": [["12/22/24, 11:39:18 78", { "id": "12/22/24, 11:39:18 78", "meats": ["BPN"], "noodle": "REGULAR", "preferences": [], "note": "", "noodleCode": "BC", "meatCodes": "BPN", "preferenceCodes": "" }]] }, "beefSide": { "dataType": "Map", "value": [] }, "beefUpdated": ["2024-12-22T19:39:18.079Z:add beef"], "chicken": { "dataType": "Map", "value": [] }, "chickenSide": { "dataType": "Map", "value": [] }, "chickenUpdated": [], "drink": { "dataType": "Map", "value": [] }, "dessert": { "dataType": "Map", "value": [] } }], [1, { "beef": { "dataType": "Map", "value": [] }, "beefSide": { "dataType": "Map", "value": [] }, "beefUpdated": [], "chicken": { "dataType": "Map", "value": [] }, "chickenSide": { "dataType": "Map", "value": [] }, "chickenUpdated": [], "drink": { "dataType": "Map", "value": [] }, "dessert": { "dataType": "Map", "value": [] } }]] } }
-    , "Table 9": { "id": "Table 9", "status": "ACTIVE", "orderTime": "2024-12-22T19:39:26.373Z", "bags": { "dataType": "Map", "value": [[0, { "beef": { "dataType": "Map", "value": [["12/22/24, 11:39:25 630", { "id": "12/22/24, 11:39:25 630", "meats": ["TENDON"], "noodle": "REGULAR", "preferences": [], "note": "", "noodleCode": "BC", "meatCodes": "g", "preferenceCodes": "" }], ["12/22/24, 11:39:42 694", { "id": "12/22/24, 11:39:42 694", "meats": ["BEEF_BALL"], "noodle": "REGULAR", "preferences": [], "note": "", "noodleCode": "BC", "meatCodes": "BV", "preferenceCodes": "" }]] }, "beefSide": { "dataType": "Map", "value": [] }, "beefUpdated": ["2024-12-22T19:39:25.630Z:add beef", "2024-12-22T19:39:42.694Z:add beef"], "chicken": { "dataType": "Map", "value": [] }, "chickenSide": { "dataType": "Map", "value": [] }, "chickenUpdated": [], "drink": { "dataType": "Map", "value": [] }, "dessert": { "dataType": "Map", "value": [] } }], [1, { "beef": { "dataType": "Map", "value": [] }, "beefSide": { "dataType": "Map", "value": [] }, "beefUpdated": [], "chicken": { "dataType": "Map", "value": [] }, "chickenSide": { "dataType": "Map", "value": [] }, "chickenUpdated": [], "drink": { "dataType": "Map", "value": [] }, "dessert": { "dataType": "Map", "value": [] } }]] } }
+    "Table 7": { "id": "Table 7", "status": "ACTIVE", "orderTime": "2025-01-06T07:21:21.377Z", "timer": 0,
+        "bags": {
+            "0": {
+                "BEEF": {
+                    "pho": [
+                        { "time": "2025-01-06T07:21:21.377Z", "staff": "Tài", "items": { "1/5/25, 23:21:19 560": { "id": "1/5/25, 23:21:19 560", "meats": [ "BPN" ], "noodle": "BC", "qty": 1 } } }
+                    ],
+                    "nonPho": [],
+                    "action": [ "2025-01-06T07:21:19.560Z:add pho" ]
+                },
+                "CHICKEN": { "pho": [], "nonPho": [], "action": [] },
+                "DRINK": { "pho": [], "nonPho": [], "action": [] }
+            },
+            "1": { "BEEF": { "pho": [], "nonPho": [], "action": [] }, "CHICKEN": { "pho": [], "nonPho": [], "action": [] }, "DRINK": { "pho": [], "nonPho": [], "action": [] } }
+        }
+    },
+    "Table 5": { "id": "Table 5", "status": "ACTIVE", "orderTime": "2025-01-06T07:26:39.775Z", "timer": 0,
+        "bags": {
+            "0": {
+                "BEEF": {
+                    "pho": [
+                        { "time": "2025-01-06T07:26:39.775Z", "staff": "Tài", "items": { "1/5/25, 23:26:38 856": { "id": "1/5/25, 23:26:38 856", "meats": [ "BPN" ], "noodle": "BC", "qty": 1 } } }
+                    ],
+                    "nonPho": [],
+                    "action": [ "2025-01-06T07:26:38.856Z:add pho" ]
+                },
+                "CHICKEN": { "pho": [], "nonPho": [], "action": [] },
+                "DRINK": { "pho": [], "nonPho": [], "action": [] }
+            },
+            "1": { "BEEF": { "pho": [], "nonPho": [], "action": [] }, "CHICKEN": { "pho": [], "nonPho": [], "action": [] }, "DRINK": { "pho": [], "nonPho": [], "action": [] } }
+        }
+    }
 }
 
 const onConnection = (ws, req) => {
@@ -66,7 +96,7 @@ const onConnection = (ws, req) => {
 };
 
 const updateActiveTable = (syncTables) => {
-    Object.entries(syncTables).forEach((tableId, syncTable) => {
+    Object.entries(syncTables).forEach(([tableId, syncTable]) => {
         if (syncTable.status === 'ACTIVE') {
             activeTables[tableId] = syncTable;
         } else {

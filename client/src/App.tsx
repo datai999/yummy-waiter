@@ -22,7 +22,7 @@ export const TableContext = createContext<ITableContext>({} as ITableContext);
 const tables = generateTables();
 
 export default function App() {
-  const [auth, setAuth] = useState<any>({ name: "Tai", code: 0, permission: [] });
+  const [auth, setAuth] = useState<any>(null);
   const [table, orderTable] = useState<Table | null>(null);
   const [refresh, setRefresh] = useState<Boolean>(false);
 

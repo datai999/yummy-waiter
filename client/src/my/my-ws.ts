@@ -1,3 +1,4 @@
+import { instanceToPlain, plainToInstance } from "class-transformer";
 import { Table } from "./my-class";
 import { JSON_replacer, JSON_reviver } from "./my-util";
 
@@ -13,10 +14,10 @@ export enum SYNC_TYPE {
 
 export const syncServer = (type: SYNC_TYPE, data: any) => {
     const message = JSON.stringify({
-        clientId: clienId,
+        senter: clienId,
         type: SYNC_TYPE[type],
-        payload: data,
-    }, JSON_replacer);
+        payload: instanceToPlain(data),
+    });
     websocket.send(message);
 }
 
@@ -34,7 +35,7 @@ const initWsClient = (username: string, onSyncTables: (tables: Map<String, Table
     };
 
     websocket.onmessage = (evt) => {
-        const data = JSON.parse(evt.data, JSON_reviver);
+        const data = JSON.parse(evt.data);
         // console.info(`[${new Date().toLocaleTimeString()}]<${data.senter}><${data.type}>:Received message`);
         if (data.type === SYNC_TYPE[SYNC_TYPE.USERS]) {
             localStorage.setItem("users", JSON.stringify(data.payload));
@@ -42,11 +43,13 @@ const initWsClient = (username: string, onSyncTables: (tables: Map<String, Table
         if (data.type === SYNC_TYPE[SYNC_TYPE.MENU]) {
             localStorage.setItem("menu", JSON.stringify(data.payload));
         }
-        if (data.type === SYNC_TYPE[SYNC_TYPE.ACTIVE_TABLES]) {
-            onSyncTables(new Map(Object.entries(data.payload)));
-        }
-        if (data.type === SYNC_TYPE[SYNC_TYPE.TABLE]) {
-            onSyncTables(new Map(Object.entries(data.payload)));
+        if (data.type === SYNC_TYPE[SYNC_TYPE.ACTIVE_TABLES]
+            || data.type === SYNC_TYPE[SYNC_TYPE.TABLE]) {
+            console.log(data.payload);
+            const tables = new Map(Object.entries(data.payload)
+                .map(([tableId, tableJson]) => [tableId, plainToInstance(Table, tableJson)]));
+            console.log(tables);
+            onSyncTables(tables);
         }
     };
 

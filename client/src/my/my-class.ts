@@ -1,3 +1,5 @@
+import "reflect-metadata";
+import { Exclude, plainToClass, Transform, Type } from 'class-transformer';
 import { MENU, TableStatus } from './my-constants';
 import { generateId } from './my-service';
 
@@ -14,7 +16,6 @@ export class Pho {
 export class NonPho {
     id: string;
     code: string;
-    note?: string;
     count: number;
 
     public constructor(code: string) {
@@ -24,19 +25,39 @@ export class NonPho {
     }
 }
 
-export class TrackedItem<T> {
+export class TrackedItem {
+    @Type(() => Date)
     time?: Date;
     staff: string;
-    items: Map<string, T> = new Map();
 
     public constructor(staff: any) {
-        this.staff = staff.name;
+        if (staff)
+            this.staff = staff.name;
+        else this.staff = '?';
     }
 }
 
+export class TrackedPho extends TrackedItem {
+    @Transform(value => new Map(Object.entries(value.value).map(([key, item]) => [key, plainToClass(Pho, item)])
+    ), { toClassOnly: true })
+    items: Map<string, Pho> = new Map();
+}
+
+export class TrackedNonPho extends TrackedItem {
+    @Transform(value => new Map(Object.entries(value.value).map(([key, item]) => [key, plainToClass(NonPho, item)])
+    ), { toClassOnly: true })
+    items: Map<string, NonPho> = new Map();
+}
+
 export class CategoryItem {
-    pho: TrackedItem<Pho>[] = [];
-    nonPho: TrackedItem<NonPho>[] = [];
+
+    @Type(() => TrackedPho)
+    pho: TrackedPho[] = [];
+
+    @Type(() => TrackedNonPho)
+    nonPho: TrackedNonPho[] = [];
+
+    @Type(() => String)
     action: string[] = [];
 
     public lastPhos(): Map<string, Pho> {
@@ -51,45 +72,31 @@ export class CategoryItem {
 export class Table {
     id: string;
     status: TableStatus = TableStatus.AVAILABLE;
+    @Type(() => Date)
     orderTime: Date | null = null;
     timer: number = 0;
+
+    @Transform(value => {
+        let resut = new Map<number, Map<string, CategoryItem>>();
+        for (let entry of Object.entries(value.value)) {
+            const categoryItems = new Map(Object.entries(entry[1] as Object).map(categoryItems => {
+                return [categoryItems[0], plainToClass(CategoryItem, categoryItems[1])];
+            }));
+            resut.set(Number(entry[0]), categoryItems);
+        }
+        return resut;
+    }, { toClassOnly: true })
     bags: Map<number, Map<string, CategoryItem>> = new Map();
 
     public constructor(id: string) {
         this.id = id;
-        this.func.newBag();
-        this.func.newBag();
+        this.newBag();
+        this.newBag();
     }
 
-    func = {
-        newBag: () => this.bags.set(
+    public newBag() {
+        this.bags.set(
             this.bags.size,
             new Map(Object.keys(MENU).map(category => [category, new CategoryItem()])))
     }
 }
-
-export class SelectedItem {
-    beef: Map<string, Pho>;
-    beefSide: Map<string, NonPho>;
-    beefUpdated: string[];
-
-    chicken: Map<string, Pho>;
-    chickenSide: Map<string, NonPho>;
-    chickenUpdated: string[];
-
-    drink: Map<string, NonPho>;
-    dessert: Map<string, NonPho>;
-
-    public constructor() {
-        this.beef = new Map();
-        this.beefSide = new Map();
-        this.beefUpdated = [];
-
-        this.chicken = new Map();
-        this.chickenSide = new Map();
-        this.chickenUpdated = [];
-
-        this.drink = new Map();
-        this.dessert = new Map();
-    }
-};
