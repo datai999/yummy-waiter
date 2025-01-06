@@ -13,32 +13,22 @@ interface TakeNonPhoProps {
     onSubmit: () => void
 }
 
-const getNonPho = (props: TakeNonPhoProps) => props.bags.get(0)!.get(props.category)?.lastNonPhos()!;
-
 const TakeNonPho = (props: TakeNonPhoProps) => {
-    const [nonPho, setNonPho] = useState<Map<string, NonPho>>(getNonPho(props));
-
     const nonPhos = MENU[props.category as keyof typeof MENU]!.nonPho;
-
-    useEffect(() => {
-        setNonPho(getNonPho(props));
-    }, [props.category])
+    const nonPho = props.bags.get(0)!.get(props.category)?.lastNonPhos()!;
 
     const addItem = (nonPhoKey: string) => {
         const nextNonPho = new Map(nonPho);
-        if (nextNonPho.has(nonPhoKey)) {
-            nextNonPho.get(nonPhoKey)!.qty++;
-        } else {
-            nextNonPho.set(nonPhoKey, new NonPho(nonPhoKey));
-        }
-        setNonPho(nextNonPho);
+        let targetNonPho = nextNonPho.get(nonPhoKey);
+        if (targetNonPho) {
+            targetNonPho.qty++;
+        } else targetNonPho = new NonPho(nonPhoKey);
 
-        const cloneBags = new Map(props.bags);
-        const dineIn = cloneBags.get(0)!;
+        nextNonPho.set(nonPhoKey, targetNonPho);
+
+        const dineIn = props.bags.get(0)!;
         const categoryItems = dineIn.get(props.category)!;
-
-        // TODO
-        categoryItems.nonPho.slice(-1)[0].items = nextNonPho;
+        categoryItems.lastNonPhos().set(nonPhoKey, targetNonPho);
         categoryItems.action.push(new Date().toISOString() + ':add nonPho');
 
         props.onSubmit();

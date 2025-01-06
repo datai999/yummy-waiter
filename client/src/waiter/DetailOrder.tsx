@@ -87,7 +87,7 @@ const PhoList = (props: { parentProps: Props, category: string }) => {
                 </Badge>
             </Typography>
             <Divider />
-            {categoryItems?.pho.map(trackPho =>
+            {categoryItems.pho.map(trackPho =>
                 <TrackedItemsList
                     key={trackPho.time?.toLocaleString()}
                     parentProps={props.parentProps}
@@ -105,7 +105,7 @@ const PhoList = (props: { parentProps: Props, category: string }) => {
                     )}
                 />)}
             {phoQty > 0 && nonPhoQty > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
-            {categoryItems?.nonPho.map(trackedItems =>
+            {categoryItems.nonPho.map(trackedItems =>
                 <TrackedItemsList
                     key={trackedItems.time?.toLocaleString()}
                     parentProps={props.parentProps}
@@ -160,8 +160,10 @@ const TrackedItemsList = (props: {
         setRefresh(!refresh);
     }
 
+    if (props.items.size === 0) return (<></>);
+
     return (<Box key={props.trackedItem.time?.toLocaleString()}>
-        {`${props.trackedItem.time?.toLocaleTimeString() || ''}:${props.trackedItem.staff}`}
+        {`${props.trackedItem.time?.toLocaleTimeString() || ''} ${props.trackedItem.staff}`}
         <List dense sx={{ width: '100%', p: 0 }}>
             {Array.from(props.items.entries()).map(([id, item], index) => {
                 return (
