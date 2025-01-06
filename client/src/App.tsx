@@ -21,14 +21,16 @@ export const TableContext = createContext<ITableContext>({} as ITableContext);
 
 const tables = generateTables();
 
+const Tai = { name: "Tai", code: 0, permission: [] };
+
 export default function App() {
-  const [auth, setAuth] = useState<any>(null);
+  const [auth, setAuth] = useState<any>(Tai);
   const [table, orderTable] = useState<Table | null>(null);
   const [refresh, setRefresh] = useState<Boolean>(false);
 
   useEffect(() => {
     initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables);
-    // orderTable(tables.get('Table 1')!);
+    orderTable(tables.get('Table 12')!);
   }, []);
 
   const onSyncTables = (syncTables: Map<String, Table>) => {

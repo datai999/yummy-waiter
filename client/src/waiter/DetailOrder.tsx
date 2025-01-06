@@ -26,16 +26,14 @@ import {
     OrderItem,
     StyledPaper,
 } from '../my/my-styled';
-import { Draggable } from './BagDnd';
+import { BagDndProps, Draggable } from './BagDnd';
 import { CategoryItem, NonPho, Pho, TrackedItem } from '../my/my-class';
 import { MENU } from '../my/my-constants';
 import { NumberInput } from '../my/my-component';
 
-interface Props {
+interface Props extends BagDndProps {
     bag: number,
     categoryItems: Map<String, CategoryItem>,
-    phoId: String;
-    showPho?: (bag: number, category: string, itemId: string) => void;
 };
 
 const OrderSummary = (props: Props) => {
@@ -47,7 +45,7 @@ const OrderSummary = (props: Props) => {
                 .filter(category => {
                     // if (!MENU[category as keyof typeof MENU].pho) return false;
                     const categoryItem = props.categoryItems.get(category)!;
-                    return categoryItem.lastPhos().size + categoryItem.lastNonPhos().size > 0;
+                    return categoryItem.getPhoQty() + categoryItem.getNonPhoQty() > 0;
                 })
                 .map(category => (
                     <Grid2 key={category} size={{ xs: 12, sm: props.showPho ? 6 : 12, md: mdResponsive }} >
@@ -68,9 +66,8 @@ const PhoList = (props: { parentProps: Props, category: string }) => {
     const showPho = props.parentProps.showPho;
     const categoryItems = props.parentProps.categoryItems.get(category)!;
 
-    // TODO:
-    const phoQty = Array.from(categoryItems.lastPhos().values()).reduce((preQty, cur) => preQty + cur.qty, 0);
-    const nonPhoQty = Array.from(categoryItems.lastNonPhos().values()).reduce((preQty, cur) => preQty + cur.qty, 0);
+    const phoQty = categoryItems.getPhoQty();
+    const nonPhoQty = categoryItems.getNonPhoQty();
 
     return (
         <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0, minWidth: '600' }}>
@@ -87,9 +84,9 @@ const PhoList = (props: { parentProps: Props, category: string }) => {
                 </Badge>
             </Typography>
             <Divider />
-            {categoryItems.pho.map(trackPho =>
+            {categoryItems.pho.map((trackPho, index) =>
                 <TrackedItemsList
-                    key={trackPho.time?.toLocaleString()}
+                    key={index}
                     parentProps={props.parentProps}
                     category={category}
                     trackedItem={trackPho}
@@ -97,7 +94,7 @@ const PhoList = (props: { parentProps: Props, category: string }) => {
                     draggablePrefix='pho'
                     onClick={(itemId: string) => {
                         if (showPho) {
-                            showPho(bag, category, phoId === itemId ? "" : itemId);
+                            showPho(bag, category, index, phoId === itemId ? "" : itemId);
                         }
                     }}
                     renderPrimaryContent={(item: Pho) => (

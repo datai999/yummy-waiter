@@ -23,12 +23,12 @@ import theme from '../theme';
 import OrderSummary from './DetailOrder';
 import { CategoryItem, NonPho, Pho } from '../my/my-class';
 
-interface Props {
+export interface BagDndProps {
     bags: Map<number, Map<string, CategoryItem>>,
     phoId: String;
-    showPho: (bag: number, category: string, itemId: string) => void,
+    showPho?: (bag: number, category: string, trackIndex: number, itemId: string) => void,
 };
-const BagDnd = ({ bags, phoId, showPho }: Props) => {
+const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
     const [refresh, setRefresh] = React.useState(false);
 
     const sensors = useSensors(
@@ -100,6 +100,7 @@ const BagDnd = ({ bags, phoId, showPho }: Props) => {
 
                             <OrderSummary
                                 key={index}
+                                bags={bags}
                                 bag={key}
                                 categoryItems={item}
                                 phoId={phoId} showPho={showPho}

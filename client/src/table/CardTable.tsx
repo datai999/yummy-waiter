@@ -161,6 +161,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
                 </Typography>
                 <OrderSummary
                   key={index}
+                  bags={table.bags}
                   bag={key}
                   categoryItems={item}
                   phoId={"null"} />

@@ -67,6 +67,18 @@ export class CategoryItem {
     public lastNonPhos(): Map<string, NonPho> {
         return this.nonPho.length === 0 ? new Map() : this.nonPho[this.nonPho.length - 1].items;
     }
+
+    public getPhoQty(): number {
+        return Array.from(this.pho).reduce((preTrackedQty, tracked) =>
+            preTrackedQty + Array.from(tracked.items.values()).reduce((preQty, cur) => preQty + cur.qty, 0), 0
+        );
+    }
+
+    public getNonPhoQty(): number {
+        return Array.from(this.nonPho).reduce((preTrackedQty, tracked) =>
+            preTrackedQty + Array.from(tracked.items.values()).reduce((preQty, cur) => preQty + cur.qty, 0), 0
+        );
+    }
 }
 
 export class Table {

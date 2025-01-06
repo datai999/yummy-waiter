@@ -43,7 +43,7 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
 
     const [refresh, setRefresh] = useState(false)
     const [pho, setPho] = useState<Pho>(new Pho());
-    const [currentBag, setCurrentBag] = useState<number>(0);
+    const [itemRef, setItemRef] = useState({ bag: 0, trackedIndex: 0 });
 
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
@@ -58,21 +58,18 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
     }, [])
 
     const submitPho = (bag: number, newPho: Pho) => {
-        const targetBag = bags.get(newPho.id?.length > 0 ? currentBag : bag)!;
+        const isEdit = bag < 0;
+        const targetBag = bags.get(isEdit ? itemRef.bag : bag)!;
         const categoryItems = targetBag.get(props.category)!;
 
-        if (bag > 0 && currentBag === 0) {
-            categoryItems?.lastPhos().delete(newPho.id);
-            const togocategoryItems = bags.get(bag)!.get(props.category);
-            togocategoryItems?.lastPhos().set(pho.id, newPho);
+        if (isEdit) {
+            categoryItems.pho[itemRef.trackedIndex].items.set(newPho.id, newPho);
         } else {
             categoryItems.lastPhos().set(newPho.id, newPho);
         }
-
-        categoryItems?.action.push(new Date().toISOString() + ':add pho');
+        categoryItems?.action.push(`${new Date().toISOString()}:${auth.name}:${isEdit ? 'Edit' : 'Add'} pho'`);
 
         setPho(new Pho());
-        setRefresh(!refresh);
     }
 
     const confirmOrder = () => {
@@ -97,14 +94,14 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
         setOpenConfirmDialog(false);
     };
 
-    const showPho = (bag: number, category: string, selectedItemId: string) => {
+    const showPho = (bag: number, category: string, trackIndex: number, selectedItemId: string) => {
         if (selectedItemId === null || selectedItemId.length === 0) {
             setPho(new Pho());
             return;
         }
         props.setCategory(category);
-        setCurrentBag(bag);
-        setPho(bags.get(bag)?.get(props.category)?.lastPhos().get(selectedItemId)!);
+        setItemRef({ bag: bag, trackedIndex: trackIndex });
+        setPho(bags.get(bag)!.get(props.category)!.pho[trackIndex].items.get(selectedItemId)!);
     }
 
     const addBag = () => {

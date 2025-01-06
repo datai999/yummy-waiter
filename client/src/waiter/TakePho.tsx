@@ -126,21 +126,21 @@ const pTakePho = (props: TakePhoProps) => {
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => addItem(0)}
+                        onClick={() => addItem(pho.id.length > 0 ? -1 : 0)}
                         fullWidth
                     >
                         {`${pho.id.length > 0 ? 'Edit item' : 'Dine-in'}`}
                     </Button>
                 </Grid2>
                 <Grid2 size={{ xs: 'auto', sm: 2, md: 2 }}  >
-                    <Button
+                    {pho.id.length === 0 && (<Button
                         variant="contained"
                         color="primary"
                         onClick={() => addItem(1)}
                         fullWidth
                     >
                         {`Togo`}
-                    </Button>
+                    </Button>)}
                 </Grid2>
             </Grid2>
         </StyledPaper>
