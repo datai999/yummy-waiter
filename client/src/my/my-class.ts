@@ -102,13 +102,11 @@ export class Table {
 
     public constructor(id: string) {
         this.id = id;
-        this.newBag();
-        this.newBag();
+        this.bags.set(this.bags.size, this.newBag());
+        this.bags.set(this.bags.size, this.newBag());
     }
 
-    public newBag() {
-        this.bags.set(
-            this.bags.size,
-            new Map(Object.keys(MENU).map(category => [category, new CategoryItem()])))
+    public newBag(): Map<string, CategoryItem> {
+        return new Map(Object.keys(MENU).map(category => [category, new CategoryItem()]));
     }
 }

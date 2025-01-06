@@ -58,6 +58,7 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
     }, [])
 
     const submitPho = (bag: number, newPho: Pho) => {
+        if (bag > bags.size) bag = bags.size - 1;
         const isEdit = bag < 0;
         const targetBag = bags.get(isEdit ? itemRef.bag : bag)!;
         const categoryItems = targetBag.get(props.category)!;
@@ -105,7 +106,12 @@ const OrderTake = ({ props }: { props: ChildWaiterProps }) => {
     }
 
     const addBag = () => {
-        table.newBag();
+        const newBag = table.newBag();
+        newBag.forEach(categoryItem => {
+            categoryItem.pho.push(new TrackedPho(auth));
+            categoryItem.nonPho.push(new TrackedNonPho(auth));
+        });
+        bags.set(bags.size, newBag);
         setRefresh(!refresh);
     }
 

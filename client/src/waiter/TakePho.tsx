@@ -136,7 +136,7 @@ const pTakePho = (props: TakePhoProps) => {
                     {pho.id.length === 0 && (<Button
                         variant="contained"
                         color="primary"
-                        onClick={() => addItem(1)}
+                        onClick={() => addItem(999)}
                         fullWidth
                     >
                         {`Togo`}
