@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { RiDragMove2Fill } from 'react-icons/ri';
+import { CSS } from '@dnd-kit/utilities';
 
 import {
     DndContext,
@@ -14,7 +15,9 @@ import {
 } from '@dnd-kit/core';
 import {
     Box,
+    BoxProps,
     Button,
+    styled,
     Typography,
 } from '@mui/material';
 
@@ -115,6 +118,18 @@ const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
     );
 }
 
+interface StyledBoxProps extends BoxProps {
+    hover: Boolean;
+}
+
+const DragableBox = styled(Box, {
+    shouldForwardProp: (prop) => prop !== 'hover',
+})<StyledBoxProps>(({ theme, hover }) => ({
+    "&:hover": {
+        border: hover ? `3px solid ${theme.palette.primary.main}` : null,
+    },
+}));
+
 export const Draggable = (props: { id: string, children: React.ReactNode, enable: boolean }) => {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: 'Draggable_' + props.id,
@@ -122,20 +137,19 @@ export const Draggable = (props: { id: string, children: React.ReactNode, enable
 
     const style = {
         width: '100%', display: 'flex',
-        transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : '',
+        transform: CSS.Translate.toString(transform),
         borderRadius: theme.shape.borderRadius,
-        border: `${transform ? `3px solid ${theme.palette.primary.main}` : null}`,
         touchAction: 'none',
     };
 
     return (
-        <Box ref={setNodeRef} style={style} >
+        <Box ref={setNodeRef} style={style}  >
             {props.children}
             {props.enable &&
                 <Button {...listeners} {...attributes} variant='outlined' sx={{ m: 0.5, p: 0.7, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
                     <RiDragMove2Fill style={{ fontSize: 26 }} />
                 </Button>}
-        </Box>
+        </Box >
     );
 }
 
