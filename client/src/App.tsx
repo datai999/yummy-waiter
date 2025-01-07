@@ -78,7 +78,6 @@ export default function App() {
      *  - button edit all items
      *  + user login
      *  - user manager
-     *  - action by
      *  - void after 5min must accept by manager
      *  - UI for customer fill phone
      * kitchen: select part of bill, print bill & system change status to waiter

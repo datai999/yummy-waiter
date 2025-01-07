@@ -81,7 +81,7 @@ const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
         } else {
             const item = activeCategoryItem.nonPho[trackedIndex].items.get(itemId) as NonPho;
             activeCategoryItem.nonPho[trackedIndex].items.delete(itemId);
-            overCategoryItem.lastNonPhos().set(item?.id as string, item);
+            overCategoryItem.lastNonPhos().set(item?.code as string, item);
         }
 
         setRefresh(!refresh);

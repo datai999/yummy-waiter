@@ -30,7 +30,6 @@ import {
 import { BagDndProps, Draggable } from './BagDnd';
 import { CategoryItem, NonPho, Pho, TrackedItem } from '../my/my-class';
 import { MENU } from '../my/my-constants';
-import { NumberInput } from '../my/my-component';
 
 interface Props extends BagDndProps {
     bag: number,
@@ -186,7 +185,7 @@ const ItemList = (param: {
             <Button onClick={() => { if (showPho) minus(item) }} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
                 <FaMinus style={{ fontSize: 12 }} />
             </Button>
-            <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${item.id}`} enable={Boolean(showPho)}>
+            <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${props.draggablePrefix === 'pho' ? item.id : item.code}`} enable={Boolean(showPho)}>
                 <ListItemButton
                     onClick={() => {
                         if (props.draggablePrefix === 'pho') {
@@ -210,12 +209,9 @@ const ItemList = (param: {
                             <TextField inputRef={secondaryRef} value={note} size='small' variant="standard" margin='none'
                                 InputProps={{ disableUnderline: true }} inputProps={{ style: { fontSize: 14 } }}
                                 onChange={(e) => {
-                                    console.log('onChange')
-                                    console.log({ '1': e.target.value })
                                     setNote(e.target.value);
                                 }}
                                 onBlur={() => {
-                                    console.log('blurred')
                                     let value: String = note.trim();
                                     item.note = value.length > 0 ? value : null;
                                     setNote(item.note);
