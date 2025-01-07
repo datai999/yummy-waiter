@@ -16,6 +16,7 @@ export class Pho {
 export class NonPho {
     id: string;
     code: string;
+    note?: string;
     qty: number;
 
     public constructor(code: string) {
