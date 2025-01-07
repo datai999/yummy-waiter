@@ -159,6 +159,19 @@ const TrackedItemsList = (props: {
         setRefresh(!refresh);
     }
 
+    const minus = (item: any) => {
+        const itemId = props.draggablePrefix === 'pho' ? item.id : item.code;
+        if (item.qty > 1) {
+            item.qty--;
+            setRefresh(!refresh);
+        } else remove(itemId);
+    }
+
+    const plus = (item: any) => {
+        item.qty++;
+        setRefresh(!refresh);
+    }
+
     if (props.items.size === 0) return (<></>);
 
     return (<Box key={props.trackedItem.time?.toLocaleString()}>
@@ -167,7 +180,7 @@ const TrackedItemsList = (props: {
             {Array.from(props.items.entries()).map(([id, item], index) => {
                 return (
                     <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }} style={{ backgroundColor: `${index % 1 === 1 ? '#f3f3f3' : null}` }}>
-                        <Button onClick={() => { if (showPho) remove(item.id) }} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
+                        <Button onClick={() => { if (showPho) minus(item) }} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
                             <FaMinus style={{ fontSize: 12 }} />
                         </Button>
                         <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${id}`} enable={Boolean(showPho)}>
@@ -183,7 +196,7 @@ const TrackedItemsList = (props: {
                             </ListItemButton>
                         </Draggable>
                         {showPho &&
-                            <Button onClick={() => copy(item)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                            <Button onClick={() => plus(item)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
                                 <FaPlus style={{ fontSize: 26 }} />
                             </Button>}
                     </OrderItem>
