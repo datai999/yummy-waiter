@@ -43,7 +43,6 @@ const OrderSummary = (props: Props) => {
         <Grid2 container spacing={2}>
             {Object.keys(MENU)
                 .filter(category => {
-                    // if (!MENU[category as keyof typeof MENU].pho) return false;
                     const categoryItem = props.categoryItems.get(category)!;
                     return categoryItem.getPhoQty() + categoryItem.getNonPhoQty() > 0;
                 })
@@ -90,6 +89,7 @@ const PhoList = (props: { parentProps: Props, category: string }) => {
                     parentProps={props.parentProps}
                     category={category}
                     trackedItem={trackPho}
+                    trackedIndex={index}
                     items={trackPho.items}
                     draggablePrefix='pho'
                     onClick={(itemId: string) => {
@@ -102,12 +102,13 @@ const PhoList = (props: { parentProps: Props, category: string }) => {
                     )}
                 />)}
             {phoQty > 0 && nonPhoQty > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
-            {categoryItems.nonPho.map(trackedItems =>
+            {categoryItems.nonPho.map((trackedItems, index) =>
                 <TrackedItemsList
-                    key={trackedItems.time?.toLocaleString()}
+                    key={index}
                     parentProps={props.parentProps}
                     category={category}
                     trackedItem={trackedItems}
+                    trackedIndex={index}
                     items={trackedItems.items}
                     draggablePrefix='nonPho'
                     onClick={() => { }}
@@ -134,6 +135,7 @@ const TrackedItemsList = (props: {
     parentProps: Props,
     category: string,
     trackedItem: TrackedItem,
+    trackedIndex: number,
     items: Map<string, any>,
     draggablePrefix: string,
     onClick: (item: string) => void
@@ -168,7 +170,7 @@ const TrackedItemsList = (props: {
                         <Button onClick={() => { if (showPho) remove(item.id) }} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
                             <FaMinus style={{ fontSize: 12 }} />
                         </Button>
-                        <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${id}`} enable={Boolean(showPho)}>
+                        <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${id}`} enable={Boolean(showPho)}>
                             <ListItemButton onClick={() => props.onClick(item.id)} dense sx={{ p: 0, m: 0 }}>
                                 <ListItemText
                                     id={item.id}

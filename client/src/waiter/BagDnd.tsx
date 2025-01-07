@@ -62,7 +62,8 @@ const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
         const type = ids[1];
         const activeBag = Number(ids[2])
         const category = ids[3];
-        const itemId = ids[4];
+        const trackedIndex = Number(ids[4]);
+        const itemId = ids[5];
 
         const overBag = Number(String(over.id).slice(-1));
         if (activeBag === overBag) return;
@@ -71,12 +72,12 @@ const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
         const overCategoryItem = bags.get(overBag)?.get(category)!;
 
         if (type === 'pho') {
-            const item = activeCategoryItem.lastPhos().get(itemId) as Pho;
-            activeCategoryItem.lastPhos().delete(itemId);
+            const item = activeCategoryItem.pho[trackedIndex].items.get(itemId) as Pho;
+            activeCategoryItem.pho[trackedIndex].items.delete(itemId);
             overCategoryItem.lastPhos().set(item?.id as string, item);
         } else {
-            const item = activeCategoryItem.lastNonPhos().get(itemId) as NonPho;
-            activeCategoryItem.lastNonPhos().delete(itemId);
+            const item = activeCategoryItem.nonPho[trackedIndex].items.get(itemId) as NonPho;
+            activeCategoryItem.nonPho[trackedIndex].items.delete(itemId);
             overCategoryItem.lastNonPhos().set(item?.id as string, item);
         }
 
