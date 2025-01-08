@@ -74,9 +74,10 @@ const CardTable = ({ table, orderTable, doneTable }: {
   }, [table.orderTime]);
 
   const cardOnClick = () => {
-    if (table.status === TableStatus.AVAILABLE) {
-      orderTable(table);
-    } else setOpenOrderModal(true);
+    orderTable(table);
+    // if (table.status === TableStatus.AVAILABLE) {
+    //   orderTable(table);
+    // } else setOpenOrderModal(true);
   }
 
   const renderTableStatus = (status: string) => {

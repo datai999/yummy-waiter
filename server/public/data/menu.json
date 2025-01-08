@@ -24,8 +24,8 @@
             },
             "noodle":["BC", "BT", "BS", "BTS"],
             "reference":{
-                "Không hành": "0h",
-                "Không béo": "0Béo",
+                "No hành": "0h",
+                "No béo": "0Béo",
                 "Ít bánh": "-b",
                 "Tái riêng": "R",
                 "Tái băm": "Bam"

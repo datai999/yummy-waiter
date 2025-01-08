@@ -13,8 +13,6 @@ import {
     ListItemText,
     TextField,
 } from '@mui/material';
-
-import { generateId } from './my-service';
 import {
     CategoryButton,
     OrderItem,
@@ -53,7 +51,7 @@ const pCheckButton = ({ ...props }: CheckButtonProps) => {
 
     return (
         <>
-            <Grid2 container spacing={1} sx={{ display: { xs: 'none', sm: 'flex', md: 'flex', lg: 'flex' }, mb: 1 }}>
+            <Grid2 container spacing={0} sx={{ display: { xs: 'none', sm: 'flex', md: 'flex', lg: 'flex' }, mb: 0, mt: 0 }}>
                 {props.allOptions.map((option) => (
                     <Grid2 key={option}>
                         <CategoryButton
@@ -61,13 +59,14 @@ const pCheckButton = ({ ...props }: CheckButtonProps) => {
                             size='large'
                             onClick={() => onClick(option)}
                             selected={options?.includes(option)}
+                            sx={{ minWidth: 100, maxWidth: 200 }}
                         >
                             {props.createLabel(option)}
                         </CategoryButton>
                     </Grid2>
                 ))}
             </Grid2>
-            <Grid2 container spacing={1} sx={{ display: { xs: 'flex', sm: 'none', md: 'none', lg: 'none' }, mb: 1 }}>
+            <Grid2 container spacing={0} sx={{ display: { xs: 'flex', sm: 'none', md: 'none', lg: 'none' }, mb: 0 }}>
                 {props.allOptions.map((option) => (
                     <Grid2 key={option}>
                         <Chip

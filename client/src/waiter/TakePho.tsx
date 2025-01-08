@@ -63,7 +63,7 @@ const pTakePho = (props: TakePhoProps) => {
     }
 
     return (
-        <StyledPaper key={props.category} sx={{ mb: 1, pb: 1 }}>
+        <StyledPaper key={props.category} sx={{ mb: 1, p: 1, pl: 1, pr: 0 }}>
             <CheckButton
                 multi={false}
                 allOptions={Object.keys(combos)}
@@ -77,7 +77,7 @@ const pTakePho = (props: TakePhoProps) => {
             />
 
             {meats && (<>
-                <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
+                <Divider textAlign="left" sx={{ m: 0.5 }}></Divider>
                 <CheckButton
                     multi={true}
                     allOptions={Object.keys(meats)}
@@ -87,7 +87,7 @@ const pTakePho = (props: TakePhoProps) => {
                 />
             </>)}
 
-            <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
+            <Divider textAlign="left" sx={{ m: 0.5 }}></Divider>
             <CheckButton
                 multi={false}
                 allOptions={noodles}
@@ -96,7 +96,7 @@ const pTakePho = (props: TakePhoProps) => {
                 callback={(noodles) => setPho({ ...pho, noodle: noodles[0] })}
             />
 
-            <Divider textAlign="left" sx={{ mb: 1 }}></Divider>
+            <Divider textAlign="left" sx={{ m: 0.5 }}></Divider>
             <CheckButton
                 multi={true}
                 allOptions={Object.keys(references)}
@@ -107,7 +107,7 @@ const pTakePho = (props: TakePhoProps) => {
                 })}
             />
 
-            <Grid2 container spacing={2} alignItems="center">
+            <Grid2 container spacing={2} alignItems="center" sx={{ mt: 1, ml: 1 }}>
                 <Grid2 size={{ xs: 3, sm: 1, md: 1 }}>
                     <NumberInput value={pho.qty} onChange={num => { setPho({ ...pho, qty: num }); }} label='Qty' />
                 </Grid2>

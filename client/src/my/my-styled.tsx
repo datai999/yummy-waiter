@@ -1,10 +1,10 @@
 import {
-  Box,
-  BoxProps,
-  Button,
-  ButtonProps,
-  Paper,
-  styled,
+    Box,
+    BoxProps,
+    Button,
+    ButtonProps,
+    Paper,
+    styled,
 } from '@mui/material';
 
 export const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -20,7 +20,10 @@ interface StyledButtonProps extends ButtonProps {
 export const CategoryButton = styled(Button, {
     shouldForwardProp: (prop) => prop !== 'selected',
 })<StyledButtonProps>(({ theme, selected }) => ({
-    margin: theme.spacing(0.5),
+    margin: 2,
+    marginTop: theme.spacing(0.2),
+    marginBottom: theme.spacing(0.3),
+    padding: '5px',
     backgroundColor: selected ? theme.palette.primary.main : "#fff",
     color: selected ? "#fff" : theme.palette.text.primary,
     "&:hover": {

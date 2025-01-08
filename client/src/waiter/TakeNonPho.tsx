@@ -6,6 +6,7 @@ import { CategoryItem, NonPho, Pho } from '../my/my-class';
 import { CheckButton } from '../my/my-component';
 import { MENU } from '../my/my-constants';
 import { StyledPaper } from '../my/my-styled';
+import { Box, Divider } from '@mui/material';
 
 interface TakeNonPhoProps {
     category: string,
@@ -34,16 +35,18 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
         props.onSubmit();
     }
 
-    return (<StyledPaper>
+    return (<StyledPaper sx={{ mb: 1, p: 1, pl: 1, pr: 0 }}>
         {nonPhos.map((nonPho, index) => (
-            <CheckButton
-                key={index}
-                multi={true}
-                allOptions={Object.keys(nonPho)}
-                options={[]}
-                createLabel={(key) => key}
-                callback={(newSideOrder) => addItem(newSideOrder[0])}
-            />
+            <Box key={index}>
+                {index > 0 && (<Divider sx={{ m: 0.5 }} />)}
+                <CheckButton
+                    multi={true}
+                    allOptions={Object.keys(nonPho)}
+                    options={[]}
+                    createLabel={(key) => key}
+                    callback={(newSideOrder) => addItem(newSideOrder[0])}
+                />
+            </Box>
         ))}
     </StyledPaper >);
 }
