@@ -31,6 +31,7 @@ export const completePho = (pho: Pho) => {
 }
 
 export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTableId: string): Table | null => {
+    if (fromTable.id === toTableId) return fromTable;
     const toTable = tables.get(toTableId) as Table;
     if (!toTable) {
         console.error('Could not find toTableId:' + toTableId);

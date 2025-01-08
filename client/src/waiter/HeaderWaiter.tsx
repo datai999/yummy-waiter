@@ -120,7 +120,7 @@ const WrapCategoryButton = ({ props }: {
         size={props.size == "small" ? "small" : props.size == "medium" ? "medium" : "large"}
         sx={{
             minHeight: props.size == 'xlarge' ? 50 : 0,
-            minWidth: props.size == 'xlarge' ? 120 : props.size === 'large' ? 80 : 0,
+            minWidth: props.size == 'xlarge' ? 120 : props.size === 'large' ? 120 : 0,
             ml: '10px'
         }}
     >

@@ -15,6 +15,7 @@ const iconStyle = {
 
 export default function Footer(props: {
     addTogoBag: () => void,
+    changeTable: () => void,
     submitOrder: () => void,
 }) {
     const { logout } = useContext(AuthContext);
@@ -32,7 +33,7 @@ export default function Footer(props: {
             Add togo bag
             <GiPaperBagFolded style={iconStyle} />
         </Button>
-        <Button variant="contained" color="primary" onClick={() => { }} >
+        <Button variant="contained" color="primary" onClick={props.changeTable} >
             Change table
             <CgArrowsExchange style={iconStyle} />
         </Button>

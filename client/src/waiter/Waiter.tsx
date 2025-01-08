@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 
 import Header from './HeaderWaiter';
 import OrderTake from './TakeOrder';
-import { Table, TrackedNonPho, TrackedPho } from '../my/my-class';
+import { CategoryItem, Table, TrackedNonPho, TrackedPho } from '../my/my-class';
 import { MENU, TableStatus } from '../my/my-constants';
 import Footer from './FooterWaiter';
 import _ from 'lodash';
@@ -12,7 +12,8 @@ import { AuthContext, TableContext } from '../App';
 import { syncServer, SYNC_TYPE } from '../my/my-ws';
 
 interface WaiterProps {
-    tables: Map<String, Table>
+    tables: Map<String, Table>,
+    tempBags: null | Map<number, Map<string, CategoryItem>>
 }
 
 export interface ChildWaiterProps extends WaiterProps {
@@ -23,10 +24,10 @@ export interface ChildWaiterProps extends WaiterProps {
 export default function Waiter(props: WaiterProps) {
     const { auth, logout } = useContext(AuthContext);
     const [refresh, setRefresh] = useState(false);
-    const { table, orderTable } = useContext(TableContext);
+    const { table, prepareChangeTable } = useContext(TableContext);
     const [category, setCategory] = useState(Object.keys(MENU)[0]);
 
-    const bags = useRef(_.cloneDeep(table.bags)).current;
+    const bags = useRef(_.cloneDeep(props.tempBags || table.bags)).current;
 
     const addTogoBag = () => {
         const newBag = table.newBag();
@@ -68,7 +69,7 @@ export default function Waiter(props: WaiterProps) {
             </Box>
             <OrderTake bags={bags} props={childProps} />
             <Box sx={{ position: "sticky", bottom: 0, zIndex: 1, bgcolor: "background.paper" }}>
-                <Footer addTogoBag={addTogoBag} submitOrder={submitOrder} />
+                <Footer addTogoBag={addTogoBag} changeTable={() => prepareChangeTable(bags)} submitOrder={submitOrder} />
             </Box>
         </>
     );

@@ -35,8 +35,12 @@ const OrderTake = ({ props, bags }: {
 
     useEffect(() => {
         bags.forEach(bag => bag.forEach(categoryItem => {
-            categoryItem.pho.push(new TrackedPho(auth));
-            categoryItem.nonPho.push(new TrackedNonPho(auth));
+            const phoLen = categoryItem.pho.length;
+            if (phoLen === 0 || (phoLen > 0 && categoryItem.pho[phoLen - 1].time))
+                categoryItem.pho.push(new TrackedPho(auth));
+            const nonPhoLen = categoryItem.nonPho.length;
+            if (nonPhoLen === 0 || (nonPhoLen > 0 && categoryItem.nonPho[nonPhoLen - 1].time))
+                categoryItem.nonPho.push(new TrackedNonPho(auth));
         }));
     }, [])
 
