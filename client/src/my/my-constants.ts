@@ -36,17 +36,17 @@ export const BEEF_NOODLE = ['BC', 'BT', 'BS', 'BTS'];
 export const CHICKEN_NOODLE = ['BC', 'BT', 'BS', 'BTS', 'Bún', 'Miến', 'Mì'];
 
 export const BEEF_REFERENCES = {
-    'Không hành': '0h',
-    'Không béo': '0Béo',
-    'Ít bánh': '-b',
-    'Tái riêng': 'R',
-    'Tái băm': 'Bam'
+    'Không hành': { sort: 4, code: '0h', },
+    'Không béo': { sort: 5, code: '0Béo', },
+    'Ít bánh': { sort: 3, code: '-b', },
+    'Tái riêng': { sort: 2, code: 'R', },
+    'Tái băm': { sort: 1, code: 'Bam', },
 }
 export const CHICKEN_REFERENCES = {
-    'Không hành': '0h',
-    'Không da': '0Skin',
-    'Không xương': '0bone',
-    'Khô': 'K'
+    'Không hành': { sort: 4, code: '0h', },
+    'Không da': { sort: 3, code: '0skin', },
+    'Không xương': { sort: 2, code: '0bone', },
+    'Khô': { sort: 1, code: 'K', },
 }
 
 export const BEEF_SIDE = {
@@ -77,8 +77,8 @@ export const BEEF_MEAT_SIDE = {
 
 export const CHICKEN_SIDE = {
     "Giá trụng": "Giá trụng",
-    'HD': 'HD',
     "Extra bamboo": "Extra bamboo",
+    "Extra noodle": "Extra noodle",
     "Whole chicken": 'Whole chicken',
     "Whole chicken: Chop": 'Whole chicken: Chop',
     "Half chicken": 'Half chicken',

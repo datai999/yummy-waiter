@@ -66,7 +66,7 @@ const TableManagerment = (props: {
         ))}
       </Grid2>
 
-      <Box sx={{ mt: 4 }}>
+      {/* <Box sx={{ mt: 4 }}>
         <Typography variant="h6" gutterBottom>
           Recent Orders
         </Typography>
@@ -89,7 +89,7 @@ const TableManagerment = (props: {
             </Card>
           ))}
         </Stack>
-      </Box>
+      </Box> */}
 
       <Modal
         open={Boolean(selectedTable)}

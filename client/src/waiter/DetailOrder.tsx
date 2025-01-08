@@ -40,7 +40,7 @@ const OrderSummary = (props: Props) => {
     const mdResponsive = props.showPho ? useMediaQuery('(min-width:900px)') ? 12 : 4 : 'grow';
 
     return (
-        <Grid2 container spacing={2} direction='row' sx={{ minHeight: props.bag === 0 ? 200 : 100 }}>
+        <Grid2 container spacing={0.5} direction='row' sx={{ minHeight: props.bag === 0 ? 200 : 30 }}>
             {Object.keys(MENU)
                 .filter(category => {
                     const categoryItem = props.categoryItems.get(category)!;
@@ -66,7 +66,7 @@ const PhoList = (props: { parentProps: Props, category: string }) => {
     const nonPhoQty = categoryItems.getNonPhoQty();
 
     return (
-        <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0, minWidth: '600' }}>
+        <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0 }}>
             <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} >
                 <Badge badgeContent={phoQty} color="primary" anchorOrigin={{
                     vertical: 'top',
@@ -138,7 +138,7 @@ const TrackedItemsList = (props: TrackedItemsListProps) => {
         </Typography>
         <List dense sx={{ width: '100%', p: 0 }}>
             {Array.from(props.items.entries()).map(([id, item], index) => {
-                return (<ItemList key={index} parentProps={props} index={index} item={item} remove={remove} />);
+                return (<ItemList key={index} parentProps={props} trackedIndex={props.trackedIndex} item={item} remove={remove} />);
             })}
         </List>
     </Box>);
@@ -146,7 +146,7 @@ const TrackedItemsList = (props: TrackedItemsListProps) => {
 
 const ItemList = (param: {
     parentProps: TrackedItemsListProps
-    index: number,
+    trackedIndex: number,
     item: any,
     remove: (item: any) => void,
 }) => {
@@ -190,7 +190,7 @@ const ItemList = (param: {
                     onClick={() => {
                         if (props.draggablePrefix === 'pho') {
                             if (showPho) {
-                                showPho(bag, category, param.index, phoId === item.id ? "" : item.id);
+                                showPho(bag, category, param.trackedIndex, phoId === item.id ? "" : item.id);
                             }
                         }
                         else {

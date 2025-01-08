@@ -1,13 +1,14 @@
 import React from 'react';
 
 import {
-  Grid2,
-  Paper,
-  styled,
-  Typography,
+    Grid2,
+    Paper,
+    styled,
+    Typography,
 } from '@mui/material';
 
 import YummyLogo from '../assets/yummy.png';
+import { CategoryButton } from '../my/my-styled';
 
 const LogoImage = styled("img")({
     width: "60px",
@@ -31,11 +32,11 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
 }));
 
-const Header = () => {
+const Header = (props: { newTogo: () => void }) => {
     return (
         <StyledPaper>
             <Grid2 container spacing={2} alignItems="center">
-                <Grid2 size={{ xs: 2, sm: 1, md: 1 }}>
+                <Grid2 size={{ xs: 2, sm: 2, md: 1 }}>
                     <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} />
                     <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} />
                 </Grid2>
@@ -43,6 +44,12 @@ const Header = () => {
                     <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ textAlign: "center", display: 'flex' }}>
                         Yummy Phở 2
                     </Typography>
+                </Grid2>
+                <Grid2 size={{ xs: 2, sm: 2, md: 2 }}>
+                    <CategoryButton variant="contained" size='large' selected={true} fullWidth={true} sx={{ borderRadius: 5 }}
+                        onClick={props.newTogo}>
+                        New togo
+                    </CategoryButton>
                 </Grid2>
             </Grid2>
         </StyledPaper >);

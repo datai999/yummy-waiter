@@ -19,14 +19,14 @@ export const sortBeefMeat = (a: string, b: string) =>
     - BEEF_MEAT[b as keyof typeof BEEF_MEAT].sort;
 
 export const generateTables = () =>
-    new Map(Array.from({ length: 21 }, (_, index) => {
+    new Map(Array.from({ length: 20 }, (_, index) => {
         const id = String(index > 19 ? 'TOGO ' + (index - 19) : 'Table ' + (index < 12 ? index + 1 : index + 2));
         return [id, new Table(id)]
     }));
 
 export const completePho = (category: any, pho: Pho) => {
     pho.id = pho.id.length > 0 ? pho.id : generateId();
-    const MEAT = category.pho.meat;
+    const MEAT = category.pho.meat || {};
     const REFER = category.pho.reference;
 
     if (pho.meats.length === 0) pho.code = 'BPN';
@@ -37,7 +37,10 @@ export const completePho = (category: any, pho: Pho) => {
     else if (pho.combo && pho.combo.startsWith('#8c')) pho.noodle = 'Mì'
 
     pho.referCode = (pho.preferences || [])
-        .map(refer => REFER[refer as keyof typeof REFER]).join(',');
+        .map(refer => REFER[refer as keyof typeof REFER])
+        .sort((a, b) => a.sort - b.sort)
+        .map(refer => refer.code)
+        .join(',');
 }
 
 export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTableId: string): Table | null => {

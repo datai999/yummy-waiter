@@ -36,7 +36,7 @@ export default function App() {
 
   useEffect(() => {
     initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables);
-    orderTable(tables.get('Table 12')!);
+    // orderTable(tables.get('Table 12')!);
   }, []);
 
   const onSyncTables = (syncTables: Map<String, Table>) => {
@@ -71,6 +71,14 @@ export default function App() {
     orderTable(selectedTable);
   }
 
+  const newTogo = () => {
+    const current = new Date();
+    const newTogo = new Table('Togo_' + current.toLocaleDateString('en-US', { day: 'numeric', month: 'numeric', year: 'numeric' })
+      + '_' + current.toLocaleTimeString('en-US', { hour12: false }));
+    tables.set(newTogo.id, newTogo);
+    orderTable(newTogo);
+  }
+
   if (!auth) return (<Login setAuth={setAuth} />)
 
   return (<AuthContext.Provider value={{ auth, logout }}>
@@ -81,7 +89,7 @@ export default function App() {
       )
       : (<>
         <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
-          <Header />
+          <Header newTogo={newTogo} />
         </Box>
         <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
       </>)}
@@ -94,9 +102,9 @@ export default function App() {
      *  + recommendation pho
      *  + order detail sperate by times modify (time + acter)
      *  + UI like aldelo
-     *  - expend dine-in vs togo
+     *  + expend dine-in vs togo
      *  - move togo item btn
-     *  - add new table togo
+     *  + add new table togo
      *  - UI only togo
      *  - void ?
      *  - order history

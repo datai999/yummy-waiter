@@ -104,9 +104,9 @@ const CardTable = ({ table, orderTable, doneTable }: {
     >
       <CardContent sx={{ p: 1 }}>
         <Grid2 container>
-          <Grid2 size={{ xs: 0, sm: 4, md: 4 }} />
+          {table.id.startsWith('Table') && <Grid2 size={{ xs: 0, sm: 4, md: 4 }} />}
           <Grid2 size='grow' >
-            <Typography variant="h5">{table.id}</Typography>
+            <Typography variant="h5">{table.id.startsWith('Table') ? table.id : 'Togo:' + table.id.split('_')[2]}</Typography>
           </Grid2>
           {/* {renderTableStatus(table.status)} */}
           <Grid2>

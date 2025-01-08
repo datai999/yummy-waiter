@@ -9,6 +9,7 @@ import { CgArrowsExchange } from "react-icons/cg";
 import { RxExit } from "react-icons/rx";
 import { AuthContext, TableContext } from '../App';
 import { FaFileSignature } from "react-icons/fa";
+import { SiCcleaner } from "react-icons/si";
 
 const iconStyle = {
     fontSize: 30, marginLeft: 8
@@ -22,7 +23,7 @@ export default function Footer(props: {
     const { logout } = useContext(AuthContext);
     const { orderTable } = useContext(TableContext);
 
-    return (<Stack direction="row" spacing={2} divider={<Divider orientation="vertical" flexItem />} sx={{
+    return (<Stack direction="row" spacing={2} sx={{
         justifyContent: "center",
         alignItems: "stretch",
     }}>
@@ -31,19 +32,23 @@ export default function Footer(props: {
             <RxExit style={iconStyle} />
         </Button>
         <Button variant="contained" color="primary" onClick={props.addTogoBag} >
-            Add togo bag
+            Add bag
             <GiPaperBagFolded style={iconStyle} />
         </Button>
         <Button variant="contained" color="primary" onClick={props.changeTable} >
             Change table
             <CgArrowsExchange style={iconStyle} />
         </Button>
+        <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={() => alert('TODO:Clear')} >
+            Clean
+            <SiCcleaner style={iconStyle} />
+        </Button>
         <Button variant="contained" color="primary" onClick={() => {
             props.submitOrder();
             orderTable(null);
         }} >
             Next order
-            <FaFileSignature  style={iconStyle} />
+            <FaFileSignature style={iconStyle} />
         </Button>
         <Button variant="contained" color="primary" onClick={() => {
             props.submitOrder();
