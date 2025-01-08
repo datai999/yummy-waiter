@@ -40,7 +40,7 @@ const OrderSummary = (props: Props) => {
     const mdResponsive = props.showPho ? useMediaQuery('(min-width:900px)') ? 12 : 4 : 'grow';
 
     return (
-        <Grid2 container spacing={2} direction='row'>
+        <Grid2 container spacing={2} direction='row' sx={{ minHeight: props.bag === 0 ? 200 : 100 }}>
             {Object.keys(MENU)
                 .filter(category => {
                     const categoryItem = props.categoryItems.get(category)!;
@@ -89,9 +89,7 @@ const PhoList = (props: { parentProps: Props, category: string }) => {
                     trackedIndex={index}
                     items={trackPho.items}
                     draggablePrefix='pho'
-                    renderPrimaryContent={(item: Pho) => (
-                        `${item.qty < 2 ? '' : item.qty + ' '}${item.meats.length === 6 ? 'DB' : item.meats} (${item.noodle}) ${(item.preferences || [])}`
-                    )}
+                    renderPrimaryContent={(item: Pho) => (`${item.qty < 2 ? '' : item.qty + ' '}${item.code} (${item.noodle}) ${item.referCode}`)}
                 />)}
             {phoQty > 0 && nonPhoQty > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
             {categoryItems.nonPho.map((trackedItems, index) =>
@@ -135,7 +133,9 @@ const TrackedItemsList = (props: TrackedItemsListProps) => {
     if (props.items.size === 0) return (<></>);
 
     return (<Box key={props.trackedItem.time?.toLocaleString()}>
-        {`${props.trackedItem.time?.toLocaleTimeString() || ''} ${props.trackedItem.staff}`}
+        <Typography variant='caption' sx={{ ml: 1 }}>
+            {`${props.trackedItem.time?.toLocaleTimeString() || ''} ${props.trackedItem.staff}`}
+        </Typography>
         <List dense sx={{ width: '100%', p: 0 }}>
             {Array.from(props.items.entries()).map(([id, item], index) => {
                 return (<ItemList key={index} parentProps={props} index={index} item={item} remove={remove} />);
@@ -182,7 +182,7 @@ const ItemList = (param: {
 
     return (
         <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }} style={{ backgroundColor: `${null}` }}>
-            <Button onClick={() => { if (showPho) minus(item) }} sx={{ m: 0, p: 1.7, mr: 0, pr: 0, pl: 0 }} style={{ maxWidth: '40px', minWidth: '30px', maxHeight: '40px', minHeight: '30px' }}>
+            <Button onClick={() => { if (showPho) minus(item) }} sx={{ m: 0, p: 1.5, pr: 0, pl: 0 }} style={{ maxWidth: '25px', minWidth: '25px', maxHeight: '30px', minHeight: '30px' }}>
                 <FaMinus style={{ fontSize: 12 }} />
             </Button>
             <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${props.draggablePrefix === 'pho' ? item.id : item.code}`} enable={Boolean(showPho)}>
@@ -201,13 +201,13 @@ const ItemList = (param: {
                     dense sx={{ p: 0, m: 0 }}>
                     <ListItemText
                         id={item.id}
-                        primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 16 } }}
-                        secondaryTypographyProps={{ style: { color: "#d32f2f" } }}
+                        primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 14 } }}
+                        secondaryTypographyProps={{ style: { color: "#d32f2f", fontSize: 12, padding: 0 } }}
                         sx={{ p: 0, m: 0 }}
                         primary={props.renderPrimaryContent(item)}
                         secondary={note === undefined || note === null ? null : props.draggablePrefix === 'pho' ? `${item.note}` :
                             <TextField inputRef={secondaryRef} value={note} size='small' variant="standard" margin='none'
-                                InputProps={{ disableUnderline: true }} inputProps={{ style: { fontSize: 14 } }}
+                                InputProps={{ disableUnderline: true }} inputProps={{ style: { fontSize: 12 } }}
                                 onChange={(e) => {
                                     setNote(e.target.value);
                                 }}
@@ -221,8 +221,8 @@ const ItemList = (param: {
                 </ListItemButton>
             </Draggable>
             {showPho &&
-                <Button onClick={() => plus(item)} variant='outlined' sx={{ m: 0.5, p: 1.1, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
-                    <FaPlus style={{ fontSize: 26 }} />
+                <Button onClick={() => plus(item)} variant='outlined' sx={{ m: 0, p: 1.1, mb: 0.2 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '30px', minHeight: '23px' }}>
+                    <FaPlus style={{ fontSize: 14 }} />
                 </Button>}
         </OrderItem>
     );

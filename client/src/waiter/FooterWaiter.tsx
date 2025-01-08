@@ -8,6 +8,7 @@ import { AiOutlineFileDone } from "react-icons/ai";
 import { CgArrowsExchange } from "react-icons/cg";
 import { RxExit } from "react-icons/rx";
 import { AuthContext, TableContext } from '../App';
+import { FaFileSignature } from "react-icons/fa";
 
 const iconStyle = {
     fontSize: 30, marginLeft: 8
@@ -41,8 +42,8 @@ export default function Footer(props: {
             props.submitOrder();
             orderTable(null);
         }} >
-            Next table
-            <MdTableRestaurant style={iconStyle} />
+            Next order
+            <FaFileSignature  style={iconStyle} />
         </Button>
         <Button variant="contained" color="primary" onClick={() => {
             props.submitOrder();

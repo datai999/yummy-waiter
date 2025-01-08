@@ -24,10 +24,20 @@ export const generateTables = () =>
         return [id, new Table(id)]
     }));
 
-export const completePho = (pho: Pho) => {
+export const completePho = (category: any, pho: Pho) => {
     pho.id = pho.id.length > 0 ? pho.id : generateId();
-    if (pho.meats.length === 0)
-        pho.meats = ["BPN"];
+    const MEAT = category.pho.meat;
+    const REFER = category.pho.reference;
+
+    if (pho.meats.length === 0) pho.code = 'BPN';
+    else if (pho.meats.length === 6) pho.code = 'DB';
+    else pho.code = pho.meats.map(meat => MEAT[meat as keyof typeof MEAT]?.code || meat).join('');
+
+    if (pho.combo && pho.combo.startsWith('#8b')) pho.noodle = 'Bread'
+    else if (pho.combo && pho.combo.startsWith('#8c')) pho.noodle = 'Mì'
+
+    pho.referCode = (pho.preferences || [])
+        .map(refer => REFER[refer as keyof typeof REFER]).join(',');
 }
 
 export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTableId: string): Table | null => {

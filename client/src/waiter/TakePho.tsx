@@ -39,8 +39,8 @@ const pTakePho = (props: TakePhoProps) => {
 
     useEffect(() => {
         if (!meats) return;
-        if (pho.meats.length > 1 && pho.meats.includes('BPN'))
-            pho.meats = pho.meats.filter(meat => meat !== "BPN");
+        // if (pho.meats.length > 1 && pho.meats.includes('BPN'))
+        //     pho.meats = pho.meats.filter(meat => meat !== "BPN");
         pho.meats.sort(SERVICE.sortBeefMeat);
         const meatCodes = pho.meats.join(',');
         const combo = Object.entries(combos)
@@ -58,7 +58,7 @@ const pTakePho = (props: TakePhoProps) => {
 
     const addItem = (bag: number) => {
         pho.note = note;
-        SERVICE.completePho(pho);
+        SERVICE.completePho(category, pho);
         props.submitPho(bag, pho);
         setPho(new Pho());
         setNote('');

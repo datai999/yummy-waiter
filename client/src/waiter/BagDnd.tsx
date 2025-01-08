@@ -97,8 +97,8 @@ const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
             {Array.from(bags.entries()).map(([key, item], index) => {
                 return (
                     <Droppable id={`${key}`} key={index}>
-                        <StyledPaper sx={{ mt: 0, pt: 0, mb: 1, pb: 0 }} onClick={() => { }}>
-                            <Typography variant="h6" style={{ fontWeight: 'bold' }} >
+                        <StyledPaper sx={{ m: 0, mb: 1, p: 0 }} onClick={() => { }}>
+                            <Typography variant="h6" style={{ fontWeight: 'bold' }} sx={{ ml: 0.5 }} >
                                 {key === 0 ? 'Dine-in' : `Togo ${key}`}
                             </Typography>
 
@@ -146,7 +146,7 @@ export const Draggable = (props: { id: string, children: React.ReactNode, enable
         <Box ref={setNodeRef} style={style}  >
             {props.children}
             {props.enable &&
-                <Button {...listeners} {...attributes} variant='outlined' sx={{ m: 0.5, p: 0.7, ml: 0 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '32px', minHeight: '23px' }}>
+                <Button {...listeners} {...attributes} variant='outlined' sx={{ m: 0, p: 0.7 }} style={{ maxWidth: '30px', minWidth: '30px', maxHeight: '30px', minHeight: '23px' }}>
                     <RiDragMove2Fill style={{ fontSize: 26 }} />
                 </Button>}
         </Box >

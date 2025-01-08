@@ -95,6 +95,7 @@ export default function App() {
      *  + order detail sperate by times modify (time + acter)
      *  + UI like aldelo
      *  - expend dine-in vs togo
+     *  - move togo item btn
      *  - add new table togo
      *  - UI only togo
      *  - void ?

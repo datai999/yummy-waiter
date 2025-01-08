@@ -7,8 +7,10 @@ export class Pho {
     id: string = '';
     combo?: string;
     meats: string[] = [];
+    code?: string;
     noodle: string = 'BC';
     preferences?: string[];
+    referCode?: string;
     note?: string;
     qty: number = 1;
 }
