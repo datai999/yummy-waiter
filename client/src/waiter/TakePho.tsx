@@ -8,6 +8,8 @@ import { CheckButton, NumberInput } from '../my/my-component';
 import { MENU } from '../my/my-constants';
 import { Pho } from '../my/my-class';
 import * as SERVICE from '../my/my-service';
+import { GiPaperBagFolded } from 'react-icons/gi';
+import { MdTableRestaurant } from 'react-icons/md';
 
 interface TakePhoProps {
     category: string,
@@ -107,7 +109,7 @@ const pTakePho = (props: TakePhoProps) => {
                 })}
             />
 
-            <Grid2 container spacing={2} alignItems="center" sx={{ mt: 1, ml: 1 }}>
+            <Grid2 container spacing={2} alignItems="center" sx={{ mt: 1, ml: 1, mr: 1 }}>
                 <Grid2 size={{ xs: 3, sm: 1, md: 1 }}>
                     <NumberInput value={pho.qty} onChange={num => { setPho({ ...pho, qty: num }); }} label='Qty' />
                 </Grid2>
@@ -122,24 +124,28 @@ const pTakePho = (props: TakePhoProps) => {
                         }}
                     />
                 </Grid2>
-                <Grid2 size={{ xs: 'auto', sm: 2, md: 2 }}  >
+                <Grid2 size={{ xs: 'auto', sm: 3, md: 3 }}  >
                     <Button
                         variant="contained"
                         color="primary"
                         onClick={() => addItem(pho.id.length > 0 ? -1 : 0)}
                         fullWidth
+                        size='large'
                     >
                         {`${pho.id.length > 0 ? 'Edit item' : 'Dine-in'}`}
+                        <MdTableRestaurant style={{ fontSize: 30, marginLeft: 8 }} />
                     </Button>
                 </Grid2>
-                <Grid2 size={{ xs: 'auto', sm: 2, md: 2 }}  >
+                <Grid2 size={{ xs: 'auto', sm: 2, md: 3 }}  >
                     {pho.id.length === 0 && (<Button
                         variant="contained"
                         color="primary"
                         onClick={() => addItem(999)}
                         fullWidth
+                        size='large'
                     >
                         {`Togo`}
+                        <GiPaperBagFolded style={{ fontSize: 30, marginLeft: 8 }} />
                     </Button>)}
                 </Grid2>
             </Grid2>

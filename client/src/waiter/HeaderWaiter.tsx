@@ -18,6 +18,9 @@ import { ChildWaiterProps } from './Waiter';
 import { changeTable } from '../my/my-service';
 import { Table } from '../my/my-class';
 import { TableContext } from '../App';
+import { GiChicken } from 'react-icons/gi';
+import { PiCow } from 'react-icons/pi';
+import { RiDrinks2Line } from 'react-icons/ri';
 
 const LogoImage = styled("img")({
     width: "60px",
@@ -67,7 +70,7 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
                 </Grid2>
                 <Grid2 size={{ md: 6 }} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
                     {Object.keys(MENU).map((category) => (
-                        <WrapCategoryButton key={category} props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'medium' }} />
+                        <WrapCategoryButton key={category} props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'xlarge' }} />
                     ))}
                 </Grid2>
                 <Grid2 size={{ xs: 4, sm: 5, md: 'grow' }} sx={{ display: { xs: 'block', sm: 'none', md: 'block' } }}>
@@ -98,6 +101,10 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
         </StyledPaper >);
 }
 
+const iconStyle = {
+    fontSize: 25, marginLeft: 12
+}
+
 const WrapCategoryButton = ({ props }: {
     props: {
         size: string,
@@ -111,8 +118,16 @@ const WrapCategoryButton = ({ props }: {
         onClick={() => props.setCategory(props.category)}
         variant="contained"
         size={props.size == "small" ? "small" : props.size == "medium" ? "medium" : "large"}
+        sx={{
+            minHeight: props.size == 'xlarge' ? 50 : 0,
+            minWidth: props.size == 'xlarge' ? 120 : props.size === 'large' ? 80 : 0,
+            ml: '10px'
+        }}
     >
         {props.category}
+        {props.category === 'BEEF' && <PiCow style={iconStyle} />}
+        {props.category === 'CHICKEN' && <GiChicken style={iconStyle} />}
+        {props.category === 'DRINK' && <RiDrinks2Line style={iconStyle} />}
     </CategoryButton>)
 }
 

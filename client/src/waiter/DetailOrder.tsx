@@ -40,14 +40,14 @@ const OrderSummary = (props: Props) => {
     const mdResponsive = props.showPho ? useMediaQuery('(min-width:900px)') ? 12 : 4 : 'grow';
 
     return (
-        <Grid2 container spacing={2}>
+        <Grid2 container spacing={2} direction='row'>
             {Object.keys(MENU)
                 .filter(category => {
                     const categoryItem = props.categoryItems.get(category)!;
                     return categoryItem.getPhoQty() + categoryItem.getNonPhoQty() > 0;
                 })
                 .map(category => (
-                    <Grid2 key={category} size={{ xs: 12, sm: props.showPho ? 6 : 12, md: mdResponsive }} >
+                    <Grid2 key={category} size={{ xs: 12, sm: props.showPho ? 4 : 12, md: mdResponsive }} >
                         <PhoList key={category} parentProps={props} category={category} />
                     </Grid2>
                 ))

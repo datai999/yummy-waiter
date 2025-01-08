@@ -35,7 +35,7 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
         props.onSubmit();
     }
 
-    return (<StyledPaper sx={{ mb: 1, p: 1, pl: 1, pr: 0 }}>
+    return (<StyledPaper sx={{ mb: 0, p: 1, pl: 1, pr: 0 }}>
         {nonPhos.map((nonPho, index) => (
             <Box key={index}>
                 {index > 0 && (<Divider sx={{ m: 0.5 }} />)}

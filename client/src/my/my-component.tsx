@@ -59,7 +59,7 @@ const pCheckButton = ({ ...props }: CheckButtonProps) => {
                             size='large'
                             onClick={() => onClick(option)}
                             selected={options?.includes(option)}
-                            sx={{ minWidth: 100, maxWidth: 200 }}
+                            sx={{ minWidth: 100, maxWidth: 200, minHeight: 50 }}
                         >
                             {props.createLabel(option)}
                         </CategoryButton>
