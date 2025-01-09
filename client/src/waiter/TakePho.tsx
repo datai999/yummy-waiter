@@ -1,4 +1,5 @@
 import React, {
+    useContext,
     useEffect,
     useState,
 } from 'react';
@@ -10,19 +11,23 @@ import { Pho } from '../my/my-class';
 import * as SERVICE from '../my/my-service';
 import { GiPaperBagFolded } from 'react-icons/gi';
 import { MdTableRestaurant } from 'react-icons/md';
+import { TableContext } from '../App';
 
 interface TakePhoProps {
     category: string,
+    bagSize: number,
     pho: Pho,
     submitPho: (bag: number, pho: Pho) => void
 }
 
 const arePropsEqual = (prev: TakePhoProps, next: TakePhoProps) => {
     return prev.category === next.category
-        && prev.pho.id === next.pho.id;
+        && prev.pho.id === next.pho.id
+        && prev.bagSize === next.bagSize;
 }
 
 const pTakePho = (props: TakePhoProps) => {
+    const { table } = useContext(TableContext);
     const [pho, setPho] = useState<Pho>({ ...props.pho });
     const [note, setNote] = useState(props.pho.note);
 
@@ -132,8 +137,10 @@ const pTakePho = (props: TakePhoProps) => {
                         fullWidth
                         size='large'
                     >
-                        {`${pho.id.length > 0 ? 'Edit item' : 'Dine-in'}`}
-                        <MdTableRestaurant style={{ fontSize: 30, marginLeft: 8 }} />
+                        {`${pho.id.length > 0 ? 'Edit item' : table.id.startsWith('Togo') ? 'Togo 1' : 'Dine-in'}`}
+                        {table.id.startsWith('Togo')
+                            ? <GiPaperBagFolded style={{ fontSize: 30, marginLeft: 8 }} />
+                            : <MdTableRestaurant style={{ fontSize: 30, marginLeft: 8 }} />}
                     </Button>
                 </Grid2>
                 <Grid2 size={{ xs: 'auto', sm: 2, md: 3 }}  >
@@ -144,7 +151,9 @@ const pTakePho = (props: TakePhoProps) => {
                         fullWidth
                         size='large'
                     >
-                        {`Togo`}
+                        {table.id.startsWith('Togo') || props.bagSize > 2
+                            ? `Togo ${table.id.startsWith('Togo') ? props.bagSize : props.bagSize - 1}`
+                            : 'Togo'}
                         <GiPaperBagFolded style={{ fontSize: 30, marginLeft: 8 }} />
                     </Button>)}
                 </Grid2>

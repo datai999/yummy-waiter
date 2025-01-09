@@ -76,6 +76,7 @@ const OrderTake = ({ props, bags }: {
                 {category?.pho && (
                     <TakePho
                         category={props.category}
+                        bagSize={bags.size}
                         pho={pho}
                         submitPho={submitPho}
                     />

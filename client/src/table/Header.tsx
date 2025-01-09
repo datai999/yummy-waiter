@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+    Box,
     Grid2,
     Paper,
     styled,
@@ -9,6 +10,7 @@ import {
 
 import YummyLogo from '../assets/yummy.png';
 import { CategoryButton } from '../my/my-styled';
+import { GiPaperBagFolded } from 'react-icons/gi';
 
 const LogoImage = styled("img")({
     width: "60px",
@@ -45,10 +47,13 @@ const Header = (props: { newTogo: () => void }) => {
                         Yummy Phở 2
                     </Typography>
                 </Grid2>
-                <Grid2 size={{ xs: 2, sm: 2, md: 2 }}>
-                    <CategoryButton variant="contained" size='large' selected={true} fullWidth={true} sx={{ borderRadius: 5 }}
+                <Grid2 size={{ xs: 4, sm: 2, md: 2 }}>
+                    <CategoryButton variant="outlined" size='large' selected={false} fullWidth={true} sx={{ borderRadius: 5 }}
                         onClick={props.newTogo}>
                         New togo
+                        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                            <GiPaperBagFolded style={{ fontSize: 30, marginLeft: 8 }} />
+                        </Box>
                     </CategoryButton>
                 </Grid2>
             </Grid2>

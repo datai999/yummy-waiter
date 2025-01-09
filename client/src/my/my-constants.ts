@@ -76,16 +76,24 @@ export const BEEF_MEAT_SIDE = {
 }
 
 export const CHICKEN_SIDE = {
-    "Giá trụng": "Giá trụng",
+    "Giá trụng": "Giá trụng"
+}
+export const CHICKEN_SIDE_2 = {
     "Extra bamboo": "Extra bamboo",
     "Extra noodle": "Extra noodle",
-    "Whole chicken": 'Whole chicken',
-    "Whole chicken: Chop": 'Whole chicken: Chop',
-    "Half chicken": 'Half chicken',
-    "Half chicken: Chop": 'Half chicken: Chop',
+}
+export const CHICKEN_SIDE_3 = {
     "Dĩa ức": 'Dia.U',
     'Dĩa cánh': 'Dia.C',
     'Dĩa đùi': 'Dia.D'
+}
+export const CHICKEN_SIDE_4 = {
+    "Half chicken": 'Half chicken',
+    "Half chicken: Chop": 'Half chicken: Chop',
+}
+export const CHICKEN_SIDE_5 = {
+    "Whole chicken": 'Whole chicken',
+    "Whole chicken: Chop": 'Whole chicken: Chop',
 }
 
 export const DRINK = {
@@ -130,7 +138,7 @@ export const MENU = {
             'noodle': CHICKEN_NOODLE,
             'reference': CHICKEN_REFERENCES
         },
-        'nonPho': [CHICKEN_SIDE]
+        'nonPho': [CHICKEN_SIDE, CHICKEN_SIDE_2, CHICKEN_SIDE_3, CHICKEN_SIDE_4, CHICKEN_SIDE_5]
     },
     'DRINK': {
         'pho': null,

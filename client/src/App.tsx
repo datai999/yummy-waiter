@@ -36,7 +36,7 @@ export default function App() {
 
   useEffect(() => {
     initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables);
-    // orderTable(tables.get('Table 12')!);
+    orderTable(tables.get('Table 12')!);
   }, []);
 
   const onSyncTables = (syncTables: Map<String, Table>) => {
@@ -105,7 +105,7 @@ export default function App() {
      *  + expend dine-in vs togo
      *  - move togo item btn
      *  + add new table togo
-     *  - UI only togo
+     *  + UI only togo
      *  - void ?
      *  - order history
      *  + select table by UI

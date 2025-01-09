@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { RiDragMove2Fill } from 'react-icons/ri';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -25,6 +25,7 @@ import { StyledPaper } from '../my/my-styled';
 import theme from '../theme';
 import OrderSummary from './DetailOrder';
 import { CategoryItem, NonPho, Pho } from '../my/my-class';
+import { TableContext } from '../App';
 
 export interface BagDndProps {
     bags: Map<number, Map<string, CategoryItem>>,
@@ -32,6 +33,7 @@ export interface BagDndProps {
     showPho?: (bag: number, category: string, trackIndex: number, itemId: string) => void,
 };
 const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
+    const { table } = useContext(TableContext);
     const [refresh, setRefresh] = React.useState(false);
 
     const sensors = useSensors(
@@ -99,7 +101,9 @@ const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
                     <Droppable id={`${key}`} key={index}>
                         <StyledPaper sx={{ m: 0, mb: 1, p: 0 }} onClick={() => { }}>
                             <Typography variant="h6" style={{ fontWeight: 'bold' }} sx={{ ml: 0.5 }} >
-                                {key === 0 ? 'Dine-in' : `Togo ${key}`}
+                                {table.id.startsWith('Togo')
+                                    ? `Togo ${key + 1}`
+                                    : key === 0 ? 'Dine-in' : bags.size > 2 ? `Togo ${key}` : 'Togo'}
                             </Typography>
 
                             <OrderSummary
