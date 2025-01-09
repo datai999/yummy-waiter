@@ -35,10 +35,10 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
         props.onSubmit();
     }
 
-    return (<StyledPaper sx={{ mt: 1, mb: 0, p: 0, pl: 1 }}>
+    return (<StyledPaper sx={{ mt: 1, mb: 0, p: 0, pl: 1, minHeight: '228px' }}>
         {nonPhos.map((nonPho, index) => (
             <Box key={index}>
-                {index > 0 && (<Divider sx={{ m: 0.5 }} />)}
+                {index > 0 && (<Divider sx={{ m: ['BEEF', 'CHICKEN'].includes(props.category) ? 0.2 : 1 }} />)}
                 <CheckButton
                     multi={true}
                     allOptions={Object.keys(nonPho)}

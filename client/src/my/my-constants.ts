@@ -36,17 +36,18 @@ export const BEEF_NOODLE = ['BC', 'BT', 'BS', 'BTS'];
 export const CHICKEN_NOODLE = ['BC', 'BT', 'BS', 'BTS', 'Bún', 'Miến', 'Mì'];
 
 export const BEEF_REFERENCES = {
-    'Không hành': { sort: 4, code: '0h', },
+    'Không hành': { sort: 4, code: '0onion', },
     'Không béo': { sort: 5, code: '0Béo', },
     'Ít bánh': { sort: 3, code: '-b', },
     'Tái riêng': { sort: 2, code: 'R', },
     'Tái băm': { sort: 1, code: 'Bam', },
 }
 export const CHICKEN_REFERENCES = {
-    'Không hành': { sort: 4, code: '0h', },
+    'Không hành': { sort: 5, code: '0onion', },
     'Không da': { sort: 3, code: '0skin', },
     'Không xương': { sort: 2, code: '0bone', },
-    'Khô': { sort: 1, code: 'K', },
+    'Măng': { sort: 4, code: 'bambo', },
+    'Khô': { sort: 1, code: 'dry', },
 }
 
 export const BEEF_DINE_IN = {

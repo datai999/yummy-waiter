@@ -8,6 +8,7 @@ import React, {
 import _ from 'lodash';
 
 import {
+    Box,
     Grid2,
 } from '@mui/material';
 
@@ -67,12 +68,13 @@ const OrderTake = ({ props, bags }: {
         }
         props.setCategory(category);
         setItemRef({ bag: bag, trackedIndex: trackIndex });
-        setPho(bags.get(bag)!.get(props.category)!.pho[trackIndex].items.get(selectedItemId)!);
+        setPho(bags.get(bag)!.get(category)!.pho[trackIndex].items.get(selectedItemId)!);
     }
 
     return (
         <Grid2 columns={10} container spacing={1} sx={{ display: 'flex', mb: 1 }}>
             <Grid2 size={{ xs: 10, sm: 10, md: 7 }}>
+                {props.category === 'CHICKEN' && <Box sx={{ height: '116.8px' }} />}
                 {category?.pho && (
                     <TakePho
                         category={props.category}
@@ -88,8 +90,7 @@ const OrderTake = ({ props, bags }: {
                         onSubmit={() => {
                             setRefresh(!refresh);
                         }}
-                    />
-                )}
+                    />)}
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }}>
                 <BagDnd bags={bags} phoId={pho.id} showPho={showPho} />

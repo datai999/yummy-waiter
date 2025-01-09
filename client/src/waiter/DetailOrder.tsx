@@ -91,7 +91,7 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
                         trackedItem: trackedItem,
                         trackedIndex: index,
                         draggablePrefix: 'pho',
-                        renderPrimaryContent: (item: Pho) => (`${item.qty < 2 ? '' : item.qty + ' '}${item.code} (${item.noodle}) ${item.referCode}`),
+                        renderPrimaryContent: (item: Pho) => (`${item.qty < 2 ? '' : item.qty + ' '}${item.meats.length % 6 === 0 ? item.code : item.meats.join(',')} (${item.noodle}) ${item.referCode}`),
                     }}
                 />)}
             {phoQty > 0 && nonPhoQty > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
@@ -169,6 +169,10 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
         if (note === ' ')
             secondaryRef.current?.focus();
     }, [note]);
+
+    useEffect(() => {
+        setNote(props.item.note);
+    }, [props.item.note]);
 
     const minus = (item: any) => {
         const itemId = props.draggablePrefix === 'pho' ? item.id : item.code;

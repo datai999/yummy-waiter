@@ -15,8 +15,8 @@ export const generateId = () => {
 }
 
 export const sortBeefMeat = (a: string, b: string) =>
-    BEEF_MEAT[a as keyof typeof BEEF_MEAT].sort
-    - BEEF_MEAT[b as keyof typeof BEEF_MEAT].sort;
+    BEEF_MEAT[a as keyof typeof BEEF_MEAT]?.sort
+    - BEEF_MEAT[b as keyof typeof BEEF_MEAT]?.sort;
 
 export const generateTables = () =>
     new Map(Array.from({ length: 20 }, (_, index) => {
