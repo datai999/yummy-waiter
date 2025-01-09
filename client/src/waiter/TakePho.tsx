@@ -144,7 +144,7 @@ const pTakePho = (props: TakePhoProps) => {
                     </Button>
                 </Grid2>
                 <Grid2 size={{ xs: 'auto', sm: 2, md: 3 }}  >
-                    {pho.id.length === 0 && (<Button
+                    {props.bagSize > 1 && pho.id.length === 0 && (<Button
                         variant="contained"
                         color="primary"
                         onClick={() => addItem(999)}

@@ -32,7 +32,7 @@ export default function Footer(props: {
             <RxExit style={iconStyle} />
         </Button>
         <Button variant="contained" color="primary" onClick={props.addTogoBag} >
-            Add bag
+            Add togo
             <GiPaperBagFolded style={iconStyle} />
         </Button>
         <Button variant="contained" color="primary" onClick={props.changeTable} >

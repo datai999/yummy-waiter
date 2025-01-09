@@ -71,8 +71,8 @@ const OrderTake = ({ props, bags }: {
     }
 
     return (
-        <Grid2 container spacing={1} sx={{ display: 'flex', mb: 1 }}>
-            <Grid2 size={{ xs: 12, sm: 12, md: 9 }}>
+        <Grid2 columns={10} container spacing={1} sx={{ display: 'flex', mb: 1 }}>
+            <Grid2 size={{ xs: 10, sm: 10, md: 7 }}>
                 {category?.pho && (
                     <TakePho
                         category={props.category}
@@ -91,7 +91,7 @@ const OrderTake = ({ props, bags }: {
                     />
                 )}
             </Grid2>
-            <Grid2 size={{ xs: 12, sm: 12, md: 'grow' }}>
+            <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }}>
                 <BagDnd bags={bags} phoId={pho.id} showPho={showPho} />
             </Grid2>
         </Grid2 >

@@ -48,7 +48,7 @@ const OrderSummary = (props: Props) => {
                 })
                 .map(category => (
                     <Grid2 key={category} size={{ xs: 12, sm: props.showPho ? 4 : 12, md: mdResponsive }} >
-                        <PhoList key={category} parentProps={props} category={category} />
+                        <PhoList key={category} props={{ ...props, category }} />
                     </Grid2>
                 ))
             }
@@ -56,11 +56,14 @@ const OrderSummary = (props: Props) => {
     )
 }
 
-const PhoList = (props: { parentProps: Props, category: string }) => {
+interface PhoListProps extends Props {
+    category: string
+}
+const PhoList = ({ props }: { props: PhoListProps }) => {
     const [refresh, setRefresh] = useState<Boolean>(false);
 
     const category = props.category;
-    const categoryItems = props.parentProps.categoryItems.get(category)!;
+    const categoryItems = props.categoryItems.get(category)!;
 
     const phoQty = categoryItems.getPhoQty();
     const nonPhoQty = categoryItems.getNonPhoQty();
@@ -80,87 +83,87 @@ const PhoList = (props: { parentProps: Props, category: string }) => {
                 </Badge>
             </Typography>
             <Divider />
-            {categoryItems.pho.map((trackPho, index) =>
-                <TrackedItemsList
-                    key={index}
-                    parentProps={props.parentProps}
-                    category={category}
-                    trackedItem={trackPho}
-                    trackedIndex={index}
-                    items={trackPho.items}
-                    draggablePrefix='pho'
-                    renderPrimaryContent={(item: Pho) => (`${item.qty < 2 ? '' : item.qty + ' '}${item.code} (${item.noodle}) ${item.referCode}`)}
+            {categoryItems.pho.map((trackedItem, index) =>
+                <TrackedItemsList key={index}
+                    props={{
+                        ...props,
+                        refreshPhoList: () => setRefresh(!refresh),
+                        trackedItem: trackedItem,
+                        trackedIndex: index,
+                        draggablePrefix: 'pho',
+                        renderPrimaryContent: (item: Pho) => (`${item.qty < 2 ? '' : item.qty + ' '}${item.code} (${item.noodle}) ${item.referCode}`),
+                    }}
                 />)}
             {phoQty > 0 && nonPhoQty > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
-            {categoryItems.nonPho.map((trackedItems, index) =>
-                <TrackedItemsList
-                    key={index}
-                    parentProps={props.parentProps}
-                    category={category}
-                    trackedItem={trackedItems}
-                    trackedIndex={index}
-                    items={trackedItems.items}
-                    draggablePrefix='nonPho'
-                    renderPrimaryContent={(item: NonPho) => (`${item.qty > 1 ? item.qty : ''} ${item.code}`)}
+            {categoryItems.nonPho.map((trackedItem, index) =>
+                <TrackedItemsList key={index}
+                    props={{
+                        ...props,
+                        refreshPhoList: () => setRefresh(!refresh),
+                        trackedItem: trackedItem,
+                        trackedIndex: index,
+                        draggablePrefix: 'nonPho',
+                        renderPrimaryContent: (item: NonPho) => (`${item.qty > 1 ? item.qty : ''} ${item.code}`)
+                    }}
                 />)}
         </StyledPaper>);
 }
 
-interface TrackedItemsListProps {
-    parentProps: Props,
-    category: string,
-    trackedItem: TrackedItem,
+interface TrackedItemsListProps extends PhoListProps {
+    refreshPhoList: () => void,
+    trackedItem: TrackedItem & { items: Map<String, any> },
     trackedIndex: number,
-    items: Map<string, any>,
     draggablePrefix: string,
     renderPrimaryContent: (item: any) => ReactNode,
 }
 
-const TrackedItemsList = (props: TrackedItemsListProps) => {
+const TrackedItemsList = ({ props }: { props: TrackedItemsListProps }) => {
     const [refresh, setRefresh] = useState<Boolean>(false);
 
     const remove = (itemId: string) => {
-        props.items.delete(itemId);
+        props.trackedItem.items.delete(itemId);
         setRefresh(!refresh);
     };
 
     const copy = (item: any) => {
         const copyItem = { ...item, id: generateId() };
-        props.items.set(copyItem.id, copyItem);
+        props.trackedItem.items.set(copyItem.id, copyItem);
         setRefresh(!refresh);
     }
 
-    if (props.items.size === 0) return (<></>);
+    if (props.trackedItem.items.size === 0) return (<></>);
 
     return (<Box key={props.trackedItem.time?.toLocaleString()}>
         <Typography variant='caption' sx={{ ml: 1 }}>
             {`${props.trackedItem.time?.toLocaleTimeString() || ''} ${props.trackedItem.staff}`}
         </Typography>
         <List dense sx={{ width: '100%', p: 0 }}>
-            {Array.from(props.items.entries()).map(([id, item], index) => {
-                return (<ItemList key={index} parentProps={props} trackedIndex={props.trackedIndex} item={item} remove={remove} />);
+            {Array.from(props.trackedItem.items.entries()).map(([id, item], index) => {
+                return (<ItemList key={index}
+                    props={{
+                        ...props,
+                        item: item,
+                        remove: remove
+                    }} />);
             })}
         </List>
     </Box>);
 }
 
-const ItemList = (param: {
-    parentProps: TrackedItemsListProps
-    trackedIndex: number,
+interface ItemListProps extends TrackedItemsListProps {
     item: any,
     remove: (item: any) => void,
-}) => {
+}
+const ItemList = ({ props }: { props: ItemListProps }) => {
     const secondaryRef = React.useRef<HTMLInputElement>();
     const [refresh, setRefresh] = useState<Boolean>(false);
-    const [note, setNote] = useState(param.item.note || null);
-
-    const props = param.parentProps;
+    const [note, setNote] = useState(props.item.note || null);
 
     const category = props.category;
-    const bag = props.parentProps.bag;
-    const phoId = props.parentProps.phoId;
-    const showPho = props.parentProps.showPho;
-    const item = param.item;
+    const bag = props.bag;
+    const phoId = props.phoId;
+    const showPho = props.showPho;
+    const item = props.item;
 
     useEffect(() => {
         if (note === ' ')
@@ -171,13 +174,13 @@ const ItemList = (param: {
         const itemId = props.draggablePrefix === 'pho' ? item.id : item.code;
         if (item.qty > 1) {
             item.qty--;
-            setRefresh(!refresh);
-        } else param.remove(itemId);
+            props.refreshPhoList();
+        } else props.remove(itemId);
     }
 
     const plus = (item: any) => {
         item.qty++;
-        setRefresh(!refresh);
+        props.refreshPhoList();
     }
 
     return (
@@ -185,12 +188,12 @@ const ItemList = (param: {
             <Button onClick={() => { if (showPho) minus(item) }} sx={{ m: 0, p: 1.5, pr: 0, pl: 0 }} style={{ maxWidth: '25px', minWidth: '25px', maxHeight: '30px', minHeight: '30px' }}>
                 <FaMinus style={{ fontSize: 12 }} />
             </Button>
-            <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${props.draggablePrefix === 'pho' ? item.id : item.code}`} enable={Boolean(showPho)}>
+            <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${props.draggablePrefix === 'pho' ? item.id : item.code}`} enable={props.bags.size > 1 && Boolean(showPho)}>
                 <ListItemButton
                     onClick={() => {
                         if (props.draggablePrefix === 'pho') {
                             if (showPho) {
-                                showPho(bag, category, param.trackedIndex, phoId === item.id ? "" : item.id);
+                                showPho(bag, category, props.trackedIndex, phoId === item.id ? "" : item.id);
                             }
                         }
                         else {

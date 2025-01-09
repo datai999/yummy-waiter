@@ -49,11 +49,13 @@ export const CHICKEN_REFERENCES = {
     'Khô': { sort: 1, code: 'K', },
 }
 
-export const BEEF_SIDE = {
+export const BEEF_DINE_IN = {
     'HD': 'HD',
     'HT': 'HT',
     'NB': 'NB',
     'Giá sống': 'Giá sống',
+}
+export const BEEF_SIDE = {
     'XiQ': 'XiQ',
     'Ch.Bánh': 'Ch.Bánh',
     'Ch.BT': 'Ch.BT',
@@ -64,7 +66,6 @@ export const BEEF_SIDE = {
     'Large.Soup': 'Large Soup',
     'Egg rolls': 'Egg rolls',
 }
-
 export const BEEF_MEAT_SIDE = {
     'Dĩa Tái': "Dĩa T",
     'Chén Tái': "Ch.T",
@@ -90,32 +91,43 @@ export const CHICKEN_SIDE_3 = {
 export const CHICKEN_SIDE_4 = {
     "Half chicken": 'Half chicken',
     "Half chicken: Chop": 'Half chicken: Chop',
-}
-export const CHICKEN_SIDE_5 = {
     "Whole chicken": 'Whole chicken',
     "Whole chicken: Chop": 'Whole chicken: Chop',
 }
 
-export const DRINK = {
+export const WATER = {
     'Water': 'Water',
     'Ice-water': 'Ice-water',
-    'Hot-water': 'Hot-water',
+    'Warm-water': 'Warm-water',
+    'Hot-water': 'Hot-water'
+}
+const TEA = {
     'Ice-tea': 'Ice-tea',
     'Hot-tea': 'Hot-tea',
+}
+const COFFEE = {
     'Coffee': 'Coffee',
     'Black-coffee': 'Black-coffee',
+    'Hot Coffee': 'Hot Coffee',
+    'Hot Black-coffee': 'Hot Black-coffee',
+}
+const SOFT_DRINK = {
     'Coke': 'Coke',
     'Diet-Coke': 'Diet-Coke',
     'Sprite': 'Sprite'
 }
-
-export const DESSERT = {
+const TOFU = {
     'Tofu soybean': 'Tofu soybean',
     'Tofu matcha': 'Tofu matcha',
     'Tofu ginger': 'Tofu ginger',
+}
+const CHE = {
     'Chè 3M': 'Chè 3M',
     'Chè Yummy': 'Chè Yummy',
     'Chè SSBL': 'Chè SSBL',
+}
+
+export const DESSERT = {
     'FLan': 'Flan',
     'Coconut jelly': 'Coconut jelly',
     'Mixed jelly': 'Mixed jelly',
@@ -129,7 +141,7 @@ export const MENU = {
             'noodle': BEEF_NOODLE,
             'reference': BEEF_REFERENCES
         },
-        'nonPho': [BEEF_SIDE, BEEF_MEAT_SIDE]
+        'nonPho': [BEEF_DINE_IN, BEEF_SIDE, BEEF_MEAT_SIDE]
     },
     'CHICKEN': {
         'pho': {
@@ -138,10 +150,10 @@ export const MENU = {
             'noodle': CHICKEN_NOODLE,
             'reference': CHICKEN_REFERENCES
         },
-        'nonPho': [CHICKEN_SIDE, CHICKEN_SIDE_2, CHICKEN_SIDE_3, CHICKEN_SIDE_4, CHICKEN_SIDE_5]
+        'nonPho': [CHICKEN_SIDE, CHICKEN_SIDE_2, CHICKEN_SIDE_3, CHICKEN_SIDE_4]
     },
     'DRINK': {
         'pho': null,
-        'nonPho': [DRINK, DESSERT]
+        'nonPho': [WATER, TEA, COFFEE, SOFT_DRINK, TOFU, CHE, DESSERT]
     }
 }

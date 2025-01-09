@@ -106,7 +106,7 @@ export class Table {
     public constructor(id: string) {
         this.id = id;
         this.bags.set(this.bags.size, this.newBag());
-        this.bags.set(this.bags.size, this.newBag());
+        // this.bags.set(this.bags.size, this.newBag());
     }
 
     public newBag(): Map<string, CategoryItem> {
