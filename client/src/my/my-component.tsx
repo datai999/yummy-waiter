@@ -23,6 +23,7 @@ import { Draggable } from '../waiter/BagDnd';
 interface CheckButtonProps {
     multi: boolean,
     allOptions: string[],
+    disabled?: string[],
     options: string[],
     createLabel: (option: string) => string,
     callback: (next: string[]) => void,
@@ -45,7 +46,7 @@ const pCheckButton = ({ ...props }: CheckButtonProps) => {
         const newOptions = options.includes(option)
             ? options.filter((e) => e !== option)
             : props.multi ? [...options, option] : [option];
-        setOptions([...newOptions]);
+        // setOptions([...newOptions]);
         props.callback([...newOptions]);
     }
 
@@ -55,6 +56,7 @@ const pCheckButton = ({ ...props }: CheckButtonProps) => {
                 {props.allOptions.map((option) => (
                     <Grid2 key={option}>
                         <CategoryButton
+                            disabled={props.disabled?.includes(option)}
                             variant='outlined'
                             size='large'
                             onClick={() => onClick(option)}

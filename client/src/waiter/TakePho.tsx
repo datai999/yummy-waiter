@@ -30,6 +30,7 @@ const pTakePho = (props: TakePhoProps) => {
     const { table } = useContext(TableContext);
     const [pho, setPho] = useState<Pho>({ ...props.pho });
     const [note, setNote] = useState(props.pho.note);
+    const [disabled, setDisabled] = useState<{ noodles: string[], prefers: string[] }>({ noodles: ['BS', 'BTS'], prefers: [] });
 
     const category = MENU[props.category as keyof typeof MENU]!;
     const combos = category.pho!.combo;
@@ -52,14 +53,55 @@ const pTakePho = (props: TakePhoProps) => {
             .find(([key, value]) => {
                 if (value.length !== pho.meats.length) return false;
                 return value.sort(SERVICE.sortBeefMeat).join(',') === meatCodes;
-            });
-        if (!combo) {
-            setPho({ ...pho, combo: undefined });
+            }) || [undefined, undefined];
+        let change = false;
+        const nextPho = { ...pho };
+        if (combo[0] !== pho.combo) {
+            change = true;
+            nextPho.combo = combo[0];
         }
-        if (combo && combo[0] !== pho.combo) {
-            setPho({ ...pho, combo: combo[0] });
+        if (!pho.meats.includes('Tái')) {
+            const nextPrefer = (pho.preferences || [])
+                .filter(p => !['Tái riêng', 'Tái băm'].includes(p));
+            if (nextPrefer.length !== pho.preferences?.length) {
+                change = true;
+                nextPho.preferences = nextPrefer;
+            }
+        }
+        if (change) {
+            setPho(nextPho);
         }
     }, [pho.meats]);
+
+    useEffect(() => {
+        if (['BS', 'BTS', 'Bún'].includes(pho.noodle)) {
+            setDisabled({ ...disabled, prefers: ['Khô'] })
+        }
+        else if (disabled.prefers.includes('Khô'))
+            setDisabled({ ...disabled, prefers: [] });
+        if (pho.noodle === 'Mì' && !(pho.preferences || []).includes('Khô'))
+            setPho({ ...pho, preferences: [...(pho.preferences || []), 'Măng', 'Khô'] });
+    }, [pho.noodle]);
+
+    useEffect(() => {
+        if (pho.preferences?.includes('Tái riêng') || pho.preferences?.includes('Tái băm')) {
+            if (!pho.meats.includes('Tái'))
+                setPho({ ...pho, meats: ['Tái', ...pho.meats] })
+        }
+        if (pho.preferences?.includes('Khô') && !disabled.noodles.includes('Bún'))
+            setDisabled({ ...disabled, noodles: ['BS', 'BTS', 'Bún'] })
+        else if (disabled.noodles.includes('Bún')) {
+            const nextDisabledNoodes = (props.bagSize > 1 || table.id.startsWith('Togo'))
+                ? [] : ['BS', 'BTS'];
+            setDisabled({ ...disabled, noodles: nextDisabledNoodes })
+        }
+    }, [pho.preferences]);
+
+    useEffect(() => {
+        if (props.bagSize > 1 || table.id.startsWith('Togo'))
+            if (disabled.noodles.length === 2)
+                setDisabled({ ...disabled, noodles: [] });
+    }, [table.id, props.bagSize]);
 
     const addItem = (bag: number) => {
         pho.note = note;
@@ -98,15 +140,17 @@ const pTakePho = (props: TakePhoProps) => {
             <CheckButton
                 multi={false}
                 allOptions={noodles}
+                disabled={disabled.noodles}
                 options={[pho.noodle]}
                 createLabel={(key) => key}
-                callback={(noodles) => setPho({ ...pho, noodle: noodles[0] })}
+                callback={(noodles) => { if (noodles.length > 0) setPho({ ...pho, noodle: noodles[0] }) }}
             />
 
             <Divider textAlign="left" sx={{ m: 0.5 }}></Divider>
             <CheckButton
                 multi={true}
                 allOptions={Object.keys(references)}
+                disabled={disabled.prefers}
                 options={pho.preferences || []}
                 createLabel={(key) => key}
                 callback={(preferences) => setPho({
