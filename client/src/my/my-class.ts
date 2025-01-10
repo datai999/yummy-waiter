@@ -3,40 +3,54 @@ import { Exclude, plainToClass, Transform, Type } from 'class-transformer';
 import { MENU, TableStatus } from './my-constants';
 import { generateId } from './my-service';
 
-export class Pho {
+export class ItemRef {
+    trackedIndex: number = -1;
     id: string = '';
-    combo?: string;
-    meats: string[] = [];
-    code?: string;
-    noodle: string = 'undefined';
-    preferences?: string[];
-    referCode?: string;
-    note?: string;
-    qty: number = 1;
+
+    public constructor(trackedIndex: number, id: string) {
+        this.trackedIndex = trackedIndex;
+        this.id = id;
+    }
 }
 
 export class NonPho {
-    id: string;
+    id: string = '';
     code: string;
-    note?: string;
-    qty: number;
+    note?: String;
+    qty: number = 1;
+    actualQty: number = 1;
+
+    @Type(() => ItemRef)
+    void?: ItemRef;
 
     public constructor(code: string) {
         this.id = generateId();
         this.code = code;
-        this.qty = 1;
+    }
+}
+
+export class Pho extends NonPho {
+    combo?: string;
+    meats: string[] = [];
+    noodle: string = 'BC';
+    preferences?: string[];
+    referCode?: string;
+
+    public constructor() {
+        super('');
+        this.id = '';
     }
 }
 
 export class TrackedItem {
     @Type(() => Date)
     time?: Date;
-    staff: string;
+    server: string;
 
-    public constructor(staff: any) {
-        if (staff)
-            this.staff = staff.name;
-        else this.staff = '?';
+    public constructor(server: any) {
+        if (server)
+            this.server = server.name;
+        else this.server = '?';
     }
 }
 
@@ -71,16 +85,24 @@ export class CategoryItem {
         return this.nonPho.length === 0 ? new Map() : this.nonPho[this.nonPho.length - 1].items;
     }
 
-    public getPhoQty(): number {
-        return Array.from(this.pho).reduce((preTrackedQty, tracked) =>
-            preTrackedQty + Array.from(tracked.items.values()).reduce((preQty, cur) => preQty + cur.qty, 0), 0
+    private getQty(type: string, actual: boolean = false): number {
+        return Array.from(type === 'pho' ? this.pho : this.nonPho).reduce((preTrackedQty, tracked) =>
+            preTrackedQty + Array.from(tracked.items.values())
+                .filter(tracked => !tracked.void)
+                .reduce((preQty, cur) => preQty + (actual ? cur.actualQty : cur.qty), 0), 0
         );
     }
 
+    public getPhoQty(): number {
+        return this.getQty('pho');
+    }
+
+    public getPhoActualQty(): number {
+        return this.getQty('pho', true);
+    }
+
     public getNonPhoQty(): number {
-        return Array.from(this.nonPho).reduce((preTrackedQty, tracked) =>
-            preTrackedQty + Array.from(tracked.items.values()).reduce((preQty, cur) => preQty + cur.qty, 0), 0
-        );
+        return this.getQty('nonPho');
     }
 }
 

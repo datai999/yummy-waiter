@@ -31,7 +31,7 @@ const pTakePho = (props: TakePhoProps) => {
     const { table } = useContext(TableContext);
     const [refresh, setRefresh] = useState(false);
     const [pho, setPho] = useState<Pho>({ ...props.pho });
-    const [note, setNote] = useState(props.pho.note);
+    const [note, setNote] = useState<String>(props.pho.note || '');
     const disabled = useRef<{ noodles: string[], prefers: string[] }>({ noodles: ['BS', 'BTS'], prefers: [] }).current;
 
     const category = MENU[props.category as keyof typeof MENU]!;
@@ -44,7 +44,7 @@ const pTakePho = (props: TakePhoProps) => {
         onNoodleChange([props.pho.noodle]);
         onPreferChange(props.pho.preferences || []);
         setPho({ ...props.pho } as Pho);
-        setNote(props.pho.note);
+        setNote(props.pho.note || '');
     }, [props.pho.id, props.category])
 
     useEffect(() => {
@@ -56,15 +56,41 @@ const pTakePho = (props: TakePhoProps) => {
     }, [table.id, props.bagSize]);
 
     const addItem = (bag: number) => {
-        if (!noodles.includes(pho.noodle)) {
+        const nonNoodle = pho.combo?.startsWith('#8b') || pho.combo?.startsWith('#8c');
+        if (!noodles.includes(pho.noodle) && !nonNoodle) {
             alert('Please select a noodle!');
             return;
+        }
+        if (nonNoodle) {
+            if (props.bagSize > 1 || table.id.startsWith('Togo'))
+                disabled.noodles = [];
+            else disabled.noodles = ['BS', 'BTS'];
         }
         pho.note = note;
         SERVICE.completePho(category, pho);
         props.submitPho(bag, pho);
         setPho(new Pho());
         setNote('');
+    }
+
+    const onComboChange = (nextCombos: string[]) => {
+        if (nextCombos.length === 0) return;
+        const combo = nextCombos[0];
+        let nextNoodle = pho.noodle;
+        if (combo.startsWith('#8b')) {
+            disabled.noodles = ['BC', 'BT', 'BS', 'BTS'];
+            nextNoodle = 'Bread'
+        } else if (combo.startsWith('#8c')) {
+            disabled.noodles = ['BC', 'BT', 'BS', 'BTS'];
+            nextNoodle = 'Mì'
+        }
+        const comboMeats = combos[combo as keyof typeof combos];
+        setPho({
+            ...pho,
+            combo: combo,
+            meats: comboMeats,
+            noodle: nextNoodle,
+        })
     }
 
     const onMeatChange = (nextMeats: string[]) => {
@@ -129,11 +155,7 @@ const pTakePho = (props: TakePhoProps) => {
                 allOptions={Object.keys(combos)}
                 options={[pho.combo as string]}
                 createLabel={(key) => key}
-                callback={(combo) => setPho({
-                    ...pho,
-                    combo: combo.length === 0 ? '' : combo[0],
-                    meats: combo.length === 0 ? [] : combos[combo[0] as keyof typeof combos]
-                })}
+                callback={onComboChange}
             />
 
             {meats && (<>

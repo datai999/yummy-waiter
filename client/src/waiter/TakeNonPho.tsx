@@ -18,18 +18,18 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
     const nonPhos = MENU[props.category as keyof typeof MENU]!.nonPho;
     const nonPho = props.bags.get(0)!.get(props.category)?.lastNonPhos()!;
 
-    const addItem = (nonPhoKey: string) => {
-        const nextNonPho = new Map(nonPho);
-        let targetNonPho = nextNonPho.get(nonPhoKey);
+    const addItem = (nonPhoCode: string) => {
+        let targetNonPho = Array.from(nonPho.values())
+            .find(value => value.code === nonPhoCode && (!value.note || value.note.trim().length === 0));
+
         if (targetNonPho) {
             targetNonPho.qty++;
-        } else targetNonPho = new NonPho(nonPhoKey);
-
-        nextNonPho.set(nonPhoKey, targetNonPho);
+            targetNonPho.actualQty++;
+        } else targetNonPho = new NonPho(nonPhoCode);
 
         const dineIn = props.bags.get(0)!;
         const categoryItems = dineIn.get(props.category)!;
-        categoryItems.lastNonPhos().set(nonPhoKey, targetNonPho);
+        categoryItems.lastNonPhos().set(targetNonPho.id, targetNonPho);
         categoryItems.action.push(new Date().toISOString() + ':add nonPho');
 
         props.onSubmit();

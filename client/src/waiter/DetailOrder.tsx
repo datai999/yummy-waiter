@@ -28,7 +28,7 @@ import {
     StyledPaper,
 } from '../my/my-styled';
 import { BagDndProps, Draggable } from './BagDnd';
-import { CategoryItem, NonPho, Pho, TrackedItem } from '../my/my-class';
+import { CategoryItem, ItemRef, NonPho, Pho, TrackedItem } from '../my/my-class';
 import { MENU } from '../my/my-constants';
 
 interface Props extends BagDndProps {
@@ -68,10 +68,19 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
     const phoQty = categoryItems.getPhoQty();
     const nonPhoQty = categoryItems.getNonPhoQty();
 
+    const copyItem = (trackedIndex: number, item: any, qty: number) => {
+        const itemRef = qty > 0 ? null : new ItemRef(trackedIndex, item.id);
+        const qtyValue = qty > 0 ? qty : -1 * qty;
+        const copyItem = { ...item, qty: qtyValue, actualQty: qtyValue, id: generateId(), void: itemRef };
+        if (item.meats) categoryItems.lastPhos().set(copyItem.id, copyItem);
+        else categoryItems.lastNonPhos().set(copyItem.id, copyItem);
+        setRefresh(!refresh);
+    }
+
     return (
         <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0 }}>
             <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} >
-                <Badge badgeContent={phoQty} color="primary" anchorOrigin={{
+                <Badge badgeContent={categoryItems.getPhoActualQty()} color="primary" anchorOrigin={{
                     vertical: 'top',
                     horizontal: 'right',
                 }}
@@ -91,9 +100,11 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
                         trackedItem: trackedItem,
                         trackedIndex: index,
                         draggablePrefix: 'pho',
-                        renderPrimaryContent: (item: Pho) => (`${item.qty < 2 ? '' : item.qty + ' '}${item.meats.length % 6 === 0 ? item.code : item.meats.join(',')} (${item.noodle}) ${item.referCode}`),
+                        renderPrimaryContent: (item: Pho) => (`${item.void ? 'Void:' : ''}${item.qty === 1 ? '' : item.qty + ' '}${item.meats.length % 6 === 0 ? item.code : item.meats.join(',')} (${item.noodle}) ${item.referCode}`),
+                        copyItem: copyItem
                     }}
-                />)}
+                />)
+            }
             {phoQty > 0 && nonPhoQty > 0 && <Divider sx={{ p: 0.5, mb: 0.5 }} />}
             {categoryItems.nonPho.map((trackedItem, index) =>
                 <TrackedItemsList key={index}
@@ -103,7 +114,8 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
                         trackedItem: trackedItem,
                         trackedIndex: index,
                         draggablePrefix: 'nonPho',
-                        renderPrimaryContent: (item: NonPho) => (`${item.qty > 1 ? item.qty : ''} ${item.code}`)
+                        renderPrimaryContent: (item: NonPho) => (`${item.void ? 'Void:' : ''}${item.qty === 1 ? '' : item.qty} ${item.code}`),
+                        copyItem: copyItem
                     }}
                 />)}
         </StyledPaper>);
@@ -115,35 +127,24 @@ interface TrackedItemsListProps extends PhoListProps {
     trackedIndex: number,
     draggablePrefix: string,
     renderPrimaryContent: (item: any) => ReactNode,
+    copyItem: (trackedIndex: number, item: any, qty: number) => void,
 }
 
 const TrackedItemsList = ({ props }: { props: TrackedItemsListProps }) => {
     const [refresh, setRefresh] = useState<Boolean>(false);
 
-    const remove = (itemId: string) => {
-        props.trackedItem.items.delete(itemId);
-        setRefresh(!refresh);
-    };
-
-    const copy = (item: any) => {
-        const copyItem = { ...item, id: generateId() };
-        props.trackedItem.items.set(copyItem.id, copyItem);
-        setRefresh(!refresh);
-    }
-
     if (props.trackedItem.items.size === 0) return (<></>);
 
     return (<Box key={props.trackedItem.time?.toLocaleString()}>
         <Typography variant='caption' sx={{ ml: 1 }}>
-            {`${props.trackedItem.time?.toLocaleTimeString() || ''} ${props.trackedItem.staff}`}
+            {`${props.trackedItem.time?.toLocaleTimeString() || ''} ${props.trackedItem.server}`}
         </Typography>
         <List dense sx={{ width: '100%', p: 0 }}>
             {Array.from(props.trackedItem.items.entries()).map(([id, item], index) => {
                 return (<ItemList key={index}
                     props={{
                         ...props,
-                        item: item,
-                        remove: remove
+                        item: item
                     }} />);
             })}
         </List>
@@ -151,13 +152,12 @@ const TrackedItemsList = ({ props }: { props: TrackedItemsListProps }) => {
 }
 
 interface ItemListProps extends TrackedItemsListProps {
-    item: any,
-    remove: (item: any) => void,
+    item: NonPho & {}
 }
 const ItemList = ({ props }: { props: ItemListProps }) => {
     const secondaryRef = React.useRef<HTMLInputElement>();
     const [refresh, setRefresh] = useState<Boolean>(false);
-    const [note, setNote] = useState(props.item.note || null);
+    const [note, setNote] = useState(props.item.note || null || undefined);
 
     const category = props.category;
     const bag = props.bag;
@@ -174,25 +174,50 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
         setNote(props.item.note);
     }, [props.item.note]);
 
-    const minus = (item: any) => {
-        const itemId = props.draggablePrefix === 'pho' ? item.id : item.code;
+    const minus = () => {
+        if (item.actualQty < 1) return;
+        if (props.trackedItem.time) {
+            props.copyItem(props.trackedIndex, item, -1);
+            item.actualQty--;
+            return;
+        }
         if (item.qty > 1) {
             item.qty--;
-            props.refreshPhoList();
-        } else props.remove(itemId);
+            item.actualQty--;
+        } else props.trackedItem.items.delete(item.id);
+        if (item.void) {
+            const categoryItem = props.categoryItems.get(category)!;
+            const refItem = (props.draggablePrefix === 'pho' ? categoryItem.pho : categoryItem.nonPho)
+            [item.void.trackedIndex].items.get(item.void.id)!;
+            refItem.actualQty++;
+        }
+        props.refreshPhoList();
     }
 
-    const plus = (item: any) => {
+    const plus = () => {
+        if (props.trackedItem.time) {
+            props.copyItem(props.trackedIndex, item, 1);
+            return;
+        }
+        if (item.void) {
+            const categoryItem = props.categoryItems.get(category)!;
+            const refItem = (props.draggablePrefix === 'pho' ? categoryItem.pho : categoryItem.nonPho)
+            [item.void.trackedIndex].items.get(item.void.id)!;
+            if (refItem.actualQty < 1) return;
+            refItem.actualQty--;
+        }
         item.qty++;
+        item.actualQty++;
         props.refreshPhoList();
     }
 
     return (
         <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }} style={{ backgroundColor: `${null}` }}>
-            <Button onClick={() => { if (showPho) minus(item) }} sx={{ m: 0, p: 1.5, pr: 0, pl: 0 }} style={{ maxWidth: '25px', minWidth: '25px', maxHeight: '30px', minHeight: '30px' }}>
-                <FaMinus style={{ fontSize: 12 }} />
-            </Button>
-            <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${props.draggablePrefix === 'pho' ? item.id : item.code}`} enable={props.bags.size > 1 && Boolean(showPho)}>
+            {!(props.trackedItem.time && item.void) &&
+                <Button onClick={() => { if (showPho) minus() }} sx={{ m: 0, p: 1.5, pr: 0, pl: 0 }} style={{ maxWidth: '25px', minWidth: '25px', maxHeight: '30px', minHeight: '30px' }}>
+                    <FaMinus style={{ fontSize: 12 }} />
+                </Button>}
+            <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${item.id}`} enable={props.bags.size > 1 && Boolean(showPho) && !props.trackedItem.time}>
                 <ListItemButton
                     onClick={() => {
                         if (props.draggablePrefix === 'pho') {
@@ -220,15 +245,15 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
                                 }}
                                 onBlur={() => {
                                     let value: String = note.trim();
-                                    item.note = value.length > 0 ? value : null;
+                                    item.note = value.length > 0 ? value : undefined;
                                     setNote(item.note);
                                 }}
                             />}
                     />
                 </ListItemButton>
             </Draggable>
-            {showPho &&
-                <Button onClick={() => plus(item)} variant='outlined' sx={{ m: 0, p: 1.1, mb: 0.2 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '30px', minHeight: '23px' }}>
+            {showPho && !(props.trackedItem.time && item.void) &&
+                <Button onClick={plus} variant='outlined' sx={{ m: 0, p: 1.1, mb: 0.2 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '30px', minHeight: '23px' }}>
                     <FaPlus style={{ fontSize: 14 }} />
                 </Button>}
         </OrderItem>
