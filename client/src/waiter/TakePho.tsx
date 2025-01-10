@@ -48,36 +48,6 @@ const pTakePho = (props: TakePhoProps) => {
     }, [props.pho.id, props.category])
 
     useEffect(() => {
-        if (!meats) return;
-        // if (pho.meats.length > 1 && pho.meats.includes('BPN'))
-        //     pho.meats = pho.meats.filter(meat => meat !== "BPN");
-        pho.meats.sort(SERVICE.sortBeefMeat);
-        const meatCodes = pho.meats.join(',');
-        const combo = Object.entries(combos)
-            .find(([key, value]) => {
-                if (value.length !== pho.meats.length) return false;
-                return value.sort(SERVICE.sortBeefMeat).join(',') === meatCodes;
-            }) || [undefined, undefined];
-        let change = false;
-        const nextPho = { ...pho };
-        if (combo[0] !== pho.combo) {
-            change = true;
-            nextPho.combo = combo[0];
-        }
-        if (!pho.meats.includes('Tái')) {
-            const nextPrefer = (pho.preferences || [])
-                .filter(p => !['Tái riêng', 'Tái băm'].includes(p));
-            if (nextPrefer.length !== pho.preferences?.length) {
-                change = true;
-                nextPho.preferences = nextPrefer;
-            }
-        }
-        if (change) {
-            setPho(nextPho);
-        }
-    }, [pho.meats]);
-
-    useEffect(() => {
         if (props.bagSize > 1 || table.id.startsWith('Togo'))
             if (disabled.noodles.length === 2) {
                 disabled.noodles = [];
@@ -86,7 +56,7 @@ const pTakePho = (props: TakePhoProps) => {
     }, [table.id, props.bagSize]);
 
     const addItem = (bag: number) => {
-        if (!MENU[props.category as keyof typeof MENU].pho?.noodle.includes(pho.noodle)) {
+        if (!noodles.includes(pho.noodle)) {
             alert('Please select a noodle!');
             return;
         }
@@ -95,6 +65,31 @@ const pTakePho = (props: TakePhoProps) => {
         props.submitPho(bag, pho);
         setPho(new Pho());
         setNote('');
+    }
+
+    const onMeatChange = (nextMeats: string[]) => {
+        if (!meats) return;
+        // if (pho.meats.length > 1 && pho.meats.includes('BPN'))
+        //     pho.meats = pho.meats.filter(meat => meat !== "BPN");
+        nextMeats.sort(SERVICE.sortBeefMeat);
+        const meatCodes = nextMeats.join(',');
+        const combo = Object.entries(combos)
+            .find(([key, value]) => {
+                if (value.length !== nextMeats.length) return false;
+                return value.sort(SERVICE.sortBeefMeat).join(',') === meatCodes;
+            }) || [undefined, undefined];
+        const nextPho = { ...pho };
+        if (combo[0] !== pho.combo) {
+            nextPho.combo = combo[0];
+        }
+        if (!nextMeats.includes('Tái')) {
+            const nextPrefer = (pho.preferences || [])
+                .filter(p => !['Tái riêng', 'Tái băm'].includes(p));
+            if (nextPrefer.length !== pho.preferences?.length) {
+                nextPho.preferences = nextPrefer;
+            }
+        }
+        setPho({ ...nextPho, meats: nextMeats });
     }
 
     const onNoodleChange = (noodles: string[]) => {
@@ -148,7 +143,7 @@ const pTakePho = (props: TakePhoProps) => {
                     allOptions={Object.keys(meats)}
                     options={pho.meats}
                     createLabel={(key) => key}
-                    callback={(meats) => setPho({ ...pho, meats })}
+                    callback={onMeatChange}
                 />
             </>)}
 
