@@ -8,7 +8,7 @@ export class Pho {
     combo?: string;
     meats: string[] = [];
     code?: string;
-    noodle: string = 'BC';
+    noodle: string = 'undefined';
     preferences?: string[];
     referCode?: string;
     note?: string;
