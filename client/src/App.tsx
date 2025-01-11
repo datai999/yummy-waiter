@@ -103,19 +103,19 @@ export default function App() {
      *  + order detail sperate by times modify (time + acter)
      *  + UI like aldelo
      *  + expend dine-in vs togo
-     *  - move togo item btn
      *  + add new table togo
      *  + UI only togo
-     *  - void ?
-     *  - order history
+     *  + void
+     *  + order history
      *  + select table by UI
      *  + qty btn pho
      *  + count pho
-     *  - multi item selection to edit
-     *  - button edit all items
      *  + user login
-     *  - user manager
-     *  - void after 5min must accept by manager
+     *  - check order change?
+     *  - UI table: server, Badge by special item
+     *  - lock only user serve table
+     *  - store order data
+     *  - view order data
      *  - UI for customer fill phone
      * kitchen: select part of bill, print bill & system change status to waiter
      * chicken: update number of chicken meats to waiter
