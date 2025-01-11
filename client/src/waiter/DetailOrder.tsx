@@ -164,6 +164,9 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
     const phoId = props.phoId;
     const showPho = props.showPho;
     const item = props.item;
+    const categoryItem = props.categoryItems.get(category)!;
+    const refItem = (props.draggablePrefix === 'pho' ? categoryItem.pho : categoryItem.nonPho)
+    [item.void?.trackedIndex || 0].items.get(item.void?.id || '');
 
     useEffect(() => {
         if (note === ' ')
@@ -185,10 +188,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
             item.qty--;
             item.actualQty--;
         } else props.trackedItem.items.delete(item.id);
-        if (item.void) {
-            const categoryItem = props.categoryItems.get(category)!;
-            const refItem = (props.draggablePrefix === 'pho' ? categoryItem.pho : categoryItem.nonPho)
-            [item.void.trackedIndex].items.get(item.void.id)!;
+        if (refItem) {
             refItem.actualQty++;
         }
         props.refreshPhoList();
@@ -199,10 +199,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
             props.copyItem(props.trackedIndex, item, 1);
             return;
         }
-        if (item.void) {
-            const categoryItem = props.categoryItems.get(category)!;
-            const refItem = (props.draggablePrefix === 'pho' ? categoryItem.pho : categoryItem.nonPho)
-            [item.void.trackedIndex].items.get(item.void.id)!;
+        if (refItem) {
             if (refItem.actualQty < 1) return;
             refItem.actualQty--;
         }
@@ -213,11 +210,13 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
 
     return (
         <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }} style={{ backgroundColor: `${null}` }}>
-            {!(props.trackedItem.time && item.void) &&
-                <Button onClick={() => { if (showPho) minus() }} sx={{ m: 0, p: 1.5, pr: 0, pl: 0 }} style={{ maxWidth: '25px', minWidth: '25px', maxHeight: '30px', minHeight: '30px' }}>
-                    <FaMinus style={{ fontSize: 12 }} />
-                </Button>}
-            <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${item.id}`} enable={props.bags.size > 1 && Boolean(showPho) && !props.trackedItem.time}>
+            <Box style={{ maxWidth: '25px', minWidth: '25px', maxHeight: '30px', minHeight: '30px' }}>
+                {!(props.trackedItem.time && item.void) &&
+                    <Button disabled={item.actualQty === 0} onClick={() => { if (showPho) minus() }} sx={{ m: 0, p: 1.5, pr: 0, pl: 0 }} style={{ maxWidth: '25px', minWidth: '25px', maxHeight: '30px', minHeight: '30px' }}>
+                        <FaMinus style={{ fontSize: 12 }} />
+                    </Button>}
+            </Box>
+            <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${item.id}`} enable={props.bags.size > 1 && Boolean(showPho) && !props.trackedItem.time && !item.void}>
                 <ListItemButton
                     onClick={() => {
                         if (props.draggablePrefix === 'pho') {
@@ -252,7 +251,11 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
                     />
                 </ListItemButton>
             </Draggable>
-            {showPho && !(props.trackedItem.time && item.void) &&
+            {(!refItem
+                || (showPho
+                    && !(props.trackedItem.time && refItem)
+                    && (!props.trackedItem.time && refItem?.actualQty > 0)))
+                &&
                 <Button onClick={plus} variant='outlined' sx={{ m: 0, p: 1.1, mb: 0.2 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '30px', minHeight: '23px' }}>
                     <FaPlus style={{ fontSize: 14 }} />
                 </Button>}
