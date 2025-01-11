@@ -32,7 +32,6 @@ const pTakePho = (props: TakePhoProps) => {
     const [refresh, setRefresh] = useState(false);
     const [pho, setPho] = useState<Pho>({ ...props.pho });
     const [note, setNote] = useState<String>(props.pho.note || '');
-    const disabled = useRef<{ noodles: string[], prefers: string[] }>({ noodles: ['BS', 'BTS'], prefers: [] }).current;
 
     const category = MENU[props.category as keyof typeof MENU]!;
     const combos = category.pho!.combo;
@@ -41,30 +40,15 @@ const pTakePho = (props: TakePhoProps) => {
     const references = category.pho!.reference;
 
     useEffect(() => {
-        onNoodleChange([props.pho.noodle]);
-        onPreferChange(props.pho.preferences || []);
         setPho({ ...props.pho } as Pho);
         setNote(props.pho.note || '');
     }, [props.pho.id, props.category])
-
-    useEffect(() => {
-        if (props.bagSize > 1 || table.id.startsWith('Togo'))
-            if (disabled.noodles.length === 2) {
-                disabled.noodles = [];
-                setRefresh(!refresh);
-            }
-    }, [table.id, props.bagSize]);
 
     const addItem = (bag: number) => {
         const nonNoodle = pho.combo?.startsWith('#8b') || pho.combo?.startsWith('#8c');
         if (!noodles.includes(pho.noodle) && !nonNoodle) {
             alert('Please select a noodle!');
             return;
-        }
-        if (nonNoodle) {
-            if (props.bagSize > 1 || table.id.startsWith('Togo'))
-                disabled.noodles = [];
-            else disabled.noodles = ['BS', 'BTS'];
         }
         pho.note = note;
         SERVICE.completePho(category, pho);
@@ -73,23 +57,39 @@ const pTakePho = (props: TakePhoProps) => {
         setNote('');
     }
 
+    const calDisabledNoodles = (pho: Pho): string[] => {
+        const disabledNoodles = [
+            ...(pho.combo?.startsWith('#8b') || pho.combo?.startsWith('#8c') ? ['BC', 'BT', 'BS', 'BTS'] : []),
+            ...(props.bagSize < 2 && !table.id.startsWith('Togo') ? ['BS', 'BTS'] : [])
+        ];
+        return disabledNoodles;
+    }
+
+    const calDisabledPrefers = (pho: Pho): string[] => {
+        const disabledPrefers = [
+            ...(pho.meats.includes('Xi') || pho.combo?.startsWith('#8') ? ['Tái riêng', 'Tái băm'] : []),
+            pho.combo?.startsWith('#8b') ? 'Ít bánh' : '',
+            pho.combo?.startsWith('C') ? 'Không xương' : '',
+            ['BC', 'BT', 'BS', 'BTS'].includes(pho.noodle) ? 'Măng' : '',
+            ['BS', 'BTS', 'Bún'].includes(pho.noodle) ? 'Khô' : ''
+        ];
+        pho.preferences = pho.preferences?.filter(prefer => !disabledPrefers.includes(prefer));
+        return disabledPrefers;
+    }
+
     const onComboChange = (nextCombos: string[]) => {
         if (nextCombos.length === 0) return;
         const combo = nextCombos[0];
-        let nextNoodle = pho.noodle;
         if (combo.startsWith('#8b')) {
-            disabled.noodles = ['BC', 'BT', 'BS', 'BTS'];
-            nextNoodle = 'Bread'
+            pho.noodle = 'Bread'
         } else if (combo.startsWith('#8c')) {
-            disabled.noodles = ['BC', 'BT', 'BS', 'BTS'];
-            nextNoodle = 'Mì'
+            pho.noodle = 'Mì'
         }
         const comboMeats = combos[combo as keyof typeof combos];
         setPho({
             ...pho,
             combo: combo,
-            meats: comboMeats,
-            noodle: nextNoodle,
+            meats: comboMeats
         })
     }
 
@@ -104,40 +104,29 @@ const pTakePho = (props: TakePhoProps) => {
                 if (value.length !== nextMeats.length) return false;
                 return value.sort(SERVICE.sortBeefMeat).join(',') === meatCodes;
             }) || [undefined, undefined];
-        const nextPho = { ...pho };
         if (combo[0] !== pho.combo) {
-            nextPho.combo = combo[0];
+            pho.combo = combo[0];
         }
         if (!nextMeats.includes('Tái')) {
             const nextPrefer = (pho.preferences || [])
                 .filter(p => !['Tái riêng', 'Tái băm'].includes(p));
             if (nextPrefer.length !== pho.preferences?.length) {
-                nextPho.preferences = nextPrefer;
+                pho.preferences = nextPrefer;
             }
         }
-        setPho({ ...nextPho, meats: nextMeats });
+        setPho({ ...pho, meats: nextMeats });
     }
 
     const onNoodleChange = (noodles: string[]) => {
         if (noodles.length !== 1) return;
         const noodle = noodles[0];
-
-        let prefers = new Set(pho.preferences || []);
-        if (['BC', 'BT'].includes(noodle)) {
-            disabled.prefers = ['Măng'];
-        } else if (['BS', 'BTS'].includes(noodle)) {
-            disabled.prefers = ['Khô', 'Măng'];
-        } else if (['Bún'].includes(noodle)) {
-            disabled.prefers = ['Khô'];
-            prefers.add('Măng');
-        } else if (['Miến', 'Mì'].includes(noodle)) {
-            disabled.prefers = [];
+        if (['Bún', 'Miến', 'Mì'].includes(noodle)) {
+            const prefers = new Set(pho.preferences || []);
             prefers.add('Măng');
             if (noodle === 'Mì') prefers.add('Khô');
+            pho.preferences = Array.from(prefers);
         }
-        disabled.prefers.forEach(dp => prefers.delete(dp));
-
-        setPho({ ...pho, noodle: noodle, preferences: Array.from(prefers) })
+        setPho({ ...pho, noodle: noodle });
     }
 
     const onPreferChange = (prefers: string[]) => {
@@ -173,7 +162,7 @@ const pTakePho = (props: TakePhoProps) => {
             <CheckButton
                 multi={false}
                 allOptions={noodles}
-                disabled={disabled.noodles}
+                disabled={calDisabledNoodles(pho)}
                 options={[pho.noodle]}
                 createLabel={(key) => key}
                 callback={onNoodleChange}
@@ -183,14 +172,14 @@ const pTakePho = (props: TakePhoProps) => {
             <CheckButton
                 multi={true}
                 allOptions={Object.keys(references)}
-                disabled={disabled.prefers}
+                disabled={calDisabledPrefers(pho)}
                 options={pho.preferences || []}
                 createLabel={(key) => key}
                 callback={onPreferChange}
             />
 
             <Grid2 container spacing={2} alignItems="center" sx={{ mt: 1, ml: 1, mr: 1 }}>
-                <Grid2 size={{ xs: 3, sm: 1, md: 1 }}>
+                <Grid2 size={{ xs: 3, sm: 1, md: 1 }} sx={{ mb: 1 }}>
                     <NumberInput value={pho.qty} onChange={num => { setPho({ ...pho, qty: num }); }} label='Qty' />
                 </Grid2>
                 <Grid2 size={{ xs: 9, sm: 6, md: 5 }}  >
@@ -208,9 +197,10 @@ const pTakePho = (props: TakePhoProps) => {
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => addItem(pho.id.length > 0 ? -1 : 0)}
-                        fullWidth
                         size='large'
+                        fullWidth
+                        disabled={!pho.isPho}
+                        onClick={() => addItem(pho.id.length > 0 ? -1 : 0)}
                     >
                         {`${pho.id.length > 0 ? 'Edit item' : table.id.startsWith('Togo') ? 'Togo 1' : 'Dine-in'}`}
                         {table.id.startsWith('Togo')
