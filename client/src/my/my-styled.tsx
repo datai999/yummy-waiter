@@ -44,5 +44,5 @@ export const OrderItem = styled(Box, {
     borderRadius: theme.shape.borderRadius,
     cursor: "pointer",
     transition: "all 0.3s ease",
-    border: `${selected ? `3px solid ${theme.palette.primary.main}` : null}`,
+    border: `2px solid ${selected ? theme.palette.primary.main : 'white'}`,
 }));

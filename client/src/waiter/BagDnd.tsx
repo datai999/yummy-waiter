@@ -30,7 +30,7 @@ import { TableContext } from '../App';
 export interface BagDndProps {
     bags: Map<number, Map<string, CategoryItem>>,
     phoId: String;
-    showPho?: (bag: number, category: string, trackIndex: number, itemId: string) => void,
+    showPho?: (isPho:boolean, bag: number, category: string, trackIndex: number, itemId: string) => void,
 };
 const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
     const { table } = useContext(TableContext);

@@ -61,14 +61,21 @@ const OrderTake = ({ props, bags }: {
         setPho(new Pho());
     }
 
-    const showPho = (bag: number, category: string, trackIndex: number, selectedItemId: string) => {
+    const showPho = (isPho: boolean, bag: number, category: string, trackIndex: number, selectedItemId: string) => {
         if (selectedItemId === null || selectedItemId.length === 0) {
             setPho(new Pho());
             return;
         }
         props.setCategory(category);
         setItemRef({ bag: bag, trackedIndex: trackIndex });
-        setPho(bags.get(bag)!.get(category)!.pho[trackIndex].items.get(selectedItemId)!);
+        const categoryItem = bags.get(bag)!.get(category)!;
+        let viewPho: Pho;
+        if (isPho) viewPho = categoryItem.pho[trackIndex].items.get(selectedItemId)!;
+        else {
+            const nonPho = categoryItem.nonPho[trackIndex].items.get(selectedItemId)!;
+            viewPho = Pho.from(nonPho);
+        }
+        setPho(viewPho);
     }
 
     return (

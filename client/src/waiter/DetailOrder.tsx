@@ -68,13 +68,14 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
     const phoQty = categoryItems.getPhoQty();
     const nonPhoQty = categoryItems.getNonPhoQty();
 
-    const copyItem = (trackedIndex: number, item: any, qty: number) => {
+    const copyItem = (trackedIndex: number, item: any, qty: number): string => {
         const itemRef = qty > 0 ? null : new ItemRef(trackedIndex, item.id);
         const qtyValue = qty > 0 ? qty : -1 * qty;
         const copyItem = { ...item, qty: qtyValue, actualQty: qtyValue, id: generateId(), void: itemRef };
         if (item.meats) categoryItems.lastPhos().set(copyItem.id, copyItem);
         else categoryItems.lastNonPhos().set(copyItem.id, copyItem);
         setRefresh(!refresh);
+        return copyItem.id;
     }
 
     return (
@@ -100,7 +101,7 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
                         trackedItem: trackedItem,
                         trackedIndex: index,
                         draggablePrefix: 'pho',
-                        renderPrimaryContent: (item: Pho) => (`${item.void ? 'Void:' : ''}${item.qty === 1 ? '' : item.qty + ' '}${item.meats.length % 6 === 0 ? item.code : item.meats.join(',')} (${item.noodle}) ${item.referCode}`),
+                        renderPrimaryContent: (item: Pho) => (`${item.void ? 'Void:' : ''}${item.actualQty === 1 ? '' : item.actualQty + ' '}${item.meats.length % 6 === 0 ? item.code : item.meats.join(',')} (${item.noodle}) ${item.referCode}`),
                         copyItem: copyItem
                     }}
                 />)
@@ -114,7 +115,7 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
                         trackedItem: trackedItem,
                         trackedIndex: index,
                         draggablePrefix: 'nonPho',
-                        renderPrimaryContent: (item: NonPho) => (`${item.void ? 'Void:' : ''}${item.qty === 1 ? '' : item.qty} ${item.code}`),
+                        renderPrimaryContent: (item: NonPho) => (`${item.void ? 'Void:' : ''}${item.actualQty === 1 ? '' : item.actualQty} ${item.code}`),
                         copyItem: copyItem
                     }}
                 />)}
@@ -127,7 +128,7 @@ interface TrackedItemsListProps extends PhoListProps {
     trackedIndex: number,
     draggablePrefix: string,
     renderPrimaryContent: (item: any) => ReactNode,
-    copyItem: (trackedIndex: number, item: any, qty: number) => void,
+    copyItem: (trackedIndex: number, item: any, qty: number) => string,
 }
 
 const TrackedItemsList = ({ props }: { props: TrackedItemsListProps }) => {
@@ -180,14 +181,35 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
     const minus = () => {
         if (item.actualQty < 1) return;
         if (props.trackedItem.time) {
-            props.copyItem(props.trackedIndex, item, -1);
+            const lastTrackedIndex = (props.draggablePrefix === 'pho' ? categoryItem.pho : categoryItem.nonPho).length - 1;
+            if (item.voided) {
+                const voidItemRef = item.voided.find(e => e.trackedIndex === lastTrackedIndex);
+                if (voidItemRef) {
+                    const voidItem = (props.draggablePrefix === 'pho' ? categoryItem.pho : categoryItem.nonPho)
+                    [lastTrackedIndex].items.get(voidItemRef.id)!;
+                    voidItem.qty++;
+                    voidItem.actualQty++;
+                    item.actualQty--;
+                    props.refreshPhoList();
+                    return;
+                }
+            }
+
+            const copyItemId = props.copyItem(props.trackedIndex, item, -1);
             item.actualQty--;
+            item.voided = (item.voided || []);
+            item.voided.push(new ItemRef(lastTrackedIndex, copyItemId));
             return;
         }
         if (item.qty > 1) {
             item.qty--;
             item.actualQty--;
-        } else props.trackedItem.items.delete(item.id);
+        } else {
+            props.trackedItem.items.delete(item.id);
+            if (refItem) {
+                refItem.voided?.pop();
+            }
+        }
         if (refItem) {
             refItem.actualQty++;
         }
@@ -208,8 +230,16 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
         props.refreshPhoList();
     }
 
+    const checkSelected = () => {
+        const groupIds = [item.id, refItem?.id,
+        ...(item.voided || []).map(e => e.id),
+        ...(refItem?.voided || []).map(e => e.id),
+        ];
+        return groupIds.includes(phoId as string);
+    }
+
     return (
-        <OrderItem key={item.id} selected={item.id === phoId} sx={{ display: 'flex' }} style={{ backgroundColor: `${null}` }}>
+        <OrderItem key={item.id} selected={checkSelected()} sx={{ display: 'flex' }} style={{ backgroundColor: `${null}` }}>
             <Box style={{ maxWidth: '25px', minWidth: '25px', maxHeight: '30px', minHeight: '30px' }}>
                 {!(props.trackedItem.time && item.void) &&
                     <Button disabled={item.actualQty === 0} onClick={() => { if (showPho) minus() }} sx={{ m: 0, p: 1.5, pr: 0, pl: 0 }} style={{ maxWidth: '25px', minWidth: '25px', maxHeight: '30px', minHeight: '30px' }}>
@@ -221,10 +251,13 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
                     onClick={() => {
                         if (props.draggablePrefix === 'pho') {
                             if (showPho) {
-                                showPho(bag, category, props.trackedIndex, phoId === item.id ? "" : item.id);
+                                showPho(true, bag, category, props.trackedIndex, phoId === item.id ? "" : item.id);
                             }
                         }
                         else {
+                            if (showPho) {
+                                showPho(false, bag, category, props.trackedIndex, phoId === item.id ? "" : item.id);
+                            }
                             if (!note) setNote(' ');
                             else secondaryRef.current?.focus();
                         }

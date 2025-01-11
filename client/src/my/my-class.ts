@@ -22,6 +22,8 @@ export class NonPho {
 
     @Type(() => ItemRef)
     void?: ItemRef;
+    @Type(() => ItemRef)
+    voided?: ItemRef[];
 
     public constructor(code: string) {
         this.id = generateId();
@@ -39,6 +41,16 @@ export class Pho extends NonPho {
     public constructor() {
         super('');
         this.id = '';
+    }
+
+    static from(nonPho: NonPho): Pho {
+        const pho = new this();
+        pho.id = nonPho.id;
+        pho.code = nonPho.code;
+        pho.note = nonPho.note;
+        pho.qty = nonPho.qty;
+        pho.actualQty = nonPho.qty;
+        return pho;
     }
 }
 
