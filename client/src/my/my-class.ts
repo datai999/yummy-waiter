@@ -32,6 +32,7 @@ export class NonPho {
 }
 
 export class Pho extends NonPho {
+    isPho: boolean = true;
     combo?: string;
     meats: string[] = [];
     noodle: string = 'BC';
@@ -50,6 +51,7 @@ export class Pho extends NonPho {
         pho.note = nonPho.note;
         pho.qty = nonPho.qty;
         pho.actualQty = nonPho.qty;
+        pho.isPho = false;
         return pho;
     }
 }

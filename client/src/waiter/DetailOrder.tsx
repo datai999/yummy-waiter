@@ -249,15 +249,11 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
             <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${item.id}`} enable={props.bags.size > 1 && Boolean(showPho) && !props.trackedItem.time && !item.void}>
                 <ListItemButton
                     onClick={() => {
-                        if (props.draggablePrefix === 'pho') {
-                            if (showPho) {
-                                showPho(true, bag, category, props.trackedIndex, phoId === item.id ? "" : item.id);
-                            }
+                        if (item.void) return;
+                        if (showPho) {
+                            showPho(props.draggablePrefix === 'pho', bag, category, props.trackedIndex, phoId === item.id ? "" : item.id);
                         }
-                        else {
-                            if (showPho) {
-                                showPho(false, bag, category, props.trackedIndex, phoId === item.id ? "" : item.id);
-                            }
+                        if (props.draggablePrefix !== 'pho') {
                             if (!note) setNote(' ');
                             else secondaryRef.current?.focus();
                         }
