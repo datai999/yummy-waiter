@@ -15,6 +15,7 @@ import { MdTableRestaurant } from 'react-icons/md';
 import { TableContext } from '../App';
 
 interface TakePhoProps {
+    isDoneItem: boolean,
     category: string,
     bagSize: number,
     pho: Pho,
@@ -199,7 +200,7 @@ const pTakePho = (props: TakePhoProps) => {
                         color="primary"
                         size='large'
                         fullWidth
-                        disabled={!pho.isPho}
+                        disabled={props.isDoneItem || !pho.isPho}
                         onClick={() => addItem(pho.id.length > 0 ? -1 : 0)}
                     >
                         {`${pho.id.length > 0 ? 'Edit item' : table.id.startsWith('Togo') ? 'Togo 1' : 'Dine-in'}`}

@@ -17,7 +17,7 @@ import {
 } from '../my/my-constants';
 import BagDnd from './BagDnd';
 import { ChildWaiterProps } from './Waiter';
-import { CategoryItem, Pho, TrackedNonPho, TrackedPho } from '../my/my-class';
+import { CategoryItem, Pho, TrackedItem, TrackedNonPho, TrackedPho } from '../my/my-class';
 import TakePho from './TakePho';
 import TakeNonPho from './TakeNonPho';
 import { AuthContext } from '../App';
@@ -30,7 +30,8 @@ const OrderTake = ({ props, bags }: {
 
     const [refresh, setRefresh] = useState(false)
     const [pho, setPho] = useState<Pho>(new Pho());
-    const [itemRef, setItemRef] = useState({ bag: 0, trackedIndex: 0 });
+    const [itemRef, setItemRef] = useState<{ bag: number, trackedIndex: number, server: string, time: Date | undefined }>
+        ({ bag: -1, trackedIndex: -1, server: '', time: undefined });
 
     const category = MENU[props.category as keyof typeof MENU];
 
@@ -57,24 +58,30 @@ const OrderTake = ({ props, bags }: {
             categoryItems.lastPhos().set(newPho.id, newPho);
         }
         categoryItems?.action.push(`${new Date().toISOString()}:${auth.name}:${isEdit ? 'Edit' : 'Add'} pho'`);
-
+        setItemRef({ bag: -1, trackedIndex: -1, server: '', time: undefined });
         setPho(new Pho());
     }
 
     const showPho = (isPho: boolean, bag: number, category: string, trackIndex: number, selectedItemId: string) => {
         if (selectedItemId === null || selectedItemId.length === 0) {
+            setItemRef({ bag: -1, trackedIndex: -1, server: '', time: undefined });
             setPho(new Pho());
             return;
         }
         props.setCategory(category);
-        setItemRef({ bag: bag, trackedIndex: trackIndex });
         const categoryItem = bags.get(bag)!.get(category)!;
         let viewPho: Pho;
-        if (isPho) viewPho = categoryItem.pho[trackIndex].items.get(selectedItemId)!;
+        let trackedItem: TrackedItem;
+        if (isPho) {
+            trackedItem = categoryItem.pho[trackIndex];
+            viewPho = categoryItem.pho[trackIndex].items.get(selectedItemId)!;
+        }
         else {
+            trackedItem = categoryItem.nonPho[trackIndex];
             const nonPho = categoryItem.nonPho[trackIndex].items.get(selectedItemId)!;
             viewPho = Pho.from(nonPho);
         }
+        setItemRef({ bag: bag, trackedIndex: trackIndex, server: trackedItem.server, time: trackedItem.time });
         setPho(viewPho);
     }
 
@@ -84,6 +91,7 @@ const OrderTake = ({ props, bags }: {
                 {props.category === 'CHICKEN' && <Box sx={{ height: '116.8px' }} />}
                 {category?.pho && (
                     <TakePho
+                        isDoneItem={Boolean(itemRef.time)}
                         category={props.category}
                         bagSize={bags.size}
                         pho={pho}
