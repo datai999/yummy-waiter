@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import {
     Box,
@@ -11,6 +11,7 @@ import {
 import YummyLogo from '../assets/yummy.png';
 import { CategoryButton } from '../my/my-styled';
 import { GiPaperBagFolded } from 'react-icons/gi';
+import { AuthContext } from '../App';
 
 const LogoImage = styled("img")({
     width: "60px",
@@ -35,28 +36,27 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const Header = (props: { newTogo: () => void }) => {
+    const { auth, logout } = useContext(AuthContext);
+
     return (
-        <StyledPaper>
-            <Grid2 container spacing={2} alignItems="center">
-                <Grid2 size={{ xs: 2, sm: 2, md: 1 }}>
-                    <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} />
-                    <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} />
-                </Grid2>
-                <Grid2 size='grow'  >
-                    <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ textAlign: "center", display: 'flex' }}>
-                        Yummy Phở 2
-                    </Typography>
-                </Grid2>
-                <Grid2 size={{ xs: 4, sm: 2, md: 2 }}>
-                    <CategoryButton variant="outlined" size='large' selected={false} fullWidth={true} sx={{ borderRadius: 5 }}
-                        onClick={props.newTogo}>
-                        New togo
-                        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                            <GiPaperBagFolded style={{ fontSize: 30, marginLeft: 8 }} />
-                        </Box>
-                    </CategoryButton>
-                </Grid2>
-            </Grid2>
+        <StyledPaper sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', direction: 'row', alignItems: 'center' }}>
+                <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} onClick={logout} />
+                <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} onClick={logout} />
+                <Typography fontWeight='fontWeightMedium' variant="h4" sx={{ textAlign: "center", display: 'flex', ml: 1 }}>
+                    Yummy Phở 2
+                </Typography>
+                <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ textAlign: "center", display: 'flex', ml: 1, mt: 1 }}>
+                    : {auth.name}
+                </Typography>
+            </Box>
+            <CategoryButton variant="outlined" size='large' selected={false} sx={{ borderRadius: 5 }}
+                onClick={props.newTogo}>
+                New togo
+                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                    <GiPaperBagFolded style={{ fontSize: 30, marginLeft: 8 }} />
+                </Box>
+            </CategoryButton>
         </StyledPaper >);
 }
 

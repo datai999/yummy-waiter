@@ -9,6 +9,7 @@ import {
     Select,
     styled,
     Typography,
+    useMediaQuery,
 } from '@mui/material';
 
 import YummyLogo from '../assets/yummy.png';
@@ -17,7 +18,7 @@ import { CategoryButton } from '../my/my-styled';
 import { ChildWaiterProps } from './Waiter';
 import { changeTable } from '../my/my-service';
 import { Table } from '../my/my-class';
-import { TableContext } from '../App';
+import { AuthContext, TableContext } from '../App';
 import { GiChicken } from 'react-icons/gi';
 import { PiCow } from 'react-icons/pi';
 import { RiDrinks2Line } from 'react-icons/ri';
@@ -46,57 +47,33 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 
 
 const Header = ({ props }: { props: ChildWaiterProps }) => {
+    const { auth, logout } = useContext(AuthContext);
     const { orderTable } = useContext(TableContext);
 
     return (
         <StyledPaper>
-            <Grid2 container spacing={2} alignItems="center">
-                <Grid2 size={{ xs: 2, sm: 1, md: 1 }} onClick={() => orderTable(null)}>
-                    <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} />
-                    <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} />
-                </Grid2>
-                <Grid2 size={{ xs: 6, sm: 6, md: 2 }}  >
-                    <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ textAlign: "center", display: { xs: 'flex', sm: 'block', md: 'none', lg: 'none' } }}>
+            <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', direction: 'row', alignItems: 'center' }}>
+                    <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} onClick={() => orderTable(null)} />
+                    <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} onClick={() => orderTable(null)} />
+                    <Typography fontWeight='fontWeightMedium' variant="h4" sx={{ textAlign: "center", display: 'flex', ml: 1 }}>
                         Yummy Phở 2
                     </Typography>
-                    <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ display: { xs: 'none', sm: 'none', md: 'block', lg: 'block' } }}>                        Yummy Phở 2
+                    <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ textAlign: "center", display: 'flex', ml: 1, mt: 1 }}>
+                        : {auth.name}
                     </Typography>
-                    <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'none' } }}>
-                        Yummy
-                    </Typography>
-                    <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'none' } }}>
-                        Phở 2
-                    </Typography>
-                </Grid2>
-                <Grid2 size={{ md: 6 }} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
+                </Box>
+                <Box>
                     {Object.keys(MENU).map((category) => (
-                        <WrapCategoryButton key={category} props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'xlarge' }} />
+                        <WrapCategoryButton key={category} props={{
+                            selectedCategory: props.category, category: category, setCategory: props.setCategory,
+                            size: useMediaQuery('(min-width:900px)') ? 'xlarge' : 'medium',
+                        }} />
                     ))}
-                </Grid2>
-                <Grid2 size={{ xs: 4, sm: 5, md: 'grow' }} sx={{ display: { xs: 'block', sm: 'none', md: 'block' } }}>
-                    <TableSelections props={props} size='small' />
-                </Grid2>
-            </Grid2>
-
-            <Box sx={{ display: { xs: 'none', sm: 'block', md: 'none', flexWrap: "wrap" } }}>
-                <Divider textAlign="left" sx={{ mb: 0 }}></Divider>
-                <Grid2 container spacing={2} alignItems="center">
-                    <Grid2 size={{ sm: 8, }}>
-                        {Object.keys(MENU).map((category) => (
-                            <WrapCategoryButton key={category} props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'large' }} />
-                        ))}
-                    </Grid2>
-                    <Grid2 size={{ sm: 'grow', }} >
-                        <TableSelections props={props} size='medium' />
-                    </Grid2>
-                </Grid2>
-            </Box>
-
-            <Box sx={{ display: { xs: 'block', sm: 'none', md: 'none' }, flexWrap: "wrap" }}>
-                <Divider textAlign="left" sx={{ mb: 0 }}></Divider>
-                {Object.keys(MENU).map((category) => (
-                    <WrapCategoryButton key={category} props={{ selectedCategory: props.category, category: category, setCategory: props.setCategory, size: 'small' }} />
-                ))}
+                </Box>
+                <Box sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: '150px' }}>
+                    <TableSelections props={props} size='medium' />
+                </Box>
             </Box>
         </StyledPaper >);
 }
