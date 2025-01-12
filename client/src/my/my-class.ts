@@ -148,4 +148,13 @@ export class Table {
     public newBag(): Map<string, CategoryItem> {
         return new Map(Object.keys(MENU).map(category => [category, new CategoryItem()]));
     }
+
+    public getServer(): string[] {
+        const servers = new Set<string>();
+        this.bags.forEach(bag => bag.forEach(category => {
+            category.pho.forEach(tracked => servers.add(tracked.server));
+            category.nonPho.forEach(tracked => servers.add(tracked.server));
+        }));
+        return Array.from(servers);
+    }
 }

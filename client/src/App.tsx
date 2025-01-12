@@ -36,7 +36,7 @@ export default function App() {
 
   useEffect(() => {
     initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables);
-    orderTable(tables.get('Table 12')!);
+    // orderTable(tables.get('Table 12')!);
   }, []);
 
   const onSyncTables = (syncTables: Map<String, Table>) => {
@@ -113,7 +113,7 @@ export default function App() {
      *  + user login
      *  + scroll view order detail
      *  - check order change?
-     *  - UI table: server, Badge by special item
+     *  + UI table: server, Badge by special item
      *  - lock only user serve table
      *  - store order data
      *  - view order data

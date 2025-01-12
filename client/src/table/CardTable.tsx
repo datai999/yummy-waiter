@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import styled from '@emotion/styled';
 import {
+  Badge,
   Box,
   Button,
   Card,
@@ -18,6 +19,8 @@ import { TableStatus } from '../my/my-constants';
 import OrderSummary from '../waiter/DetailOrder';
 import { StyledPaper } from '../my/my-styled';
 import { Table } from '../my/my-class';
+import { GiChicken } from 'react-icons/gi';
+import { PiCow } from 'react-icons/pi';
 
 const StyledCard = styled(Card)(({ status }: { status: TableStatus }) => ({
   minHeight: "100px",
@@ -102,24 +105,35 @@ const CardTable = ({ table, orderTable, doneTable }: {
       status={table.status}
       onClick={cardOnClick}
     >
-      <CardContent sx={{ p: 1 }}>
+      <CardContent sx={{ p: 1, pb: 0, pt: 0, maxHeight: '100px' }}>
         <Grid2 container>
-          {table.id.startsWith('Table') && <Grid2 size={{ xs: 0, sm: 4, md: 4 }} />}
           <Grid2 size='grow' >
-            <Typography variant="h5">{table.id.startsWith('Table') ? table.id : 'Togo:' + table.id.split('_')[2]}</Typography>
+            <Typography variant="h5" sx={{ mb: 1, ml: table.id.startsWith('Table') ? '30%' : 0 }}>{table.id.startsWith('Table') ? table.id : 'Togo:' + table.id.split('_')[2]}</Typography>
+            {table.status !== TableStatus.AVAILABLE &&
+              <Stack direction="row" spacing={1} sx={{ justifyContent: "center", alignItems: "stretch", }}>
+                {Array.from(table.bags.entries()).map(([key, item], index) => <Box key={index} >
+                  <Badge badgeContent={item.get('BEEF')?.getPhoActualQty()} color="primary" anchorOrigin={{ vertical: 'top', horizontal: 'right', }}
+                    sx={{ mb: 0, pb: 0, ml: 1 }}>
+                    <PiCow style={{ fontSize: 24, marginLeft: 6 }} />
+                  </Badge>
+                  <Badge badgeContent={item.get('CHICKEN')?.getPhoActualQty()} color="primary" anchorOrigin={{ vertical: 'top', horizontal: 'right', }}
+                    sx={{ mb: 0, pb: 0, ml: 1 }}>
+                    <GiChicken style={{ fontSize: 24, marginLeft: 6 }} />
+                  </Badge>
+                </Box>)}
+              </Stack>}
           </Grid2>
-          {/* {renderTableStatus(table.status)} */}
           <Grid2>
-            {table.status !== TableStatus.AVAILABLE && (
+            {table.status !== TableStatus.AVAILABLE && <>
               <Typography>
                 {formatTime(timer)}
               </Typography>
-            )}
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                {table.getServer().map(server => <Box key={server} sx={{ fontSize: 12 }}> {`${server}`}</Box>)}
+              </Box>
+            </>}
           </Grid2>
         </Grid2>
-        {/* <Typography>
-          {table.orderTime && table.orderTime.toLocaleTimeString()}
-        </Typography> */}
       </CardContent>
     </StyledCard >
 
