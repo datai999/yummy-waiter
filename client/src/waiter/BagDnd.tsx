@@ -96,6 +96,7 @@ const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
             // onDragStart={handleDragStart}
             onDragEnd={onDragEnd}
         >
+            
             {Array.from(bags.entries()).map(([key, item], index) => {
                 return (
                     <Droppable id={`${key}`} key={index}>

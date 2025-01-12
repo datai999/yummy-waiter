@@ -180,8 +180,8 @@ const pTakePho = (props: TakePhoProps) => {
             />
 
             <Grid2 container spacing={2} alignItems="center" sx={{ mt: 1, ml: 1, mr: 1 }}>
-                <Grid2 size={{ xs: 3, sm: 1, md: 1 }} sx={{ mb: 1 }}>
-                    <NumberInput value={pho.qty} onChange={num => { setPho({ ...pho, qty: num }); }} label='Qty' />
+                <Grid2 size={{ xs: 3, sm: 1, md: 1 }} sx={{ mb: 0 }}>
+                    <NumberInput value={pho.qty} onChange={num => { setPho({ ...pho, qty: num, actualQty: num }); }} label='Qty' />
                 </Grid2>
                 <Grid2 size={{ xs: 9, sm: 6, md: 5 }}  >
                     <TextField

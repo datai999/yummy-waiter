@@ -111,6 +111,7 @@ export default function App() {
      *  + qty btn pho
      *  + count pho
      *  + user login
+     *  + scroll view order detail
      *  - check order change?
      *  - UI table: server, Badge by special item
      *  - lock only user serve table

@@ -107,7 +107,7 @@ const OrderTake = ({ props, bags }: {
                         }}
                     />)}
             </Grid2>
-            <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }}>
+            <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }} style={{maxHeight: 600, overflow: 'auto'}}>
                 <BagDnd bags={bags} phoId={pho.id} showPho={showPho} />
             </Grid2>
         </Grid2 >
