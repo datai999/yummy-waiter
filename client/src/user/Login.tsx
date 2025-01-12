@@ -39,7 +39,7 @@ export default function Login(props: {
         <Stack direction="column" alignItems="center" spacing={1} mb={20}>
             <Stack direction="row" >
                 <LogoImage src={YummyLogoCut} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} />
-                <Typography mt='70px' ml='-65px' fontWeight='fontWeightMedium' variant="h3" sx={{ textAlign: "center", display: 'flex', color: '#cf2e44' }}>
+                <Typography mt='70px' ml='-65px' fontWeight='fontWeightMedium' variant="h3" sx={{ textAlign: "center", display: 'flex', color: '#D22D44' }}>
                     ummy Phở 2
                 </Typography>
             </Stack>

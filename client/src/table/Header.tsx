@@ -50,11 +50,11 @@ const Header = (props: { newTogo: () => void }) => {
                     : {auth.name}
                 </Typography>
             </Box>
-            <CategoryButton variant="outlined" size='large' selected={false} sx={{ borderRadius: 5 }}
+            <CategoryButton variant="outlined" size='large' selected={false} sx={{ borderRadius: 5, pl: 2, pr: 2 }}
                 onClick={props.newTogo}>
                 New togo
                 <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                    <GiPaperBagFolded style={{ fontSize: 30, marginLeft: 8 }} />
+                    <GiPaperBagFolded style={{ fontSize: 30, marginLeft: 3 }} />
                 </Box>
             </CategoryButton>
         </StyledPaper >);

@@ -9,7 +9,7 @@ export enum SYNC_TYPE {
     USERS,
     MENU,
     ACTIVE_TABLES,
-    TABLE
+    LOCKED_TABLES,
 }
 
 export const syncServer = (type: SYNC_TYPE, data: any) => {
@@ -43,13 +43,13 @@ const initWsClient = (username: string, onSyncTables: (tables: Map<String, Table
         if (data.type === SYNC_TYPE[SYNC_TYPE.MENU]) {
             localStorage.setItem("menu", JSON.stringify(data.payload));
         }
-        if (data.type === SYNC_TYPE[SYNC_TYPE.ACTIVE_TABLES]
-            || data.type === SYNC_TYPE[SYNC_TYPE.TABLE]) {
-            console.log(data.payload);
+        if (data.type === SYNC_TYPE[SYNC_TYPE.ACTIVE_TABLES]) {
             const tables = new Map(Object.entries(data.payload)
                 .map(([tableId, tableJson]) => [tableId, plainToInstance(Table, tableJson)]));
-            console.log(tables);
             onSyncTables(tables);
+        }
+        if (data.type === SYNC_TYPE[SYNC_TYPE.LOCKED_TABLES]) {
+            console.log(data);
         }
     };
 

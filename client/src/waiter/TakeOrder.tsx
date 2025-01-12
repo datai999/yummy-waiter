@@ -20,18 +20,22 @@ import { ChildWaiterProps } from './Waiter';
 import { CategoryItem, Pho, TrackedItem, TrackedNonPho, TrackedPho } from '../my/my-class';
 import TakePho from './TakePho';
 import TakeNonPho from './TakeNonPho';
-import { AuthContext } from '../App';
+import { AuthContext, TableContext } from '../App';
+import { SYNC_TYPE, syncServer } from '../my/my-ws';
 
 const OrderTake = ({ props, bags }: {
     props: ChildWaiterProps,
     bags: Map<number, Map<string, CategoryItem>>
 }) => {
-    const { auth, logout } = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
+    const { table } = useContext(TableContext);
 
     const [refresh, setRefresh] = useState(false)
     const [pho, setPho] = useState<Pho>(new Pho());
     const [itemRef, setItemRef] = useState<{ bag: number, trackedIndex: number, server: string, time: Date | undefined }>
         ({ bag: -1, trackedIndex: -1, server: '', time: undefined });
+
+    const hasChange = useRef(false);
 
     const category = MENU[props.category as keyof typeof MENU];
 
@@ -44,7 +48,7 @@ const OrderTake = ({ props, bags }: {
             if (nonPhoLen === 0 || (nonPhoLen > 0 && categoryItem.nonPho[nonPhoLen - 1].time))
                 categoryItem.nonPho.push(new TrackedNonPho(auth));
         }));
-    }, [])
+    }, []);
 
     const submitPho = (bag: number, newPho: Pho) => {
         if (bag > bags.size) bag = bags.size - 1;
@@ -60,6 +64,19 @@ const OrderTake = ({ props, bags }: {
         categoryItems?.action.push(`${new Date().toISOString()}:${auth.name}:${isEdit ? 'Edit' : 'Add'} pho'`);
         setItemRef({ bag: -1, trackedIndex: -1, server: '', time: undefined });
         setPho(new Pho());
+        lockTable();
+    }
+
+    const lockTable = () => {
+        if (!hasChange.current) {
+            hasChange.current = true;
+            syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: true });
+        }
+    }
+
+    const submitNonPho = () => {
+        setRefresh(!refresh);
+        lockTable();
     }
 
     const showPho = (isPho: boolean, bag: number, category: string, trackIndex: number, selectedItemId: string) => {
@@ -102,12 +119,10 @@ const OrderTake = ({ props, bags }: {
                     <TakeNonPho
                         category={props.category}
                         bags={bags}
-                        onSubmit={() => {
-                            setRefresh(!refresh);
-                        }}
+                        onSubmit={submitNonPho}
                     />)}
             </Grid2>
-            <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }} style={{maxHeight: 600, overflow: 'auto'}}>
+            <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }} style={{ maxHeight: 600, overflow: 'auto' }}>
                 <BagDnd bags={bags} phoId={pho.id} showPho={showPho} />
             </Grid2>
         </Grid2 >

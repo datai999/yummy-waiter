@@ -69,7 +69,7 @@ export default function Waiter(props: WaiterProps) {
                 table.status = TableStatus.ACTIVE;
                 table.orderTime = new Date();
             }
-            syncServer(SYNC_TYPE.TABLE, { [table.id]: table });
+            syncServer(SYNC_TYPE.ACTIVE_TABLES, { [table.id]: table });
         }
     };
 

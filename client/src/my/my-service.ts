@@ -62,7 +62,7 @@ export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTabl
 
     if (toTable.status === TableStatus.ACTIVE) {
         const data = { [fromTable.id]: fromTable, [toTableId]: toTable };
-        syncServer(SYNC_TYPE.TABLE, data);
+        syncServer(SYNC_TYPE.ACTIVE_TABLES, data);
     }
 
     return toTable;
