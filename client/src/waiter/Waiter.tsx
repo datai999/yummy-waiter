@@ -40,30 +40,43 @@ export default function Waiter(props: WaiterProps) {
     }
 
     const submitOrder = () => {
-        if (table.status === TableStatus.AVAILABLE) {
-            table.status = TableStatus.ACTIVE;
-            table.orderTime = new Date();
+        let bagChange = false;
+        let count = 0;
+        bags.forEach((categoryItems, key) => {
+            let hasItem = false;
+            categoryItems.forEach(categoryItem => {
+                const lastPho = categoryItem.pho.pop()!;
+                if (lastPho.items.size > 0) {
+                    bagChange = true;
+                    lastPho.time = new Date();
+                    categoryItem.pho.push(lastPho);
+                }
+                const lastNonPho = categoryItem.nonPho.pop()!;
+                if (lastNonPho.items.size > 0) {
+                    bagChange = true;
+                    lastNonPho.time = new Date();
+                    categoryItem.nonPho.push(lastNonPho);
+                }
+                if (categoryItem.pho.length > 0 || categoryItem.nonPho.length > 0)
+                    hasItem = true;
+            });
+            if (!hasItem) bags.delete(Number(key));
+            else table.bags.set(count++, categoryItems);
+        });
+
+        if (bagChange) {
+            if (table.status === TableStatus.AVAILABLE) {
+                table.status = TableStatus.ACTIVE;
+                table.orderTime = new Date();
+            }
+            syncServer(SYNC_TYPE.TABLE, { [table.id]: table });
         }
-        bags.forEach(bag => bag.forEach(categoryItem => {
-            const lastPho = categoryItem.pho.pop()!;
-            if (lastPho.items.size > 0) {
-                lastPho.time = new Date();
-                categoryItem.pho.push(lastPho);
-            }
-            const lastNonPho = categoryItem.nonPho.pop()!;
-            if (lastNonPho.items.size > 0) {
-                lastNonPho.time = new Date();
-                categoryItem.nonPho.push(lastNonPho);
-            }
-        }));
-        table.bags = bags;
-        syncServer(SYNC_TYPE.TABLE, { [table.id]: table });
     };
 
     const childProps: ChildWaiterProps = { ...props, category: category, setCategory: setCategory, }
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column' }} minHeight='740px'>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }} minHeight='100vh'>
             <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
                 <Header props={childProps} />
             </Box>
