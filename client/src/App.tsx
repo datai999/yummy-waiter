@@ -39,7 +39,8 @@ const Tai = { name: "Tai", code: 0, permission: [] };
 export default function App() {
   const [auth, setAuth] = useState<any>(Tai);
   const [table, orderTable] = useState<Table | null>(null);
-  const [refresh, setRefresh] = useState<Boolean>(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const [refresh2, setRefresh2] = useState<boolean>(false);
 
   const tempTable = React.useRef<Table | null>();
   const tempBags = React.useRef<null | Map<number, Map<string, CategoryItem>>>(null);
@@ -61,7 +62,9 @@ export default function App() {
   const onLockedTables = (lockedTables: Map<string, LockedTable>) => {
     lockedTables.forEach((lockedTable, tableId) =>
       lockedTable.locked ? LOCKED_TABLES.set(tableId, lockedTable) : LOCKED_TABLES.delete(tableId));
-    if (!table) setRefresh(!refresh);
+    if (!table) {
+      setRefresh2((cur: Boolean) => !cur);
+    }
   }
 
   const logout = () => {
@@ -131,7 +134,7 @@ export default function App() {
      *  + scroll view order detail
      *  + check order change?
      *  + UI table: server, Badge by special item
-     *  - lock only user serve table
+     *  - lock/unlock only user serve table
      *  - store order data
      *  - view order data
      *  - UI for customer fill phone
