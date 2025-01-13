@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import styled from '@emotion/styled';
 import {
@@ -21,6 +21,8 @@ import { StyledPaper } from '../my/my-styled';
 import { Table } from '../my/my-class';
 import { GiChicken } from 'react-icons/gi';
 import { PiCow } from 'react-icons/pi';
+import { CONTEXT } from '../App';
+import { FaPen } from 'react-icons/fa';
 
 const StyledCard = styled(Card)(({ status }: { status: TableStatus }) => ({
   minHeight: "100px",
@@ -63,8 +65,11 @@ const CardTable = ({ table, orderTable, doneTable }: {
   orderTable: (table: Table) => void,
   doneTable: (tableId: string) => void
 }) => {
+  const lockedServer = useContext(CONTEXT.LockedTable)(table.id);
   const [timer, setTimer] = useState(0);
   const [openOrderModal, setOpenOrderModal] = useState(false);
+
+  const tableServers = table.getServers();
 
   useEffect(() => {
     if (table.orderTime) {
@@ -102,7 +107,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
 
   return (<>
     <StyledCard
-      status={table.status}
+      status={lockedServer ? TableStatus.ACTIVE : table.status}
       onClick={cardOnClick}
     >
       <CardContent sx={{ p: 1, pb: 0, pt: 0, maxHeight: '100px' }}>
@@ -124,12 +129,21 @@ const CardTable = ({ table, orderTable, doneTable }: {
               </Stack>}
           </Grid2>
           <Grid2>
-            {table.status !== TableStatus.AVAILABLE && <>
+            {(table.status !== TableStatus.AVAILABLE || lockedServer) && <>
               <Typography>
                 {formatTime(timer)}
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                {table.getServer().map(server => <Box key={server} sx={{ fontSize: 12 }}> {`${server}`}</Box>)}
+                {!tableServers.includes(lockedServer || '') &&
+                  <Box sx={{ fontSize: 12 }}>
+                    {`${lockedServer} `}
+                    <FaPen />
+                  </Box>}
+                {tableServers.map(server =>
+                  <Box key={server} sx={{ fontSize: 12 }}>
+                    {`${server} `}
+                    {lockedServer === server && <FaPen />}
+                  </Box>)}
               </Box>
             </>}
           </Grid2>

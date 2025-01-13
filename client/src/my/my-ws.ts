@@ -1,5 +1,5 @@
 import { instanceToPlain, plainToInstance } from "class-transformer";
-import { Table } from "./my-class";
+import { LockedTable, Table } from "./my-class";
 import { JSON_replacer, JSON_reviver } from "./my-util";
 
 let websocket: WebSocket;
@@ -21,7 +21,10 @@ export const syncServer = (type: SYNC_TYPE, data: any) => {
     websocket.send(message);
 }
 
-const initWsClient = (username: string, onSyncTables: (tables: Map<String, Table>) => void) => {
+const initWsClient = (username: string,
+    onSyncTables: (tables: Map<String, Table>) => void,
+    onLockTables: (lockedTables: Map<string, LockedTable>) => void
+) => {
     clienId = username;
     websocket = new WebSocket('ws://192.168.12.182:8080');
 
@@ -49,7 +52,9 @@ const initWsClient = (username: string, onSyncTables: (tables: Map<String, Table
             onSyncTables(tables);
         }
         if (data.type === SYNC_TYPE[SYNC_TYPE.LOCKED_TABLES]) {
-            console.log(data);
+            const lockedTables = new Map<string, LockedTable>(Object.entries(data.payload)
+                .map(([tableId, lockedTable]) => [tableId, plainToInstance(LockedTable, lockedTable)]));
+            onLockTables(lockedTables);
         }
     };
 

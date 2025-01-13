@@ -1,4 +1,5 @@
 import React, {
+    useContext,
     useEffect,
     useState,
 } from 'react';
@@ -7,6 +8,7 @@ import { CheckButton } from '../my/my-component';
 import { MENU } from '../my/my-constants';
 import { StyledPaper } from '../my/my-styled';
 import { Box, Divider } from '@mui/material';
+import { CONTEXT } from '../App';
 
 interface TakeNonPhoProps {
     category: string,
@@ -15,10 +17,15 @@ interface TakeNonPhoProps {
 }
 
 const TakeNonPho = (props: TakeNonPhoProps) => {
+    const { table } = useContext(CONTEXT.Table);
+    const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
+
     const nonPhos = MENU[props.category as keyof typeof MENU]!.nonPho;
     const nonPho = props.bags.get(0)!.get(props.category)?.lastNonPhos()!;
 
     const addItem = (nonPhoCode: string) => {
+        if (lockedTable) return;
+
         let targetNonPho = Array.from(nonPho.values())
             .find(value => value.code === nonPhoCode && (!value.note || value.note.trim().length === 0));
 

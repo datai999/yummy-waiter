@@ -12,7 +12,7 @@ import { Pho } from '../my/my-class';
 import * as SERVICE from '../my/my-service';
 import { GiPaperBagFolded } from 'react-icons/gi';
 import { MdTableRestaurant } from 'react-icons/md';
-import { TableContext } from '../App';
+import { CONTEXT } from '../App';
 
 interface TakePhoProps {
     isDoneItem: boolean,
@@ -29,10 +29,12 @@ const arePropsEqual = (prev: TakePhoProps, next: TakePhoProps) => {
 }
 
 const pTakePho = (props: TakePhoProps) => {
-    const { table } = useContext(TableContext);
+    const { table } = useContext(CONTEXT.Table);
     const [refresh, setRefresh] = useState(false);
     const [pho, setPho] = useState<Pho>({ ...props.pho });
     const [note, setNote] = useState<String>(props.pho.note || '');
+
+    const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
 
     const category = MENU[props.category as keyof typeof MENU]!;
     const combos = category.pho!.combo;
@@ -133,7 +135,11 @@ const pTakePho = (props: TakePhoProps) => {
     const onPreferChange = (prefers: string[]) => {
         if (pho.noodle === 'Mì' && !prefers.includes('Khô')) return;
         if (prefers.includes('Tái riêng') || prefers.includes('Tái băm')) {
-            if (!pho.meats.includes('Tái')) pho.meats = ['Tái', ...pho.meats];
+            if (!pho.meats.includes('Tái')) {
+                pho.preferences = prefers;
+                onMeatChange(['Tái', ...pho.meats]);
+                return;
+            }
         }
         setPho({ ...pho, preferences: prefers })
     }
@@ -200,7 +206,7 @@ const pTakePho = (props: TakePhoProps) => {
                         color="primary"
                         size='large'
                         fullWidth
-                        disabled={props.isDoneItem || !pho.isPho}
+                        disabled={props.isDoneItem || !pho.isPho || lockedTable}
                         onClick={() => addItem(pho.id.length > 0 ? -1 : 0)}
                     >
                         {`${pho.id.length > 0 ? 'Edit item' : table.id.startsWith('Togo') ? 'Togo 1' : 'Dine-in'}`}
@@ -213,6 +219,7 @@ const pTakePho = (props: TakePhoProps) => {
                     {props.bagSize > 1 && pho.id.length === 0 && (<Button
                         variant="contained"
                         color="primary"
+                        disabled={lockedTable}
                         onClick={() => addItem(999)}
                         fullWidth
                         size='large'

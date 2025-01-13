@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useContext, useEffect, useState } from 'react';
 
 import {
     FaMinus,
@@ -30,6 +30,7 @@ import {
 import { BagDndProps, Draggable } from './BagDnd';
 import { CategoryItem, ItemRef, NonPho, Pho, TrackedItem } from '../my/my-class';
 import { MENU } from '../my/my-constants';
+import { CONTEXT } from '../App';
 
 interface Props extends BagDndProps {
     bag: number,
@@ -157,6 +158,9 @@ interface ItemListProps extends TrackedItemsListProps {
 }
 const ItemList = ({ props }: { props: ItemListProps }) => {
     const secondaryRef = React.useRef<HTMLInputElement>();
+    const { table } = useContext(CONTEXT.Table);
+    const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
+
     const [refresh, setRefresh] = useState<Boolean>(false);
     const [note, setNote] = useState(props.item.note || null || undefined);
 
@@ -179,7 +183,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
     }, [props.item.note]);
 
     const minus = () => {
-        if (item.actualQty < 1) return;
+        if (lockedTable || item.actualQty < 1) return;
         if (props.trackedItem.time) {
             const lastTrackedIndex = (props.draggablePrefix === 'pho' ? categoryItem.pho : categoryItem.nonPho).length - 1;
             if (item.voided) {
@@ -217,6 +221,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
     }
 
     const plus = () => {
+        if (lockedTable) return;
         if (props.trackedItem.time) {
             props.copyItem(props.trackedIndex, item, 1);
             return;
@@ -249,7 +254,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
             <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${item.id}`} enable={props.bags.size > 1 && Boolean(showPho) && !props.trackedItem.time && !item.void}>
                 <ListItemButton
                     onClick={() => {
-                        if (item.void) return;
+                        if (lockedTable || item.void) return;
                         if (showPho) {
                             showPho(props.draggablePrefix === 'pho', bag, category, props.trackedIndex, phoId === item.id ? "" : item.id);
                         }

@@ -149,12 +149,22 @@ export class Table {
         return new Map(Object.keys(MENU).map(category => [category, new CategoryItem()]));
     }
 
-    public getServer(): string[] {
+    public getServers(): string[] {
         const servers = new Set<string>();
         this.bags.forEach(bag => bag.forEach(category => {
             category.pho.forEach(tracked => servers.add(tracked.server));
             category.nonPho.forEach(tracked => servers.add(tracked.server));
         }));
         return Array.from(servers);
+    }
+}
+
+export class LockedTable {
+    locked: boolean;
+    server: string;
+
+    public constructor(locked: boolean, server: string) {
+        this.locked = locked;
+        this.server = server;
     }
 }

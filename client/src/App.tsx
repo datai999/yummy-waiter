@@ -6,7 +6,7 @@ import Waiter from './waiter/Waiter';
 import { Box } from '@mui/material';
 import { changeTable, generateTables } from './my/my-service';
 import initWsClient from './my/my-ws';
-import { CategoryItem, Table } from './my/my-class';
+import { CategoryItem, LockedTable, Table } from './my/my-class';
 import Login from './user/Login';
 import { TableStatus } from './my/my-constants';
 
@@ -19,8 +19,18 @@ interface ITableContext {
   prepareChangeTable: (bags: Map<number, Map<string, CategoryItem>>) => void
 }
 
+const LOCKED_TABLES = new Map<string, LockedTable>();
+
 export const AuthContext = createContext<IAuthContext>({ auth: {}, logout: () => { } });
+const LockedTableContext = createContext<(tableId: string) => string | undefined>(
+  (tableId: string) => LOCKED_TABLES.get(tableId)?.server);
 export const TableContext = createContext<ITableContext>({} as ITableContext);
+
+export const CONTEXT = {
+  Auth: AuthContext,
+  LockedTable: LockedTableContext,
+  Table: TableContext
+}
 
 const tables = generateTables();
 
@@ -35,7 +45,7 @@ export default function App() {
   const tempBags = React.useRef<null | Map<number, Map<string, CategoryItem>>>(null);
 
   useEffect(() => {
-    initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables);
+    initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables, onLockedTables);
     // orderTable(tables.get('Table 12')!);
   }, []);
 
@@ -46,6 +56,12 @@ export default function App() {
     if (!table) {
       setRefresh((cur: Boolean) => !cur);
     }
+  }
+
+  const onLockedTables = (lockedTables: Map<string, LockedTable>) => {
+    lockedTables.forEach((lockedTable, tableId) =>
+      lockedTable.locked ? LOCKED_TABLES.set(tableId, lockedTable) : LOCKED_TABLES.delete(tableId));
+    if (!table) setRefresh(!refresh);
   }
 
   const logout = () => {
@@ -82,18 +98,19 @@ export default function App() {
   if (!auth) return (<Login setAuth={setAuth} />)
 
   return (<AuthContext.Provider value={{ auth, logout }}>
-    {table
-      ? (<TableContext.Provider value={{ table, orderTable, prepareChangeTable }}>
-        <Waiter tables={tables} tempBags={tempBags.current} />
-      </TableContext.Provider>
-      )
-      : (<>
-        <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
-          <Header newTogo={newTogo} />
-        </Box>
-        <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
-      </>)}
-
+    <LockedTableContext.Provider value={React.useContext(CONTEXT.LockedTable)}>
+      {table
+        ? (<TableContext.Provider value={{ table, orderTable, prepareChangeTable }}>
+          <Waiter tables={tables} tempBags={tempBags.current} />
+        </TableContext.Provider>
+        )
+        : (<>
+          <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
+            <Header newTogo={newTogo} />
+          </Box>
+          <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
+        </>)}
+    </LockedTableContext.Provider>
   </AuthContext.Provider>
     /**
      * waiter: 

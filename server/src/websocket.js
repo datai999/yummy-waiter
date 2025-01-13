@@ -76,7 +76,7 @@ const onConnection = (ws, req) => {
             boardcastMessageExceptOwner(ws, messageConvert);
         }
         if (data.type === 'LOCKED_TABLES') {
-            updateLockedTable(data.senter, data.payload);
+            updateLockedTable(data.payload);
             boardcastMessageExceptOwner(ws, messageConvert);
         }
     });
@@ -96,10 +96,10 @@ const updateActiveTable = (syncTables) => {
     });
 }
 
-const updateLockedTable = (senter, syncTables) => {
+const updateLockedTable = (syncTables) => {
     Object.entries(syncTables).forEach(([tableId, syncTable]) => {
         if (syncTable) {
-            LOCKED_TABLES[tableId] = senter;
+            LOCKED_TABLES[tableId] = syncTable;
         } else {
             delete LOCKED_TABLES[tableId];
         }

@@ -17,7 +17,7 @@ import {
 } from '../my/my-constants';
 import BagDnd from './BagDnd';
 import { ChildWaiterProps } from './Waiter';
-import { CategoryItem, Pho, TrackedItem, TrackedNonPho, TrackedPho } from '../my/my-class';
+import { CategoryItem, LockedTable, Pho, TrackedItem, TrackedNonPho, TrackedPho } from '../my/my-class';
 import TakePho from './TakePho';
 import TakeNonPho from './TakeNonPho';
 import { AuthContext, TableContext } from '../App';
@@ -70,7 +70,7 @@ const OrderTake = ({ props, bags }: {
     const lockTable = () => {
         if (!hasChange.current) {
             hasChange.current = true;
-            syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: true });
+            syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(true, auth.name) });
         }
     }
 

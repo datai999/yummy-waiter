@@ -18,10 +18,11 @@ import { CategoryButton } from '../my/my-styled';
 import { ChildWaiterProps } from './Waiter';
 import { changeTable } from '../my/my-service';
 import { Table } from '../my/my-class';
-import { AuthContext, TableContext } from '../App';
+import { CONTEXT } from '../App';
 import { GiChicken } from 'react-icons/gi';
 import { PiCow } from 'react-icons/pi';
 import { RiDrinks2Line } from 'react-icons/ri';
+import { FaPen } from 'react-icons/fa';
 
 const LogoImage = styled("img")({
     width: "60px",
@@ -47,8 +48,8 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 
 
 const Header = ({ props }: { props: ChildWaiterProps }) => {
-    const { auth, logout } = useContext(AuthContext);
-    const { orderTable } = useContext(TableContext);
+    const { auth, logout } = useContext(CONTEXT.Auth);
+    const { table, orderTable } = useContext(CONTEXT.Table);
 
     return (
         <StyledPaper>
@@ -71,8 +72,11 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
                         }} />
                     ))}
                 </Box>
-                <Box sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: '150px' }}>
+                <Box sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: '200px' }}>
                     <TableSelections props={props} size='medium' />
+                </Box>
+                <Box sx={{ display: { xs: 'none', sm: 'block', md: 'none' }, minWidth: '150px' }}>
+                    <TableSelections props={props} size='small' />
                 </Box>
             </Box>
         </StyledPaper >);
@@ -102,14 +106,16 @@ const WrapCategoryButton = ({ props }: {
         }}
     >
         {props.category}
-        {props.category === 'BEEF' && <PiCow style={iconStyle} />}
-        {props.category === 'CHICKEN' && <GiChicken style={iconStyle} />}
-        {props.category === 'DRINK' && <RiDrinks2Line style={iconStyle} />}
+        {props.size === 'xlarge' && props.category === 'BEEF' && <PiCow style={iconStyle} />}
+        {props.size === 'xlarge' && props.category === 'CHICKEN' && <GiChicken style={iconStyle} />}
+        {props.size === 'xlarge' && props.category === 'DRINK' && <RiDrinks2Line style={iconStyle} />}
     </CategoryButton>)
 }
 
 const TableSelections = ({ props, size }: { props: ChildWaiterProps, size: string }) => {
-    const { table, orderTable } = useContext(TableContext);
+    const { table, orderTable } = useContext(CONTEXT.Table);
+
+    const lockedServer = useContext(CONTEXT.LockedTable)(table.id);
 
     let tableIdAvailable = Array.from(props.tables.values())
         .filter((table: Table) => table.status === TableStatus.AVAILABLE && table.id.startsWith("Table"))
@@ -121,6 +127,7 @@ const TableSelections = ({ props, size }: { props: ChildWaiterProps, size: strin
     return (<Select
         fullWidth
         value={table.id}
+        disabled={Boolean(lockedServer)}
         onChange={(e) => {
             const toTable = changeTable(props.tables, table, e.target.value) as Table;
             orderTable(toTable);
@@ -130,7 +137,7 @@ const TableSelections = ({ props, size }: { props: ChildWaiterProps, size: strin
     >
         {tableIdAvailable.map((tableId) => (
             <MenuItem key={tableId} value={tableId}>
-                {tableId}
+                {tableId}{lockedServer ? <>{`:${lockedServer} `} <FaPen style={{ fontSize: 12 }} /> </> : ''}
             </MenuItem>
         ))}
     </Select>);

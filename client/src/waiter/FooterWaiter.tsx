@@ -7,7 +7,7 @@ import { MdOutlineBorderColor, MdTableRestaurant } from 'react-icons/md';
 import { AiOutlineFileDone } from "react-icons/ai";
 import { CgArrowsExchange } from "react-icons/cg";
 import { RxExit } from "react-icons/rx";
-import { AuthContext, TableContext } from '../App';
+import { CONTEXT } from '../App';
 import { FaFileSignature } from "react-icons/fa";
 import { SiCcleaner } from "react-icons/si";
 
@@ -20,8 +20,10 @@ export default function Footer(props: {
     changeTable: () => void,
     submitOrder: () => void,
 }) {
-    const { logout } = useContext(AuthContext);
-    const { orderTable } = useContext(TableContext);
+    const { logout } = useContext(CONTEXT.Auth);
+    const { table, orderTable } = useContext(CONTEXT.Table);
+
+    const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
 
     return (<Stack direction="row" spacing={2} sx={{
         justifyContent: "center",
@@ -31,26 +33,26 @@ export default function Footer(props: {
             Cancel
             <RxExit style={iconStyle} />
         </Button>
-        <Button variant="contained" color="primary" onClick={props.addTogoBag} >
+        <Button variant="contained" color="primary" disabled={lockedTable} onClick={props.addTogoBag} >
             Add togo
             <GiPaperBagFolded style={iconStyle} />
         </Button>
-        <Button variant="contained" color="primary" onClick={props.changeTable} >
+        <Button variant="contained" color="primary" disabled={lockedTable} onClick={props.changeTable} >
             Change table
             <CgArrowsExchange style={iconStyle} />
         </Button>
-        <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={() => alert('TODO:Clear')} >
+        <Button variant="contained" color="primary" disabled={lockedTable} sx={{ minHeight: 50 }} onClick={() => alert('TODO:Clear')} >
             Clean
             <SiCcleaner style={iconStyle} />
         </Button>
-        <Button variant="contained" color="primary" onClick={() => {
+        <Button variant="contained" color="primary" disabled={lockedTable} onClick={() => {
             props.submitOrder();
             orderTable(null);
         }} >
             Next order
             <FaFileSignature style={iconStyle} />
         </Button>
-        <Button variant="contained" color="primary" onClick={() => {
+        <Button variant="contained" color="primary" disabled={lockedTable} onClick={() => {
             props.submitOrder();
             logout();
         }} >
