@@ -134,7 +134,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
                 {formatTime(timer)}
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                {!tableServers.includes(lockedServer || '') &&
+                {lockedServer && !tableServers.includes(lockedServer || '') &&
                   <Box sx={{ fontSize: 12 }}>
                     {`${lockedServer} `}
                     <FaPen />

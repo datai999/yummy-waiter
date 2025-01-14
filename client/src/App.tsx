@@ -5,8 +5,8 @@ import TableManagerment from './table/ManagementTable';
 import Waiter from './waiter/Waiter';
 import { Box } from '@mui/material';
 import { changeTable, generateTables } from './my/my-service';
-import initWsClient from './my/my-ws';
-import { CategoryItem, LockedTable, Table } from './my/my-class';
+import initWsClient, { SYNC_TYPE, syncServer } from './my/my-ws';
+import { Auth, CategoryItem, LockedTable, Table } from './my/my-class';
 import Login from './user/Login';
 import { TableStatus } from './my/my-constants';
 
@@ -37,7 +37,7 @@ const tables = generateTables();
 const Tai = { name: "Tai", code: 0, permission: [] };
 
 export default function App() {
-  const [auth, setAuth] = useState<any>(Tai);
+  const [auth, setAuth] = useState<null | Auth>(null);
   const [table, orderTable] = useState<Table | null>(null);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [refresh2, setRefresh2] = useState<boolean>(false);
@@ -67,6 +67,24 @@ export default function App() {
     }
   }
 
+  const onSetAuth = (auth: Auth) => {
+    removeLockedTablesBy(auth);
+    setAuth(auth);
+  }
+
+  const removeLockedTablesBy = (auth: Auth) => {
+    const wrongLocked = new Map<string, LockedTable>();
+    LOCKED_TABLES.forEach((lockedTable, tableId) => {
+      if (lockedTable.server !== auth?.name) return;
+      lockedTable.locked = false;
+      wrongLocked.set(tableId, lockedTable);
+      LOCKED_TABLES.delete(tableId);
+    });
+    if (wrongLocked.size) {
+      syncServer(SYNC_TYPE.LOCKED_TABLES, wrongLocked);
+    }
+  }
+
   const logout = () => {
     orderTable(null);
     setAuth(null);
@@ -84,7 +102,7 @@ export default function App() {
       return;
     }
     if (tempTable.current) {
-      changeTable(tables, tempTable.current, selectedTable.id);
+      changeTable(auth, tables, tempTable.current, selectedTable.id);
       tempTable.current = null;
     } else tempBags.current = null;
     orderTable(selectedTable);
@@ -98,10 +116,10 @@ export default function App() {
     orderTable(newTogo);
   }
 
-  if (!auth) return (<Login setAuth={setAuth} />)
+  if (!auth) return (<Login setAuth={onSetAuth} />)
 
   return (<AuthContext.Provider value={{ auth, logout }}>
-    <LockedTableContext.Provider value={React.useContext(CONTEXT.LockedTable)}>
+    <LockedTableContext.Provider value={(tableId: string) => LOCKED_TABLES.get(tableId)?.server}>
       {table
         ? (<TableContext.Provider value={{ table, orderTable, prepareChangeTable }}>
           <Waiter tables={tables} tempBags={tempBags.current} />
@@ -134,7 +152,7 @@ export default function App() {
      *  + scroll view order detail
      *  + check order change?
      *  + UI table: server, Badge by special item
-     *  - lock/unlock only user serve table
+     *  + lock/unlock only user serve table
      *  - store order data
      *  - view order data
      *  - UI for customer fill phone

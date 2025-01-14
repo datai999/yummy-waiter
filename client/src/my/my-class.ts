@@ -168,3 +168,11 @@ export class LockedTable {
         this.server = server;
     }
 }
+
+export class Auth {
+    name: string;
+
+    public constructor(name: string) {
+        this.name = name;
+    }
+}

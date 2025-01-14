@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 
 import Header from './HeaderWaiter';
 import OrderTake from './TakeOrder';
-import { CategoryItem, Table, TrackedNonPho, TrackedPho } from '../my/my-class';
+import { CategoryItem, LockedTable, Table, TrackedNonPho, TrackedPho } from '../my/my-class';
 import { MENU, TableStatus } from '../my/my-constants';
 import Footer from './FooterWaiter';
 import _ from 'lodash';
@@ -63,7 +63,7 @@ export default function Waiter(props: WaiterProps) {
             if (!hasItem) bags.delete(Number(key));
             else table.bags.set(count++, categoryItems);
         });
-
+        syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(false, auth.name) });
         if (bagChange) {
             if (table.status === TableStatus.AVAILABLE) {
                 table.status = TableStatus.ACTIVE;

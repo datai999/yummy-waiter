@@ -17,12 +17,13 @@ import { MENU, TableStatus } from '../my/my-constants';
 import { CategoryButton } from '../my/my-styled';
 import { ChildWaiterProps } from './Waiter';
 import { changeTable } from '../my/my-service';
-import { Table } from '../my/my-class';
+import { LockedTable, Table } from '../my/my-class';
 import { CONTEXT } from '../App';
 import { GiChicken } from 'react-icons/gi';
 import { PiCow } from 'react-icons/pi';
 import { RiDrinks2Line } from 'react-icons/ri';
 import { FaPen } from 'react-icons/fa';
+import { syncServer, SYNC_TYPE } from '../my/my-ws';
 
 const LogoImage = styled("img")({
     width: "60px",
@@ -51,12 +52,21 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
     const { auth, logout } = useContext(CONTEXT.Auth);
     const { table, orderTable } = useContext(CONTEXT.Table);
 
+    const lockedServer = useContext(CONTEXT.LockedTable)(table.id);
+
+    const routeTableManagement = () => {
+        orderTable(null);
+        if (!lockedServer || auth.name === lockedServer) {
+            syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(false, auth.name) });
+        }
+    }
+
     return (
         <StyledPaper>
             <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box sx={{ display: 'flex', direction: 'row', alignItems: 'center' }}>
-                    <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} onClick={() => orderTable(null)} />
-                    <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} onClick={() => orderTable(null)} />
+                    <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} onClick={routeTableManagement} />
+                    <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} onClick={routeTableManagement} />
                     <Typography fontWeight='fontWeightMedium' variant="h4" sx={{ textAlign: "center", display: 'flex', ml: 1 }}>
                         Yummy Phở 2
                     </Typography>
@@ -113,6 +123,7 @@ const WrapCategoryButton = ({ props }: {
 }
 
 const TableSelections = ({ props, size }: { props: ChildWaiterProps, size: string }) => {
+    const { auth } = useContext(CONTEXT.Auth);
     const { table, orderTable } = useContext(CONTEXT.Table);
 
     const lockedServer = useContext(CONTEXT.LockedTable)(table.id);
@@ -129,7 +140,7 @@ const TableSelections = ({ props, size }: { props: ChildWaiterProps, size: strin
         value={table.id}
         disabled={Boolean(lockedServer)}
         onChange={(e) => {
-            const toTable = changeTable(props.tables, table, e.target.value) as Table;
+            const toTable = changeTable(auth, props.tables, table, e.target.value) as Table;
             orderTable(toTable);
         }}
         displayEmpty

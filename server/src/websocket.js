@@ -98,7 +98,7 @@ const updateActiveTable = (syncTables) => {
 
 const updateLockedTable = (syncTables) => {
     Object.entries(syncTables).forEach(([tableId, syncTable]) => {
-        if (syncTable) {
+        if (syncTable.locked) {
             LOCKED_TABLES[tableId] = syncTable;
         } else {
             delete LOCKED_TABLES[tableId];

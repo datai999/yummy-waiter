@@ -4,7 +4,7 @@ import {
 } from './my-constants';
 import _ from 'lodash';
 import { syncServer, SYNC_TYPE } from './my-ws';
-import { Pho, Table } from './my-class';
+import { LockedTable, Pho, Table } from './my-class';
 
 const lodash = _;
 
@@ -43,7 +43,7 @@ export const completePho = (category: any, pho: Pho) => {
         .join(',');
 }
 
-export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTableId: string): Table | null => {
+export const changeTable = (auth: any, tables: Map<String, Table>, fromTable: Table, toTableId: string): Table | null => {
     if (fromTable.id === toTableId) return fromTable;
     const toTable = tables.get(toTableId) as Table;
     if (!toTable) {
@@ -60,6 +60,10 @@ export const changeTable = (tables: Map<String, Table>, fromTable: Table, toTabl
     fromTable = new Table(fromTable.id);
     tables.set(fromTable.id, fromTable);
 
+    syncServer(SYNC_TYPE.LOCKED_TABLES, {
+        [fromTable.id]: new LockedTable(false, auth.name),
+        [toTableId]: new LockedTable(true, auth.name)
+    });
     if (toTable.status === TableStatus.ACTIVE) {
         const data = { [fromTable.id]: fromTable, [toTableId]: toTable };
         syncServer(SYNC_TYPE.ACTIVE_TABLES, data);
