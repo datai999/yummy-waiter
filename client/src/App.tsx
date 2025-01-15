@@ -38,7 +38,7 @@ const tables = generateTables();
 const Tai = { name: "Tai", code: 0, permission: [] };
 
 export default function App() {
-  const [auth, setAuth] = useState<null | Auth>(null);
+  const [auth, setAuth] = useState<null | Auth>(Tai);
   const [table, orderTable] = useState<Table | null>(null);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [refresh2, setRefresh2] = useState<boolean>(false);
@@ -47,7 +47,7 @@ export default function App() {
   const tempBags = React.useRef<null | Map<number, Map<string, CategoryItem>>>(null);
 
   useEffect(() => {
-    initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables, onLockedTables);
+    initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables, onLockedTables, onDoneOrders);
     // orderTable(tables.get('Table 12')!);
   }, []);
 
@@ -67,6 +67,17 @@ export default function App() {
       setRefresh2((cur: Boolean) => !cur);
     }
   }
+
+  const onDoneOrders = (syncTables: Map<String, Table>) => {
+    syncTables.forEach(syncTable => {
+      if (syncTable.id.startsWith('Togo')) tables.delete(syncTable.id);
+      else tables.set(syncTable.id, syncTable);
+    });
+    if (!table) {
+      setRefresh((cur: Boolean) => !cur);
+
+    }
+  };
 
   const onSetAuth = (auth: Auth) => {
     removeLockedTablesBy(auth);

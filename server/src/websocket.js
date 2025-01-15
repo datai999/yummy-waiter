@@ -80,6 +80,10 @@ const onConnection = (ws, req) => {
             updateLockedTable(data.payload);
             boardcastMessageExceptOwner(ws, messageConvert);
         }
+        if (data.type === 'DONE_ORDER') {
+            doneOrder(data.payload);
+            boardcastMessageExceptOwner(ws, messageConvert);
+        }
     });
 
     ws.on('close', () => {
@@ -95,7 +99,7 @@ const updateActiveTable = (syncTables) => {
             delete ACTIVE_TABLES[tableId];
         }
     });
-    writeJsonFile('ACTIVE_TABLES', ACTIVE_TABLES);
+    // writeJsonFile('ACTIVE_TABLES', ACTIVE_TABLES);
 }
 
 const updateLockedTable = (syncTables) => {
@@ -105,6 +109,19 @@ const updateLockedTable = (syncTables) => {
         } else {
             delete LOCKED_TABLES[tableId];
         }
+    });
+}
+
+const doneOrder = (syncTables) => {
+    Object.entries(syncTables).forEach(([tableId, syncTable]) => {
+        const orderTime = syncTable.orderTime.replaceAll(':', '-');
+        const fileName = orderTime + ', ' + (tableId.startsWith('Togo') ? 'Togo' : tableId);
+
+        const paths = orderTime.split('-');
+        const filePath = `/orders/${paths[0]}/${paths[1]}`;
+
+        writeJsonFile(filePath, fileName, syncTable);
+        delete ACTIVE_TABLES[tableId];
     });
 }
 

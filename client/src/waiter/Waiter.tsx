@@ -24,7 +24,7 @@ export interface ChildWaiterProps extends WaiterProps {
 export default function Waiter(props: WaiterProps) {
     const { auth, logout } = useContext(AuthContext);
     const [refresh, setRefresh] = useState(false);
-    const { table, prepareChangeTable } = useContext(TableContext);
+    const { table, orderTable, prepareChangeTable } = useContext(TableContext);
     const [category, setCategory] = useState(Object.keys(MENU)[0]);
 
     const bags = useRef(_.cloneDeep(props.tempBags || table.bags)).current;
@@ -73,6 +73,13 @@ export default function Waiter(props: WaiterProps) {
         }
     };
 
+    const doneOrder = () => {
+        if (table.id.startsWith('Togo')) props.tables.delete(table.id);
+        else props.tables.set(table.id, new Table(table.id));
+        syncServer(SYNC_TYPE.DONE_ORDER, { [table.id]: table });
+        orderTable(null);
+    }
+
     const childProps: ChildWaiterProps = { ...props, category: category, setCategory: setCategory, }
 
     return (
@@ -83,7 +90,7 @@ export default function Waiter(props: WaiterProps) {
             <OrderTake bags={bags} props={childProps} />
             <Box sx={{ position: "sticky", bottom: 3, zIndex: 1, bgcolor: "background.paper", mt: 'auto' }}>
                 {/* <Box sx={{ mt: 'auto', mb: 1 }}> */}
-                <Footer addTogoBag={addTogoBag} changeTable={() => prepareChangeTable(bags)} submitOrder={submitOrder} />
+                <Footer addTogoBag={addTogoBag} changeTable={() => prepareChangeTable(bags)} submitOrder={submitOrder} doneOrder={doneOrder} />
             </Box>
         </Box>
     );

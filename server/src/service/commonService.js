@@ -10,15 +10,29 @@ const readJsonFile = (filePath) => {
     return JSON.parse(data);
 }
 
-const writeJsonFile = (fileName, data) => {
-    fs.writeFile(`./public/data/${fileName}.json`, JSON.stringify(data), function (err) {
+const writeJsonFile = (path, fileName, data) => {
+    const dir = './public/data' + path;
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFile(`${dir}/${fileName}.json`, JSON.stringify(data), function (err) {
         if (err) {
             console.log(err);
+            const errorDir = './public/data/errors';
+            if (!fs.existsSync(errorDir)) {
+                fs.mkdirSync(errorDir, { recursive: true });
+            }
+            fs.writeFile(`${errorDir}/${formatTime()}`, err);
         }
     });
 }
 
+const formatTime = (time) => {
+    const date = time || new Date();
+    return date.toLocaleString('en-CA', { hour12: false }) + ':' + date.getMilliseconds();
+}
+
 module.exports = {
     readJsonFile,
-    writeFile
+    writeJsonFile
 }

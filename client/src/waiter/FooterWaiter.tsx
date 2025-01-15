@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { StyledPaper } from '../my/my-styled';
-import { Button, Divider, Grid2, Stack } from '@mui/material';
+import { Box, Button, Divider, Grid2, Modal, Stack, Typography } from '@mui/material';
 import { GiPaperBagFolded } from 'react-icons/gi';
 import { FaChevronRight, FaExchangeAlt } from 'react-icons/fa';
 import { MdOutlineBorderColor, MdTableRestaurant } from 'react-icons/md';
@@ -15,13 +15,27 @@ const iconStyle = {
     fontSize: 30, marginLeft: 8
 }
 
+const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    borderRadius: "16px",
+    boxShadow: 24,
+    p: 4,
+};
+
 export default function Footer(props: {
     addTogoBag: () => void,
     changeTable: () => void,
     submitOrder: () => void,
+    doneOrder: () => void
 }) {
     const { logout } = useContext(CONTEXT.Auth);
     const { table, orderTable } = useContext(CONTEXT.Table);
+    const [openModal, setOpen] = React.useState(false);
 
     const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
 
@@ -41,7 +55,7 @@ export default function Footer(props: {
             Change table
             <CgArrowsExchange style={iconStyle} />
         </Button>
-        <Button variant="contained" color="primary" disabled={lockedTable} sx={{ minHeight: 50 }} onClick={() => alert('TODO:Clear')} >
+        <Button variant="contained" color="primary" disabled={lockedTable} sx={{ minHeight: 50 }} onClick={() => setOpen(true)} >
             Clean
             <SiCcleaner style={iconStyle} />
         </Button>
@@ -59,6 +73,28 @@ export default function Footer(props: {
             Done order
             <AiOutlineFileDone style={iconStyle} />
         </Button>
+        <Modal
+            open={openModal}
+            onClose={() => setOpen(false)}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box sx={modalStyle}>
+                <Typography variant="h4" fontWeight='fontWeightMedium' >
+                    Clean up your order ?
+                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: "space-around", width: '100%', mt: 3 }}>
+                    <Button variant="contained" color="primary" disabled={lockedTable} sx={{ minHeight: 50 }} onClick={props.doneOrder} >
+                        Clean
+                        <SiCcleaner style={iconStyle} />
+                    </Button>
+                    <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={() => setOpen(false)} >
+                        Cancel
+                        <RxExit style={iconStyle} />
+                    </Button>
+                </Box>
+            </Box>
+        </Modal>
     </Stack >
     )
 }
