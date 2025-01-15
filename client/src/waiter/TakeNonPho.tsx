@@ -9,6 +9,7 @@ import { MENU } from '../my/my-constants';
 import { StyledPaper } from '../my/my-styled';
 import { Box, Divider } from '@mui/material';
 import { CONTEXT } from '../App';
+import { UTILS } from '../my/my-util';
 
 interface TakeNonPhoProps {
     category: string,
@@ -17,6 +18,7 @@ interface TakeNonPhoProps {
 }
 
 const TakeNonPho = (props: TakeNonPhoProps) => {
+    const { auth } = useContext(CONTEXT.Auth);
     const { table } = useContext(CONTEXT.Table);
     const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
 
@@ -37,7 +39,7 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
         const dineIn = props.bags.get(0)!;
         const categoryItems = dineIn.get(props.category)!;
         categoryItems.lastNonPhos().set(targetNonPho.id, targetNonPho);
-        categoryItems.action.push(new Date().toISOString() + ':add nonPho');
+        categoryItems.action.push(`${UTILS.formatTime()}:${auth.name}:${nonPhoCode}`);
 
         props.onSubmit();
     }

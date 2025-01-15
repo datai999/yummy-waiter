@@ -9,6 +9,7 @@ import initWsClient, { SYNC_TYPE, syncServer } from './my/my-ws';
 import { Auth, CategoryItem, LockedTable, Table } from './my/my-class';
 import Login from './user/Login';
 import { TableStatus } from './my/my-constants';
+import { UTILS } from './my/my-util';
 
 interface IAuthContext {
   auth: any, logout: () => void
@@ -109,9 +110,7 @@ export default function App() {
   }
 
   const newTogo = () => {
-    const current = new Date();
-    const newTogo = new Table('Togo_' + current.toLocaleDateString('en-US', { day: 'numeric', month: 'numeric', year: 'numeric' })
-      + '_' + current.toLocaleTimeString('en-US', { hour12: false }));
+    const newTogo = new Table('Togo_' + UTILS.formatTime());
     tables.set(newTogo.id, newTogo);
     orderTable(newTogo);
   }

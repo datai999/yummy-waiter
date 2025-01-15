@@ -39,7 +39,7 @@ const initWsClient = (username: string,
 
     websocket.onmessage = (evt) => {
         const data = JSON.parse(evt.data);
-        // console.info(`[${new Date().toLocaleTimeString()}]<${data.senter}><${data.type}>:Received message`);
+        // console.info(`[${formatTime()}]<${data.senter}><${data.type}>:Received message`);
         if (data.type === SYNC_TYPE[SYNC_TYPE.USERS]) {
             localStorage.setItem("users", JSON.stringify(data.payload));
         }

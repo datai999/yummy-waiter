@@ -10,6 +10,15 @@ const readJsonFile = (filePath) => {
     return JSON.parse(data);
 }
 
+const writeJsonFile = (fileName, data) => {
+    fs.writeFile(`./public/data/${fileName}.json`, JSON.stringify(data), function (err) {
+        if (err) {
+            console.log(err);
+        }
+    });
+}
+
 module.exports = {
-    readJsonFile
+    readJsonFile,
+    writeFile
 }

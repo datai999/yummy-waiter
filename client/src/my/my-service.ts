@@ -5,14 +5,11 @@ import {
 import _ from 'lodash';
 import { syncServer, SYNC_TYPE } from './my-ws';
 import { LockedTable, Pho, Table } from './my-class';
+import { UTILS } from './my-util';
 
 const lodash = _;
 
-export const generateId = () => {
-    const date = new Date();
-    return date.toLocaleString("en-US", { timeZone: 'PST', hour12: false, dateStyle: 'short', timeStyle: 'medium' })
-        + " " + date.getMilliseconds();
-}
+export const generateId = () => UTILS.formatTime();
 
 export const sortBeefMeat = (a: string, b: string) =>
     BEEF_MEAT[a as keyof typeof BEEF_MEAT]?.sort

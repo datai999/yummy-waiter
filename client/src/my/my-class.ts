@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { Exclude, plainToClass, Transform, Type } from 'class-transformer';
 import { MENU, TableStatus } from './my-constants';
 import { generateId } from './my-service';
+import { UTILS } from "./my-util";
 
 export class ItemRef {
     trackedIndex: number = -1;
@@ -57,7 +58,8 @@ export class Pho extends NonPho {
 }
 
 export class TrackedItem {
-    @Type(() => Date)
+    @Type(() => String)
+    @UTILS.TransformTime()
     time?: Date;
     server: string;
 
@@ -123,8 +125,12 @@ export class CategoryItem {
 export class Table {
     id: string;
     status: TableStatus = TableStatus.AVAILABLE;
-    @Type(() => Date)
+
+    @Type(() => String)
+    @UTILS.TransformTime()
     orderTime: Date | null = null;
+
+    @Exclude()
     timer: number = 0;
 
     @Transform(value => {

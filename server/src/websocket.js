@@ -2,6 +2,7 @@ const WebSocket = require('ws');
 
 const { loadUsers } = require("./service/userService");
 const { loadMenu } = require('./service/menuService');
+const { writeJsonFile } = require('./service/commonService.js');
 
 let wss;
 
@@ -94,6 +95,7 @@ const updateActiveTable = (syncTables) => {
             delete ACTIVE_TABLES[tableId];
         }
     });
+    writeJsonFile('ACTIVE_TABLES', ACTIVE_TABLES);
 }
 
 const updateLockedTable = (syncTables) => {

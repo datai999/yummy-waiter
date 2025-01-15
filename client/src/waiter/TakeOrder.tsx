@@ -20,15 +20,16 @@ import { ChildWaiterProps } from './Waiter';
 import { CategoryItem, LockedTable, Pho, TrackedItem, TrackedNonPho, TrackedPho } from '../my/my-class';
 import TakePho from './TakePho';
 import TakeNonPho from './TakeNonPho';
-import { AuthContext, TableContext } from '../App';
+import { CONTEXT } from '../App';
 import { SYNC_TYPE, syncServer } from '../my/my-ws';
+import { UTILS } from '../my/my-util';
 
 const OrderTake = ({ props, bags }: {
     props: ChildWaiterProps,
     bags: Map<number, Map<string, CategoryItem>>
 }) => {
-    const { auth } = useContext(AuthContext);
-    const { table } = useContext(TableContext);
+    const { auth } = useContext(CONTEXT.Auth);
+    const { table } = useContext(CONTEXT.Table);
 
     const [refresh, setRefresh] = useState(false)
     const [pho, setPho] = useState<Pho>(new Pho());
@@ -61,7 +62,8 @@ const OrderTake = ({ props, bags }: {
         } else {
             categoryItems.lastPhos().set(newPho.id, newPho);
         }
-        categoryItems?.action.push(`${new Date().toISOString()}:${auth.name}:${isEdit ? 'Edit' : 'Add'} pho'`);
+        if (!isEdit)
+            categoryItems?.action.push(`${UTILS.formatTime()} [${auth.name}] ${newPho.qty} ${newPho.code}`);
         setItemRef({ bag: -1, trackedIndex: -1, server: '', time: undefined });
         setPho(new Pho());
         lockTable();
