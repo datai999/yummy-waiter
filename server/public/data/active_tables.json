@@ -1,0 +1,237 @@
+{
+    "Table 7": {
+        "id": "Table 7",
+        "status": "ACTIVE",
+        "orderTime": "2025-01-14, 22:15:04:457",
+        "bags": {
+            "0": {
+                "BEEF": {
+                    "pho": [
+                        {
+                            "time": "2025-01-14, 22:15:04:457",
+                            "server": "Tai",
+                            "items": {
+                                "2025-01-14, 22:15:03:209": {
+                                    "id": "2025-01-14, 22:15:03:209",
+                                    "code": "DB",
+                                    "note": "",
+                                    "qty": 1,
+                                    "actualQty": 1,
+                                    "isPho": true,
+                                    "combo": "#1:DB",
+                                    "meats": [
+                                        "Tái",
+                                        "Chín",
+                                        "Gầu",
+                                        "Gân",
+                                        "Sách",
+                                        "BV"
+                                    ],
+                                    "noodle": "BC",
+                                    "preferences": [
+                                        "Tái băm",
+                                        "Tái riêng"
+                                    ],
+                                    "referCode": "Bam,R"
+                                }
+                            }
+                        },
+                        {
+                            "time": "2025-01-14, 22:15:35:929",
+                            "server": "Tai",
+                            "items": {
+                                "2025-01-14, 22:15:33:673": {
+                                    "id": "2025-01-14, 22:15:33:673",
+                                    "code": "XiG`BV",
+                                    "note": "",
+                                    "qty": 1,
+                                    "actualQty": 1,
+                                    "isPho": true,
+                                    "combo": "#7:Xi,Gầu,Bò viên",
+                                    "meats": [
+                                        "Xi",
+                                        "Gầu",
+                                        "BV"
+                                    ],
+                                    "noodle": "BT",
+                                    "preferences": [
+                                        "Không hành",
+                                        "Không béo",
+                                        "Ít bánh"
+                                    ],
+                                    "referCode": "-b,0onion,0Béo"
+                                }
+                            }
+                        }
+                    ],
+                    "nonPho": [
+                        {
+                            "time": "2025-01-14, 22:15:35:929",
+                            "server": "Tai",
+                            "items": {
+                                "2025-01-14, 22:15:31:851": {
+                                    "id": "2025-01-14, 22:15:31:851",
+                                    "code": "HD",
+                                    "qty": 1,
+                                    "actualQty": 1
+                                },
+                                "2025-01-14, 22:15:32:178": {
+                                    "id": "2025-01-14, 22:15:32:178",
+                                    "code": "HT",
+                                    "qty": 1,
+                                    "actualQty": 1
+                                },
+                                "2025-01-14, 22:15:32:451": {
+                                    "id": "2025-01-14, 22:15:32:451",
+                                    "code": "NB",
+                                    "qty": 1,
+                                    "actualQty": 1
+                                }
+                            }
+                        }
+                    ],
+                    "action": [
+                        "2025-01-14, 22:15:03:210 [Tai] 1 DB",
+                        "2025-01-14, 22:15:31:851:Tai:HD",
+                        "2025-01-14, 22:15:32:179:Tai:HT",
+                        "2025-01-14, 22:15:32:451:Tai:NB",
+                        "2025-01-14, 22:15:33:674 [Tai] 1 XiG`BV"
+                    ]
+                },
+                "CHICKEN": {
+                    "pho": [
+                        {
+                            "time": "2025-01-14, 22:15:35:929",
+                            "server": "Tai",
+                            "items": {
+                                "2025-01-14, 22:15:23:609": {
+                                    "id": "2025-01-14, 22:15:23:609",
+                                    "code": "D",
+                                    "note": "",
+                                    "qty": 1,
+                                    "actualQty": 0,
+                                    "voided": [
+                                        {
+                                            "trackedIndex": 1,
+                                            "id": "2025-01-14, 22:15:41:323"
+                                        }
+                                    ],
+                                    "isPho": true,
+                                    "combo": "Đùi",
+                                    "meats": [
+                                        "D"
+                                    ],
+                                    "noodle": "Mì",
+                                    "preferences": [
+                                        "Măng",
+                                        "Khô"
+                                    ],
+                                    "referCode": "dry,bambo"
+                                }
+                            }
+                        },
+                        {
+                            "time": "2025-01-14, 22:15:49:17",
+                            "server": "Tai",
+                            "items": {
+                                "2025-01-14, 22:15:41:323": {
+                                    "id": "2025-01-14, 22:15:41:323",
+                                    "code": "D",
+                                    "note": "",
+                                    "qty": 1,
+                                    "actualQty": 1,
+                                    "void": {
+                                        "trackedIndex": 0,
+                                        "id": "2025-01-14, 22:15:23:609"
+                                    },
+                                    "isPho": true,
+                                    "combo": "Đùi",
+                                    "meats": [
+                                        "D"
+                                    ],
+                                    "noodle": "Mì",
+                                    "preferences": [
+                                        "Măng",
+                                        "Khô"
+                                    ],
+                                    "referCode": "dry,bambo"
+                                },
+                                "2025-01-14, 22:15:46:338": {
+                                    "id": "2025-01-14, 22:15:46:338",
+                                    "code": "U",
+                                    "note": "",
+                                    "qty": 1,
+                                    "actualQty": 1,
+                                    "isPho": true,
+                                    "combo": "Ức",
+                                    "meats": [
+                                        "U"
+                                    ],
+                                    "noodle": "Mì",
+                                    "preferences": [
+                                        "Măng",
+                                        "Khô"
+                                    ],
+                                    "referCode": "dry,bambo"
+                                }
+                            }
+                        }
+                    ],
+                    "nonPho": [],
+                    "action": [
+                        "2025-01-14, 22:15:23:609 [Tai] 1 D",
+                        "2025-01-14, 22:15:46:338 [Tai] 1 U"
+                    ]
+                },
+                "DRINK": {
+                    "pho": [],
+                    "nonPho": [],
+                    "action": []
+                }
+            },
+            "1": {
+                "BEEF": {
+                    "pho": [
+                        {
+                            "time": "2025-01-14, 22:16:41:74",
+                            "server": "Tai",
+                            "items": {
+                                "2025-01-14, 22:16:31:90": {
+                                    "id": "2025-01-14, 22:16:31:90",
+                                    "code": "Pho BK",
+                                    "note": "",
+                                    "qty": 1,
+                                    "actualQty": 1,
+                                    "isPho": true,
+                                    "combo": "#8a:Hủ tiếu BK",
+                                    "meats": [
+                                        "Pho BK"
+                                    ],
+                                    "noodle": "BTS",
+                                    "preferences": [
+                                        "Ít bánh"
+                                    ],
+                                    "referCode": "-b"
+                                }
+                            }
+                        }
+                    ],
+                    "nonPho": [],
+                    "action": [
+                        "2025-01-14, 22:16:31:90 [Tai] 1 Pho BK"
+                    ]
+                },
+                "CHICKEN": {
+                    "pho": [],
+                    "nonPho": [],
+                    "action": []
+                },
+                "DRINK": {
+                    "pho": [],
+                    "nonPho": [],
+                    "action": []
+                }
+            }
+        }
+    }
+}

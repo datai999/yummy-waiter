@@ -10,7 +10,7 @@ const readJsonFile = (filePath) => {
     return JSON.parse(data);
 }
 
-const writeJsonFile = (path, fileName, data) => {
+const writeJsonFile = (data, fileName, path = '') => {
     const dir = './public/data' + path;
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });

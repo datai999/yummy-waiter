@@ -2,12 +2,31 @@ const WebSocket = require('ws');
 
 const { loadUsers } = require("./service/userService");
 const { loadMenu } = require('./service/menuService');
-const { writeJsonFile } = require('./service/commonService.js');
+const { readJsonFile, writeJsonFile } = require('./service/commonService.js');
 
 let wss;
 
+let ACTIVE_TABLES = {
+    "Table 7": {
+        "id": "Table 7", "status": "ACTIVE", "orderTime": "2025-01-14, 22:15:04:457",
+        "bags": {
+            "0": {
+                "BEEF": { "pho": [{ "time": "2025-01-14, 22:15:04:457", "server": "Tai", "items": { "2025-01-14, 22:15:03:209": { "id": "2025-01-14, 22:15:03:209", "code": "DB", "note": "", "qty": 1, "actualQty": 1, "isPho": true, "combo": "#1:DB", "meats": ["Tái", "Chín", "Gầu", "Gân", "Sách", "BV"], "noodle": "BC", "preferences": ["Tái băm", "Tái riêng"], "referCode": "Bam,R" } } }, { "time": "2025-01-14, 22:15:35:929", "server": "Tai", "items": { "2025-01-14, 22:15:33:673": { "id": "2025-01-14, 22:15:33:673", "code": "XiG`BV", "note": "", "qty": 1, "actualQty": 1, "isPho": true, "combo": "#7:Xi,Gầu,Bò viên", "meats": ["Xi", "Gầu", "BV"], "noodle": "BT", "preferences": ["Không hành", "Không béo", "Ít bánh"], "referCode": "-b,0onion,0Béo" } } }], "nonPho": [{ "time": "2025-01-14, 22:15:35:929", "server": "Tai", "items": { "2025-01-14, 22:15:31:851": { "id": "2025-01-14, 22:15:31:851", "code": "HD", "qty": 1, "actualQty": 1 }, "2025-01-14, 22:15:32:178": { "id": "2025-01-14, 22:15:32:178", "code": "HT", "qty": 1, "actualQty": 1 }, "2025-01-14, 22:15:32:451": { "id": "2025-01-14, 22:15:32:451", "code": "NB", "qty": 1, "actualQty": 1 } } }], "action": ["2025-01-14, 22:15:03:210 [Tai] 1 DB", "2025-01-14, 22:15:31:851:Tai:HD", "2025-01-14, 22:15:32:179:Tai:HT", "2025-01-14, 22:15:32:451:Tai:NB", "2025-01-14, 22:15:33:674 [Tai] 1 XiG`BV"] },
+                "CHICKEN": { "pho": [{ "time": "2025-01-14, 22:15:35:929", "server": "Tai", "items": { "2025-01-14, 22:15:23:609": { "id": "2025-01-14, 22:15:23:609", "code": "D", "note": "", "qty": 1, "actualQty": 0, "voided": [{ "trackedIndex": 1, "id": "2025-01-14, 22:15:41:323" }], "isPho": true, "combo": "Đùi", "meats": ["D"], "noodle": "Mì", "preferences": ["Măng", "Khô"], "referCode": "dry,bambo" } } }, { "time": "2025-01-14, 22:15:49:17", "server": "Tai", "items": { "2025-01-14, 22:15:41:323": { "id": "2025-01-14, 22:15:41:323", "code": "D", "note": "", "qty": 1, "actualQty": 1, "void": { "trackedIndex": 0, "id": "2025-01-14, 22:15:23:609" }, "isPho": true, "combo": "Đùi", "meats": ["D"], "noodle": "Mì", "preferences": ["Măng", "Khô"], "referCode": "dry,bambo" }, "2025-01-14, 22:15:46:338": { "id": "2025-01-14, 22:15:46:338", "code": "U", "note": "", "qty": 1, "actualQty": 1, "isPho": true, "combo": "Ức", "meats": ["U"], "noodle": "Mì", "preferences": ["Măng", "Khô"], "referCode": "dry,bambo" } } }], "nonPho": [], "action": ["2025-01-14, 22:15:23:609 [Tai] 1 D", "2025-01-14, 22:15:46:338 [Tai] 1 U"] },
+                "DRINK": { "pho": [], "nonPho": [], "action": [] }
+            },
+            "1": {
+                "BEEF": { "pho": [{ "time": "2025-01-14, 22:16:41:74", "server": "Tai", "items": { "2025-01-14, 22:16:31:90": { "id": "2025-01-14, 22:16:31:90", "code": "Pho BK", "note": "", "qty": 1, "actualQty": 1, "isPho": true, "combo": "#8a:Hủ tiếu BK", "meats": ["Pho BK"], "noodle": "BTS", "preferences": ["Ít bánh"], "referCode": "-b" } } }], "nonPho": [], "action": ["2025-01-14, 22:16:31:90 [Tai] 1 Pho BK"] },
+                "CHICKEN": { "pho": [], "nonPho": [], "action": [] },
+                "DRINK": { "pho": [], "nonPho": [], "action": [] }
+            }
+        }
+    }
+};
+
 const initWsServer = () => {
     console.log('Init ws server');
+    ACTIVE_TABLES = readJsonFile('./public/data/active_tables.json');
     wss = new WebSocket.Server({ port: 8080 });
     wss.on('connection', onConnection);
     console.log('Done: Init ws server');
@@ -19,42 +38,6 @@ module.exports = {
 
 const USERS = {};
 const LOCKED_TABLES = {};
-const ACTIVE_TABLES = {
-    "Table 7": {
-        "id": "Table 7", "status": "ACTIVE", "orderTime": "2025-01-06T07:21:21.377Z", "timer": 0,
-        "bags": {
-            "0": {
-                "BEEF": {
-                    "pho": [
-                        { "time": "2025-01-06T07:21:21.377Z", "staff": "Tài", "items": { "1/5/25, 23:21:19 560": { "id": "1/5/25, 23:21:19 560", "meats": ["BPN"], "noodle": "BC", "qty": 1 } } }
-                    ],
-                    "nonPho": [],
-                    "action": ["2025-01-06T07:21:19.560Z:add pho"]
-                },
-                "CHICKEN": { "pho": [], "nonPho": [], "action": [] },
-                "DRINK": { "pho": [], "nonPho": [], "action": [] }
-            },
-            "1": { "BEEF": { "pho": [], "nonPho": [], "action": [] }, "CHICKEN": { "pho": [], "nonPho": [], "action": [] }, "DRINK": { "pho": [], "nonPho": [], "action": [] } }
-        }
-    },
-    "Table 5": {
-        "id": "Table 5", "status": "ACTIVE", "orderTime": "2025-01-06T07:26:39.775Z", "timer": 0,
-        "bags": {
-            "0": {
-                "BEEF": {
-                    "pho": [
-                        { "time": "2025-01-06T07:26:39.775Z", "staff": "Tài", "items": { "1/5/25, 23:26:38 856": { "id": "1/5/25, 23:26:38 856", "meats": ["BPN"], "noodle": "BC", "qty": 1 } } }
-                    ],
-                    "nonPho": [],
-                    "action": ["2025-01-06T07:26:38.856Z:add pho"]
-                },
-                "CHICKEN": { "pho": [], "nonPho": [], "action": [] },
-                "DRINK": { "pho": [], "nonPho": [], "action": [] }
-            },
-            "1": { "BEEF": { "pho": [], "nonPho": [], "action": [] }, "CHICKEN": { "pho": [], "nonPho": [], "action": [] }, "DRINK": { "pho": [], "nonPho": [], "action": [] } }
-        }
-    }
-}
 
 const onConnection = (ws, req) => {
     ws.on('error', console.error);
@@ -99,7 +82,7 @@ const updateActiveTable = (syncTables) => {
             delete ACTIVE_TABLES[tableId];
         }
     });
-    // writeJsonFile('ACTIVE_TABLES', ACTIVE_TABLES);
+    writeJsonFile(ACTIVE_TABLES, 'active_tables');
 }
 
 const updateLockedTable = (syncTables) => {
@@ -117,10 +100,11 @@ const doneOrder = (syncTables) => {
         const orderTime = syncTable.orderTime.replaceAll(':', '-');
         const fileName = orderTime + ', ' + (tableId.startsWith('Togo') ? 'Togo' : tableId);
 
-        const paths = orderTime.split('-');
-        const filePath = `/orders/${paths[0]}/${paths[1]}`;
+        const orderTimes = orderTime.split(', ')[0];
+        const paths = orderTimes.split('-');
+        const filePath = `/orders/${paths[0]}/${paths[1]}/${paths[2]}`;
 
-        writeJsonFile(filePath, fileName, syncTable);
+        writeJsonFile(syncTable, fileName, filePath);
         delete ACTIVE_TABLES[tableId];
     });
 }
