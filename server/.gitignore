@@ -13,6 +13,7 @@ dist-electron
 # testing
 /coverage
 /print
+/public/data/active_tables.json
 /public/data/orders
 
 # production

@@ -1,9 +1,9 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState, useRef } from 'react';
 
 import Header from './table/Header';
 import TableManagerment from './table/ManagementTable';
 import Waiter from './waiter/Waiter';
-import { Box } from '@mui/material';
+import { Alert, Box, Slide, SlideProps, Snackbar } from '@mui/material';
 import { changeTable, generateTables } from './my/my-service';
 import initWsClient, { SYNC_TYPE, syncServer } from './my/my-ws';
 import { Auth, CategoryItem, LockedTable, Table } from './my/my-class';
@@ -26,60 +26,89 @@ export const AuthContext = createContext<IAuthContext>({ auth: {}, logout: () =>
 const LockedTableContext = createContext<(tableId: string) => string | undefined>(
   (tableId: string) => LOCKED_TABLES.get(tableId)?.server);
 export const TableContext = createContext<ITableContext>({} as ITableContext);
+const ToastContext = createContext((msg: string) => { });
 
 export const CONTEXT = {
   Auth: AuthContext,
   LockedTable: LockedTableContext,
-  Table: TableContext
+  Table: TableContext,
+  Toast: ToastContext
 }
 
 const tables = generateTables();
 
 const Tai = { name: "Tai", code: 0, permission: [] };
 
+let closeInitWsClient: undefined | (() => void);
+
 export default function App() {
   const [auth, setAuth] = useState<null | Auth>(Tai);
   const [table, orderTable] = useState<Table | null>(null);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [refresh2, setRefresh2] = useState<boolean>(false);
+  const [open, setOpen] = useState(false);
 
-  const tempTable = React.useRef<Table | null>();
-  const tempBags = React.useRef<null | Map<number, Map<string, CategoryItem>>>(null);
+  const holdTable = useRef<Table | null>();
+  const toasMsg = useRef<string>();
+  const tempTable = useRef<Table | null>();
+  const tempBags = useRef<null | Map<number, Map<string, CategoryItem>>>(null);
 
   useEffect(() => {
-    initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables, onLockedTables, onDoneOrders);
+    closeInitWsClient = initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables, onLockedTables, onDoneOrders);
     // orderTable(tables.get('Table 12')!);
   }, []);
 
-  const onSyncTables = (syncTables: Map<String, Table>) => {
+  useEffect(() => {
+    holdTable.current = table;
+  }, [table])
+
+  const onSyncTables = (senter: string, syncTables: Map<String, Table>) => {
     syncTables.forEach(syncTable => {
       tables.set(syncTable.id, syncTable);
     });
-    if (!table) {
+    if (!holdTable.current?.id) {
       setRefresh((cur: Boolean) => !cur);
+    } else if (syncTables.has(holdTable.current.id)) {
+      toasMsg.current = `${senter} just changed order ${holdTable.current.id}`;
+      setOpen(true);
+      orderTable(null);
     }
   }
 
-  const onLockedTables = (lockedTables: Map<string, LockedTable>) => {
+  const onLockedTables = (senter: string, lockedTables: Map<string, LockedTable>) => {
     lockedTables.forEach((lockedTable, tableId) =>
       lockedTable.locked ? LOCKED_TABLES.set(tableId, lockedTable) : LOCKED_TABLES.delete(tableId));
-    if (!table) {
+    if (!holdTable.current?.id) {
       setRefresh2((cur: Boolean) => !cur);
+    } else {
+      const lockedTable = lockedTables.get(holdTable.current.id);
+      if (lockedTable) {
+        toasMsg.current = `${senter} ${lockedTable.locked ? 'is taking' : 'unlocked'} ${holdTable.current.id}`;
+        setOpen(true);
+        setRefresh2((cur: Boolean) => !cur);
+      }
     }
   }
 
-  const onDoneOrders = (syncTables: Map<String, Table>) => {
+  const onDoneOrders = (senter: string, syncTables: Map<String, Table>) => {
     syncTables.forEach(syncTable => {
       if (syncTable.id.startsWith('Togo')) tables.delete(syncTable.id);
-      else tables.set(syncTable.id, syncTable);
+      else tables.set(syncTable.id, new Table(syncTable.id));
     });
-    if (!table) {
-      setRefresh((cur: Boolean) => !cur);
-
+    if (!holdTable.current?.id) {
+      setRefresh2((cur: Boolean) => !cur);
+    } else if (syncTables.has(holdTable.current.id)) {
+      toasMsg.current = `${senter} done order ${holdTable.current.id}`;
+      setOpen(true);
+      setRefresh2((cur: Boolean) => !cur);
     }
   };
 
   const onSetAuth = (auth: Auth) => {
+    if (closeInitWsClient) {
+      closeInitWsClient();
+      closeInitWsClient = initWsClient(auth.name, onSyncTables, onLockedTables, onDoneOrders);
+    }
     removeLockedTablesBy(auth);
     setAuth(auth);
   }
@@ -128,21 +157,43 @@ export default function App() {
 
   if (!auth) return (<Login setAuth={onSetAuth} />)
 
-  return (<AuthContext.Provider value={{ auth, logout }}>
-    <LockedTableContext.Provider value={(tableId: string) => LOCKED_TABLES.get(tableId)?.server}>
-      {table
-        ? (<TableContext.Provider value={{ table, orderTable, prepareChangeTable }}>
-          <Waiter tables={tables} tempBags={tempBags.current} />
-        </TableContext.Provider>
-        )
-        : (<>
-          <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
-            <Header newTogo={newTogo} />
-          </Box>
-          <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
-        </>)}
-    </LockedTableContext.Provider>
-  </AuthContext.Provider>
+  return (
+    <ToastContext.Provider value={(msg: string) => { toasMsg.current = msg; setOpen(true) }}>
+      <AuthContext.Provider value={{ auth, logout }}>
+        <LockedTableContext.Provider value={(tableId: string) => LOCKED_TABLES.get(tableId)?.server}>
+          {table
+            ? (<TableContext.Provider value={{ table, orderTable, prepareChangeTable }}>
+              <Waiter tables={tables} tempBags={tempBags.current} />
+            </TableContext.Provider>
+            )
+            : (<>
+              <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
+                <Header newTogo={newTogo} />
+              </Box>
+              <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
+            </>)}
+        </LockedTableContext.Provider>
+        <Snackbar
+          open={open}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          onClose={() => setOpen(false)}
+          autoHideDuration={5000}
+          TransitionComponent={(props: SlideProps) => <Slide {...props} direction="down" />}
+        // message={`${toasMsg.current}`}
+        // action={action}
+        >
+          <Alert
+            onClose={() => setOpen(false)}
+            severity="info"
+            color='error'
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {`${toasMsg.current}`}
+          </Alert>
+        </Snackbar>
+      </AuthContext.Provider>
+    </ToastContext.Provider>
     /**
      * waiter: 
      *  + communicate between devices in LAN

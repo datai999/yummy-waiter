@@ -54,6 +54,7 @@ const onConnection = (ws, req) => {
                                 ${data.type !== 'MESSAGE' ? '' : `:${data.payload}`}`);
 
         if (data.type === 'REQUEST') {
+            //TODO
         }
         if (data.type === 'ACTIVE_TABLES') {
             updateActiveTable(data.payload);

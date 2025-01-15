@@ -9,7 +9,7 @@ const theme = createTheme({
       main: red[700],
     },
     error: {
-      main: red.A400,
+      main: red[700],
     },
     text: {
       primary: red[700],

@@ -27,7 +27,8 @@ export default function Waiter(props: WaiterProps) {
     const { table, orderTable, prepareChangeTable } = useContext(TableContext);
     const [category, setCategory] = useState(Object.keys(MENU)[0]);
 
-    const bags = useRef(_.cloneDeep(props.tempBags || table.bags)).current;
+    let refBags = useRef(_.cloneDeep(props.tempBags || table.bags));
+    const bags = refBags.current;
 
     const addTogoBag = () => {
         const newBag = table.newBag();

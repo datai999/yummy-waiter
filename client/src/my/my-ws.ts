@@ -23,9 +23,9 @@ export const syncServer = (type: SYNC_TYPE, data: any) => {
 }
 
 const initWsClient = (username: string,
-    onSyncTables: (tables: Map<String, Table>) => void,
-    onLockTables: (lockedTables: Map<string, LockedTable>) => void,
-    onDoneOrders: (tables: Map<String, Table>) => void,
+    onSyncTables: (senter: string, tables: Map<String, Table>) => void,
+    onLockTables: (senter: string, lockedTables: Map<string, LockedTable>) => void,
+    onDoneOrders: (senter: string, tables: Map<String, Table>) => void,
 ) => {
     clienId = username;
     websocket = new WebSocket('ws://192.168.12.182:8080');
@@ -51,17 +51,17 @@ const initWsClient = (username: string,
         if (data.type === SYNC_TYPE[SYNC_TYPE.ACTIVE_TABLES]) {
             const tables = new Map(Object.entries(data.payload)
                 .map(([tableId, tableJson]) => [tableId, plainToInstance(Table, tableJson)]));
-            onSyncTables(tables);
+            onSyncTables(data.senter, tables);
         }
         if (data.type === SYNC_TYPE[SYNC_TYPE.LOCKED_TABLES]) {
             const lockedTables = new Map<string, LockedTable>(Object.entries(data.payload)
                 .map(([tableId, lockedTable]) => [tableId, plainToInstance(LockedTable, lockedTable)]));
-            onLockTables(lockedTables);
+            onLockTables(data.senter, lockedTables);
         }
         if (data.type === SYNC_TYPE[SYNC_TYPE.DONE_ORDER]) {
             const tables = new Map(Object.entries(data.payload)
                 .map(([tableId, tableJson]) => [tableId, plainToInstance(Table, tableJson)]));
-            onDoneOrders(tables);
+            onDoneOrders(data.senter, tables);
         }
     };
 
