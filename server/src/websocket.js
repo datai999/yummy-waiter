@@ -42,19 +42,25 @@ const LOCKED_TABLES = {};
 const onConnection = (ws, req) => {
     ws.on('error', console.error);
 
-    var userID = parseInt(req.url.substr(1), 10);
+    var userID = req.url.substr(1);
     USERS[userID] = ws;
 
-    sentDataOnConnect(ws);
+    console.log(`[${new Date().toLocaleTimeString()}]:<${userID}>:Connected`);
 
     ws.on('message', (message, isBinary) => {
         const messageConvert = isBinary ? message : message.toString();
         const data = JSON.parse(messageConvert);
-        console.log(`[${new Date().toLocaleTimeString()}]<${data.senter}><${data.type}>
+        console.log(`[${new Date().toLocaleTimeString()}]:<${data.senter}>:<${data.type}>:
                                 ${data.type !== 'MESSAGE' ? '' : `:${data.payload}`}`);
 
         if (data.type === 'REQUEST') {
-            //TODO
+            if (data.senter.startsWith('Client'))
+                sendMessageTo(ws, JSON.stringify({
+                    senter: "SERVER",
+                    type: "USERS",
+                    payload: loadUsers()
+                }));
+            else sentDataOnConnect(ws);
         }
         if (data.type === 'ACTIVE_TABLES') {
             updateActiveTable(data.payload);
@@ -71,7 +77,8 @@ const onConnection = (ws, req) => {
     });
 
     ws.on('close', () => {
-        console.log(`[${new Date().toLocaleTimeString()}]:Client disconnected`);
+        console.log(`[${new Date().toLocaleTimeString()}]:<${userID}>:Disconnected`);
+        delete USERS[userID];
     });
 };
 
@@ -111,12 +118,6 @@ const doneOrder = (syncTables) => {
 }
 
 const sentDataOnConnect = (ws) => {
-    sendMessageTo(ws, JSON.stringify({
-        senter: "SERVER",
-        type: "USERS",
-        payload: loadUsers()
-    }));
-
     sendMessageTo(ws, JSON.stringify({
         senter: "SERVER",
         type: "MENU",

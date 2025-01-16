@@ -6,6 +6,7 @@ let websocket: WebSocket;
 let clienId: string;
 
 export enum SYNC_TYPE {
+    REQUEST,
     USERS,
     MENU,
     ACTIVE_TABLES,
@@ -28,15 +29,15 @@ const initWsClient = (username: string,
     onDoneOrders: (senter: string, tables: Map<String, Table>) => void,
 ) => {
     clienId = username;
-    websocket = new WebSocket('ws://192.168.12.182:8080');
+    websocket = new WebSocket('ws://192.168.12.182:8080' + '/' + clienId);
 
     websocket.onopen = () => {
         console.log('WebSocket is connected');
-        // websocket.send(JSON.stringify({
-        //     senter: clienId,
-        //     type: SYNC_TYPE[SYNC_TYPE.REQUEST],
-        //     payload: "TABLES_ACTIVE",
-        // }));
+        websocket.send(JSON.stringify({
+            senter: clienId,
+            type: SYNC_TYPE[SYNC_TYPE.REQUEST],
+            payload: "INITIAL",
+        }));
     };
 
     websocket.onmessage = (evt) => {

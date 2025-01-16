@@ -53,6 +53,7 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
     const { table, orderTable } = useContext(CONTEXT.Table);
 
     const lockedServer = useContext(CONTEXT.LockedTable)(table.id);
+    const mdSize = useMediaQuery('(min-width:900px)');
 
     const routeTableManagement = () => {
         orderTable(null);
@@ -67,26 +68,23 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
                 <Box sx={{ display: 'flex', direction: 'row', alignItems: 'center' }}>
                     <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} onClick={routeTableManagement} />
                     <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} onClick={routeTableManagement} />
-                    <Typography fontWeight='fontWeightMedium' variant="h4" sx={{ textAlign: "center", display: 'flex', ml: 1 }}>
+                    {mdSize && <Typography fontWeight='fontWeightMedium' variant="h4" sx={{ textAlign: "center", display: 'flex', ml: 1 }}>
                         Yummy Phở 2
-                    </Typography>
+                    </Typography>}
                     <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ textAlign: "center", display: 'flex', ml: 1, mt: 1 }}>
-                        : {auth.name}
+                        {mdSize ? ':' : ''} {auth.name}
                     </Typography>
                 </Box>
                 <Box>
                     {Object.keys(MENU).map((category) => (
                         <WrapCategoryButton key={category} props={{
                             selectedCategory: props.category, category: category, setCategory: props.setCategory,
-                            size: useMediaQuery('(min-width:900px)') ? 'xlarge' : 'medium',
+                            size: mdSize ? 'xlarge' : 'xlarge',
                         }} />
                     ))}
                 </Box>
-                <Box sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: '200px' }}>
-                    <TableSelections props={props} size='medium' />
-                </Box>
-                <Box sx={{ display: { xs: 'none', sm: 'block', md: 'none' }, minWidth: '150px' }}>
-                    <TableSelections props={props} size='small' />
+                <Box sx={{ maxWidth: '200px' }}>
+                    <TableSelections props={props} size={mdSize ? 'medium' : 'small'} />
                 </Box>
             </Box>
         </StyledPaper >);
@@ -112,7 +110,7 @@ const WrapCategoryButton = ({ props }: {
         sx={{
             minHeight: props.size == 'xlarge' ? 50 : 0,
             minWidth: props.size == 'xlarge' ? 120 : props.size === 'large' ? 120 : 0,
-            ml: '10px'
+            ml: '5px'
         }}
     >
         {props.category}
@@ -135,9 +133,12 @@ const TableSelections = ({ props, size }: { props: ChildWaiterProps, size: strin
     if (!tableIdAvailable.includes(table.id))
         tableIdAvailable = [table.id, ...tableIdAvailable];
 
+    if (table.id.startsWith("Togo"))
+        tableIdAvailable = [table.getName()];
+
     return (<Select
         fullWidth
-        value={table.id}
+        value={table.id.startsWith("Togo") ? table.getName() : table.id}
         disabled={Boolean(lockedServer)}
         onChange={(e) => {
             const toTable = changeTable(auth, props.tables, table, e.target.value) as Table;
@@ -148,7 +149,7 @@ const TableSelections = ({ props, size }: { props: ChildWaiterProps, size: strin
     >
         {tableIdAvailable.map((tableId) => (
             <MenuItem key={tableId} value={tableId}>
-                {tableId}{lockedServer ? <>{`:${lockedServer} `} <FaPen style={{ fontSize: 12 }} /> </> : ''}
+                {tableId}{lockedServer ? <>: <FaPen style={{ fontSize: 12 }} />{` ${lockedServer} `}</> : ''}
             </MenuItem>
         ))}
     </Select>);

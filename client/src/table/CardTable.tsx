@@ -100,9 +100,10 @@ const CardTable = ({ table, orderTable, doneTable }: {
   };
 
   const formatTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    return `${hours > 0 ? hours + ':' : ''}${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
   return (<>
@@ -113,7 +114,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
       <CardContent sx={{ p: 1, pb: 0, pt: 0, maxHeight: '100px' }}>
         <Grid2 container>
           <Grid2 size='grow' >
-            <Typography variant="h5" sx={{ mb: 1, ml: table.id.startsWith('Table') ? '30%' : 0 }}>{table.id.startsWith('Table') ? table.id : 'Togo:' + table.id.split(' ')[1]}</Typography>
+            <Typography variant="h5" sx={{ mb: 1, ml: table.id.startsWith('Table') ? '30%' : '20%' }}>{table.getName()}</Typography>
             {table.status !== TableStatus.AVAILABLE &&
               <Stack direction="row" spacing={1} sx={{ justifyContent: "center", alignItems: "stretch", }}>
                 {Array.from(table.bags.entries()).map(([key, item], index) => <Box key={index} >

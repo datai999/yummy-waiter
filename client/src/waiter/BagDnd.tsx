@@ -18,6 +18,7 @@ import {
     BoxProps,
     Button,
     styled,
+    TextField,
     Typography,
 } from '@mui/material';
 
@@ -30,11 +31,12 @@ import { TableContext } from '../App';
 export interface BagDndProps {
     bags: Map<number, Map<string, CategoryItem>>,
     phoId: String;
-    showPho?: (isPho:boolean, bag: number, category: string, trackIndex: number, itemId: string) => void,
+    showPho?: (isPho: boolean, bag: number, category: string, trackIndex: number, itemId: string) => void,
 };
 const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
     const { table } = useContext(TableContext);
     const [refresh, setRefresh] = React.useState(false);
+    const [note, setNote] = useState<string>(table.customer || '');
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -96,7 +98,14 @@ const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
             // onDragStart={handleDragStart}
             onDragEnd={onDragEnd}
         >
-            
+            <TextField
+                fullWidth
+                label="Customer name, phone, pickup time, ..."
+                size='small'
+                sx={{ mt: 1, mb: 1 }}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+            />
             {Array.from(bags.entries()).map(([key, item], index) => {
                 return (
                     <Droppable id={`${key}`} key={index}>

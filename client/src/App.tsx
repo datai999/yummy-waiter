@@ -37,12 +37,12 @@ export const CONTEXT = {
 
 const tables = generateTables();
 
-const Tai = { name: "Tai", code: 0, permission: [] };
+const trung = { name: "Trung", code: 3, permission: [] };
 
 let closeInitWsClient: undefined | (() => void);
 
 export default function App() {
-  const [auth, setAuth] = useState<null | Auth>(Tai);
+  const [auth, setAuth] = useState<null | Auth>(null);
   const [table, orderTable] = useState<Table | null>(null);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [refresh2, setRefresh2] = useState<boolean>(false);
@@ -54,7 +54,8 @@ export default function App() {
   const tempBags = useRef<null | Map<number, Map<string, CategoryItem>>>(null);
 
   useEffect(() => {
-    closeInitWsClient = initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables, onLockedTables, onDoneOrders);
+    closeInitWsClient = initWsClient(auth ? auth.name : "Client_" + Math.floor(Math.random() * 10),
+      onSyncTables, onLockedTables, onDoneOrders);
     // orderTable(tables.get('Table 12')!);
   }, []);
 
@@ -127,6 +128,10 @@ export default function App() {
   }
 
   const logout = () => {
+    if (closeInitWsClient) {
+      closeInitWsClient();
+      closeInitWsClient = initWsClient("Client_" + Math.floor(Math.random() * 10), onSyncTables, onLockedTables, onDoneOrders);
+    }
     orderTable(null);
     setAuth(null);
   }
@@ -214,7 +219,8 @@ export default function App() {
      *  + check order change?
      *  + UI table: server, Badge by special item
      *  + lock/unlock only user serve table
-     *  - store order data
+     *  + store order data
+     *  - customer info
      *  - view order data
      *  - UI for customer fill phone
      * kitchen: select part of bill, print bill & system change status to waiter

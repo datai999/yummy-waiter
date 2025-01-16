@@ -31,6 +31,7 @@ export default function Footer(props: {
     addTogoBag: () => void,
     changeTable: () => void,
     submitOrder: () => void,
+    customerInfo: () => void,
     doneOrder: () => void
 }) {
     const { logout } = useContext(CONTEXT.Auth);
@@ -39,7 +40,7 @@ export default function Footer(props: {
 
     const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
 
-    return (<Stack direction="row" spacing={2} sx={{
+    return (<Stack direction="row" spacing={1} sx={{
         justifyContent: "center",
         alignItems: "stretch",
     }}>
@@ -55,6 +56,10 @@ export default function Footer(props: {
             Change table
             <CgArrowsExchange style={iconStyle} />
         </Button>
+        {/* <Button variant="contained" color="primary" disabled={lockedTable} onClick={props.customerInfo} >
+            Customer
+            <MdOutlinePersonPin style={iconStyle} />
+        </Button> */}
         <Button variant="contained" color="primary" disabled={lockedTable} sx={{ minHeight: 50 }} onClick={() => setOpen(true)} >
             Clean
             <SiCcleaner style={iconStyle} />
@@ -84,7 +89,7 @@ export default function Footer(props: {
                     Clean up your order ?
                 </Typography>
                 <Box sx={{ display: 'flex', justifyContent: "space-around", width: '100%', mt: 3 }}>
-                    <Button variant="contained" color="primary" disabled={lockedTable} sx={{ minHeight: 50 }} onClick={props.doneOrder} >
+                    <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={props.doneOrder} >
                         Clean
                         <SiCcleaner style={iconStyle} />
                     </Button>

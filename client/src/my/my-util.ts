@@ -25,7 +25,7 @@ export const JSON_reviver = (key: any, value: any) => {
 
 const formatTime = (time?: Date | null | undefined): string => {
     const date = time || new Date();
-    return date.toLocaleString('en-CA', { hour12: false }) + ':' + date.getMilliseconds();
+    return date.toLocaleString('en-CA', { hour12: false }) + ':' + date.getMilliseconds().toString().padEnd(3, '0');
 }
 
 const TransformTime = () => {

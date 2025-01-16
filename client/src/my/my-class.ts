@@ -124,6 +124,7 @@ export class CategoryItem {
 
 export class Table {
     id: string;
+    customer?: string;
     status: TableStatus = TableStatus.AVAILABLE;
 
     @Type(() => String)
@@ -162,6 +163,11 @@ export class Table {
             category.nonPho.forEach(tracked => servers.add(tracked.server));
         }));
         return Array.from(servers);
+    }
+
+    public getName(): string {
+        const time = this.id.split(' ')[1].split(':');
+        return this.id.startsWith('Table') ? this.id : 'Togo' + ':' + time[0] + ':' + time[1];
     }
 }
 

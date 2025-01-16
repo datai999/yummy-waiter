@@ -8,8 +8,9 @@ import { CategoryItem, LockedTable, Table, TrackedNonPho, TrackedPho } from '../
 import { MENU, TableStatus } from '../my/my-constants';
 import Footer from './FooterWaiter';
 import _ from 'lodash';
-import { AuthContext, TableContext } from '../App';
+import { CONTEXT } from '../App';
 import { syncServer, SYNC_TYPE } from '../my/my-ws';
+import TakeCustomerInfo from './TakeCustomerInfo';
 
 interface WaiterProps {
     tables: Map<String, Table>,
@@ -22,10 +23,11 @@ export interface ChildWaiterProps extends WaiterProps {
 }
 
 export default function Waiter(props: WaiterProps) {
-    const { auth, logout } = useContext(AuthContext);
+    const { auth, logout } = useContext(CONTEXT.Auth);
     const [refresh, setRefresh] = useState(false);
-    const { table, orderTable, prepareChangeTable } = useContext(TableContext);
+    const { table, orderTable, prepareChangeTable } = useContext(CONTEXT.Table);
     const [category, setCategory] = useState(Object.keys(MENU)[0]);
+    const [openModal, setOpenModal] = useState(false);
 
     let refBags = useRef(_.cloneDeep(props.tempBags || table.bags));
     const bags = refBags.current;
@@ -74,6 +76,16 @@ export default function Waiter(props: WaiterProps) {
         }
     };
 
+    const takeCustomerInfo = () => {
+        syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(true, auth.name) });
+        setOpenModal(true)
+    }
+
+    const doneTakeCustomerInfo = () => {
+        syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(false, auth.name) });
+        setOpenModal(false)
+    }
+
     const doneOrder = () => {
         if (table.id.startsWith('Togo')) props.tables.delete(table.id);
         else props.tables.set(table.id, new Table(table.id));
@@ -91,8 +103,9 @@ export default function Waiter(props: WaiterProps) {
             <OrderTake bags={bags} props={childProps} />
             <Box sx={{ position: "sticky", bottom: 3, zIndex: 1, bgcolor: "background.paper", mt: 'auto' }}>
                 {/* <Box sx={{ mt: 'auto', mb: 1 }}> */}
-                <Footer addTogoBag={addTogoBag} changeTable={() => prepareChangeTable(bags)} submitOrder={submitOrder} doneOrder={doneOrder} />
+                <Footer addTogoBag={addTogoBag} changeTable={() => prepareChangeTable(bags)} submitOrder={submitOrder} customerInfo={takeCustomerInfo} doneOrder={doneOrder} />
             </Box>
+            <TakeCustomerInfo openModal={openModal} closeModel={doneTakeCustomerInfo} />
         </Box>
     );
 }
