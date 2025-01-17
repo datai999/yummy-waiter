@@ -41,7 +41,7 @@ const OrderSummary = (props: Props) => {
     const mdResponsive = props.showPho ? useMediaQuery('(min-width:900px)') ? 12 : 4 : 'grow';
 
     return (
-        <Grid2 container spacing={0.5} direction='row' sx={{ minHeight: props.bag === 0 ? 200 : 30 }}>
+        <Grid2 container spacing={0.5} direction='row' sx={{ minHeight: props.bag === 0 ? 30 : 30 }}>
             {Object.keys(MENU)
                 .filter(category => {
                     const categoryItem = props.categoryItems.get(category)!;

@@ -126,7 +126,7 @@ const OrderTake = ({ props, note, setNote, bags }: {
                         onSubmit={submitNonPho}
                     />)}
             </Grid2>
-            <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }} style={{ maxHeight: 600, overflow: 'auto' }}>
+            <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }}>
                 <BagDnd note={note} setNote={setNote} bags={bags} phoId={pho.id} showPho={showPho} />
             </Grid2>
         </Grid2 >

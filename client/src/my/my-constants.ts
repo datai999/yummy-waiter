@@ -63,9 +63,10 @@ export const BEEF_SIDE = {
     'Ch.Egg': 'Ch.Egg',
     'Bread': 'Bread',
     'Ch.Soup': 'Ch.Soup',
-    'Small.Soup': 'Small Soup',
     'Large.Soup': 'Large Soup',
     'Egg rolls': 'Egg rolls',
+    '1 Egg roll': '1 Egg roll',
+    '?': '?',
 }
 export const BEEF_MEAT_SIDE = {
     'Dĩa Tái': "Dĩa T",
@@ -155,6 +156,6 @@ export const MENU = {
     },
     'DRINK': {
         'pho': null,
-        'nonPho': [WATER, TEA, COFFEE, SOFT_DRINK, TOFU, CHE, DESSERT]
+        'nonPho': [WATER, TEA, COFFEE, SOFT_DRINK, CHE, TOFU, DESSERT]
     }
 }

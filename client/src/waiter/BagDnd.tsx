@@ -104,33 +104,35 @@ const BagDnd = ({ note, setNote, bags, phoId, showPho }: BagDndProps) => {
             <TextField
                 label="Customer name, phone, pickup time, ..."
                 size='small'
-                sx={{ mt: 1, mb: 1, width: '98%' }}
+                sx={{ mt: 1, mb: 1, ml: 1, width: '95%' }}
                 disabled={lockedTable}
                 value={note}
                 onChange={(e) => setNote ? setNote(e.target.value) : null}
             />
-            {Array.from(bags.entries()).map(([key, item], index) => {
-                return (
-                    <Droppable id={`${key}`} key={index}>
-                        <StyledPaper sx={{ m: 0, mb: 1, p: 0 }} onClick={() => { }}>
-                            <Typography variant="h6" style={{ fontWeight: 'bold' }} sx={{ ml: 0.5 }} >
-                                {table.id.startsWith('Togo')
-                                    ? `Togo ${key + 1}`
-                                    : key === 0 ? 'Dine-in' : bags.size > 2 ? `Togo ${key}` : 'Togo'}
-                            </Typography>
+            <Box style={{ maxHeight: 540, overflow: 'auto' }}>
+                {Array.from(bags.entries()).map(([key, item], index) => {
+                    return (
+                        <Droppable id={`${key}`} key={index}>
+                            <StyledPaper sx={{ m: 0, mb: 1, p: 0 }} onClick={() => { }}>
+                                <Typography variant="h6" style={{ fontWeight: 'bold' }} sx={{ ml: 0.5 }} >
+                                    {table.id.startsWith('Togo')
+                                        ? `Togo ${key + 1}`
+                                        : key === 0 ? 'Dine-in' : bags.size > 2 ? `Togo ${key}` : 'Togo'}
+                                </Typography>
 
-                            <OrderSummary
-                                key={index}
-                                bags={bags}
-                                bag={key}
-                                categoryItems={item}
-                                phoId={phoId} showPho={showPho}
-                            />
+                                <OrderSummary
+                                    key={index}
+                                    bags={bags}
+                                    bag={key}
+                                    categoryItems={item}
+                                    phoId={phoId} showPho={showPho}
+                                />
 
-                        </StyledPaper>
-                    </Droppable>
-                );
-            })}
+                            </StyledPaper>
+                        </Droppable>
+                    );
+                })}
+            </Box>
         </DndContext>
     );
 }

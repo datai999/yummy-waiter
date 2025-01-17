@@ -30,7 +30,8 @@ const LogoImageXS = styled("img")({
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(1),
-    paddingBottom: 0,
+    paddingTop: 2,
+    paddingBottom: 1,
     backgroundColor: "#fff",
     borderRadius: theme.shape.borderRadius,
 }));

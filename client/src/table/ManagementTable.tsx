@@ -57,8 +57,8 @@ const TableManagerment = (props: {
   };
 
   return (
-    <Box sx={{ padding: "20px" }}>
-      <Grid2 container spacing={2}>
+    <Box sx={{ padding: "10px" }}>
+      <Grid2 container spacing={2} columns={12}>
         {Array.from(props.tables.values()).map(table => (
           <Grid2 key={table.id} size={{ xs: 6, sm: 4, md: 3, lg: 3 }}>
             <CardTable table={table} orderTable={props.orderTable} doneTable={handleMoveToHistory} />

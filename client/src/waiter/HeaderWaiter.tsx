@@ -42,7 +42,8 @@ const LogoImageXS = styled("img")({
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(1),
-    paddingBottom: 0,
+    paddingTop: 2,
+    paddingBottom: 1,
     backgroundColor: "#fff",
     borderRadius: theme.shape.borderRadius,
 }));
@@ -83,8 +84,8 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
                         }} />
                     ))}
                 </Box>
-                <Box sx={{ maxWidth: '200px' }}>
-                    <TableSelections props={props} size={mdSize ? 'medium' : 'small'} />
+                <Box sx={{ maxWidth: '200px', minWidth: '150px' }}>
+                    <TableSelections props={props} size={mdSize ? 'medium' : 'medium'} />
                 </Box>
             </Box>
         </StyledPaper >);
@@ -149,7 +150,7 @@ const TableSelections = ({ props, size }: { props: ChildWaiterProps, size: strin
     >
         {tableIdAvailable.map((tableId) => (
             <MenuItem key={tableId} value={tableId}>
-                {tableId}{lockedServer ? <>: <FaPen style={{ fontSize: 12 }} />{` ${lockedServer} `}</> : ''}
+                {tableId}{lockedServer ? <> :{`${lockedServer} `}<FaPen style={{ fontSize: 12 }} /></> : ''}
             </MenuItem>
         ))}
     </Select>);

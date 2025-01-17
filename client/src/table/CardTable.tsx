@@ -25,7 +25,7 @@ import { CONTEXT } from '../App';
 import { FaPen } from 'react-icons/fa';
 
 const StyledCard = styled(Card)(({ status }: { status: TableStatus }) => ({
-  minHeight: "100px",
+  minHeight: "95px",
   cursor: "pointer",
   transition: "all 0.3s ease",
   // background:
@@ -111,7 +111,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
       status={lockedServer ? TableStatus.ACTIVE : table.status}
       onClick={cardOnClick}
     >
-      <CardContent sx={{ p: 1, pb: 0, pt: 0, maxHeight: '100px' }}>
+      <CardContent sx={{ p: 1, pb: 0, pt: 0, maxHeight: '90px' }}>
         <Grid2 container>
           <Grid2 size='grow' >
             <Typography variant="h5" sx={{ mb: 1, ml: table.id.startsWith('Table') ? '30%' : '20%' }}>{table.getName()}</Typography>

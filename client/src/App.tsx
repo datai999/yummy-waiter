@@ -220,6 +220,7 @@ export default function App() {
      *  + lock/unlock only user serve table
      *  + store order data
      *  + table note
+     *  - cancel order does not have anything: togo, change table, clean, reserve
      *  - view order data
      *  - UI for customer fill phone
      * kitchen: select part of bill, print bill & system change status to waiter
