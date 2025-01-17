@@ -36,7 +36,7 @@ export default function Footer(props: {
 }) {
     const { logout } = useContext(CONTEXT.Auth);
     const { table, orderTable } = useContext(CONTEXT.Table);
-    const [openModal, setOpen] = React.useState(false);
+    const [openModal, setOpen] = useState(false);
 
     const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
 

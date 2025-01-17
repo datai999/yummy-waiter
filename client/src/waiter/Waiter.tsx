@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 import { Box } from '@mui/material';
 
@@ -22,6 +22,10 @@ export interface ChildWaiterProps extends WaiterProps {
     setCategory: (category: string) => void
 }
 
+export const WAITER_CONTEXT = {
+    lockOrder: createContext({ locked: false, setLocked: (locked: boolean) => { } })
+}
+
 export default function Waiter(props: WaiterProps) {
     const { auth, logout } = useContext(CONTEXT.Auth);
     const [refresh, setRefresh] = useState(false);
@@ -29,6 +33,7 @@ export default function Waiter(props: WaiterProps) {
     const [category, setCategory] = useState(Object.keys(MENU)[0]);
     const [openModal, setOpenModal] = useState(false);
     const [note, setNote] = useState<string>(_.cloneDeep(table.note || ''));
+    const [locked, setLocked] = useState(false);
 
     let refBags = useRef(_.cloneDeep(props.tempBags || table.bags));
     const bags = refBags.current;
@@ -41,6 +46,11 @@ export default function Waiter(props: WaiterProps) {
         });
         bags.set(bags.size, newBag);
         setRefresh(!refresh);
+    }
+
+    const onSetLocked = (nextLocked: boolean) => {
+        setLocked(nextLocked);
+        syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(true, auth.name) });
     }
 
     const submitOrder = () => {
@@ -101,16 +111,18 @@ export default function Waiter(props: WaiterProps) {
     const childProps: ChildWaiterProps = { ...props, category: category, setCategory: setCategory, }
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column' }} minHeight='96vh'>
-            <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
-                <Header props={childProps} />
+        <WAITER_CONTEXT.lockOrder.Provider value={{ locked: locked, setLocked: onSetLocked }} >
+            <Box sx={{ display: 'flex', flexDirection: 'column' }} minHeight='96vh'>
+                <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
+                    <Header props={childProps} />
+                </Box>
+                <OrderTake note={note} setNote={setNote} bags={bags} props={childProps} />
+                <Box sx={{ position: "sticky", bottom: 5, zIndex: 1, bgcolor: "background.paper", mt: 'auto' }}>
+                    {/* <Box sx={{ mt: 'auto', mb: 1 }}> */}
+                    <Footer addTogoBag={addTogoBag} changeTable={() => prepareChangeTable(bags)} submitOrder={submitOrder} customerInfo={takeCustomerInfo} doneOrder={doneOrder} />
+                </Box>
+                <TakeCustomerInfo openModal={openModal} closeModel={doneTakeCustomerInfo} />
             </Box>
-            <OrderTake note={note} setNote={setNote} bags={bags} props={childProps} />
-            <Box sx={{ position: "sticky", bottom: 5, zIndex: 1, bgcolor: "background.paper", mt: 'auto' }}>
-                {/* <Box sx={{ mt: 'auto', mb: 1 }}> */}
-                <Footer addTogoBag={addTogoBag} changeTable={() => prepareChangeTable(bags)} submitOrder={submitOrder} customerInfo={takeCustomerInfo} doneOrder={doneOrder} />
-            </Box>
-            <TakeCustomerInfo openModal={openModal} closeModel={doneTakeCustomerInfo} />
-        </Box>
+        </WAITER_CONTEXT.lockOrder.Provider >
     );
 }

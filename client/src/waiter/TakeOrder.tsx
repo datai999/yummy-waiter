@@ -16,12 +16,11 @@ import {
     MENU,
 } from '../my/my-constants';
 import BagDnd from './BagDnd';
-import { ChildWaiterProps } from './Waiter';
-import { CategoryItem, LockedTable, Pho, TrackedItem, TrackedNonPho, TrackedPho } from '../my/my-class';
+import { ChildWaiterProps, WAITER_CONTEXT } from './Waiter';
+import { CategoryItem, Pho, TrackedItem, TrackedNonPho, TrackedPho } from '../my/my-class';
 import TakePho from './TakePho';
 import TakeNonPho from './TakeNonPho';
 import { CONTEXT } from '../App';
-import { SYNC_TYPE, syncServer } from '../my/my-ws';
 import { UTILS } from '../my/my-util';
 
 const OrderTake = ({ props, note, setNote, bags }: {
@@ -32,13 +31,12 @@ const OrderTake = ({ props, note, setNote, bags }: {
 }) => {
     const { auth } = useContext(CONTEXT.Auth);
     const { table } = useContext(CONTEXT.Table);
+    const { locked, setLocked } = useContext(WAITER_CONTEXT.lockOrder);
 
     const [refresh, setRefresh] = useState(false)
     const [pho, setPho] = useState<Pho>(new Pho());
     const [itemRef, setItemRef] = useState<{ bag: number, trackedIndex: number, server: string, time: Date | undefined }>
         ({ bag: -1, trackedIndex: -1, server: '', time: undefined });
-
-    const hasChange = useRef(false);
 
     const category = MENU[props.category as keyof typeof MENU];
 
@@ -72,9 +70,8 @@ const OrderTake = ({ props, note, setNote, bags }: {
     }
 
     const lockTable = () => {
-        if (!hasChange.current) {
-            hasChange.current = true;
-            syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(true, auth.name) });
+        if (!locked) {
+            setLocked(true);
         }
     }
 

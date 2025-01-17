@@ -51,6 +51,7 @@ export default function Login(props: {
                         <Button
                             variant="outlined"
                             color="primary"
+                            // onClick={() => inputKey(key)}
                             onTouchStart={() => inputKey(key)}
                             fullWidth
                             sx={{ minHeight: 70, maxHeight: 5, borderRadius: '32px' }}

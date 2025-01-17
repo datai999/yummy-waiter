@@ -102,7 +102,7 @@ const BagDnd = ({ note, setNote, bags, phoId, showPho }: BagDndProps) => {
             onDragEnd={onDragEnd}
         >
             <TextField
-                label="Customer name, phone, pickup time, ..."
+                label="Customer name, phone, pickup time, reserved, ..."
                 size='small'
                 sx={{ mt: 1, mb: 1, ml: 1, width: '95%' }}
                 disabled={lockedTable}
