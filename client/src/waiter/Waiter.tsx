@@ -55,7 +55,7 @@ export default function Waiter(props: WaiterProps) {
 
     const submitOrder = () => {
         let bagChange = false;
-        if (note !== table.note) {
+        if (note !== (table.note || '')) {
             bagChange = true;
             table.note = note;
         }
@@ -87,6 +87,7 @@ export default function Waiter(props: WaiterProps) {
                 table.status = TableStatus.ACTIVE;
                 table.orderTime = new Date();
             }
+            props.tables.set(table.id, table);
             syncServer(SYNC_TYPE.ACTIVE_TABLES, { [table.id]: table });
         }
     };
