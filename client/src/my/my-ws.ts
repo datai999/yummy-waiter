@@ -27,6 +27,7 @@ const initWsClient = (username: string,
     onSyncTables: (senter: string, tables: Map<String, Table>) => void,
     onLockTables: (senter: string, lockedTables: Map<string, LockedTable>) => void,
     onDoneOrders: (senter: string, tables: Map<String, Table>) => void,
+    removeLockedTablesBy?: (username: string) => void
 ) => {
     clienId = username;
     websocket = new WebSocket('ws://192.168.12.182:8080' + '/' + clienId);
@@ -38,6 +39,8 @@ const initWsClient = (username: string,
             type: SYNC_TYPE[SYNC_TYPE.REQUEST],
             payload: "INITIAL",
         }));
+        if (!clienId.startsWith('CLient') && removeLockedTablesBy)
+            removeLockedTablesBy(username);
     };
 
     websocket.onmessage = (evt) => {

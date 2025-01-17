@@ -108,16 +108,15 @@ export default function App() {
   const onSetAuth = (auth: Auth) => {
     if (closeInitWsClient) {
       closeInitWsClient();
-      closeInitWsClient = initWsClient(auth.name, onSyncTables, onLockedTables, onDoneOrders);
+      closeInitWsClient = initWsClient(auth.name, onSyncTables, onLockedTables, onDoneOrders, removeLockedTablesBy);
     }
-    removeLockedTablesBy(auth);
     setAuth(auth);
   }
 
-  const removeLockedTablesBy = (auth: Auth) => {
+  const removeLockedTablesBy = (username: string) => {
     const wrongLocked = new Map<string, LockedTable>();
     LOCKED_TABLES.forEach((lockedTable, tableId) => {
-      if (lockedTable.server !== auth?.name) return;
+      if (lockedTable.server !== username) return;
       lockedTable.locked = false;
       wrongLocked.set(tableId, lockedTable);
       LOCKED_TABLES.delete(tableId);
