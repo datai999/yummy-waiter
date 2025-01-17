@@ -219,7 +219,7 @@ export default function App() {
      *  + UI table: server, Badge by special item
      *  + lock/unlock only user serve table
      *  + store order data
-     *  - customer info
+     *  + table note
      *  - view order data
      *  - UI for customer fill phone
      * kitchen: select part of bill, print bill & system change status to waiter

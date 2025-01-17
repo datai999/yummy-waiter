@@ -70,7 +70,7 @@ const initWsClient = (username: string,
     };
 
     websocket.onclose = () => {
-        console.log(`WebSocket is closed:${clienId}`);
+        console.log(`WebSocket is closed by:${clienId}`);
     };
 
     return () => {
