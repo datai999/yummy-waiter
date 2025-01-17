@@ -32,7 +32,7 @@ const initWsClient = (username: string,
     websocket = new WebSocket('ws://192.168.12.182:8080' + '/' + clienId);
 
     websocket.onopen = () => {
-        console.log('WebSocket is connected');
+        console.log(`WebSocket is connected:${clienId}`);
         websocket.send(JSON.stringify({
             senter: clienId,
             type: SYNC_TYPE[SYNC_TYPE.REQUEST],
@@ -67,7 +67,7 @@ const initWsClient = (username: string,
     };
 
     websocket.onclose = () => {
-        console.log('WebSocket is closed');
+        console.log(`WebSocket is closed:${clienId}`);
     };
 
     return () => {

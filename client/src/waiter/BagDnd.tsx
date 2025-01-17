@@ -26,17 +26,20 @@ import { StyledPaper } from '../my/my-styled';
 import theme from '../theme';
 import OrderSummary from './DetailOrder';
 import { CategoryItem, NonPho, Pho } from '../my/my-class';
-import { TableContext } from '../App';
+import { CONTEXT, TableContext } from '../App';
 
 export interface BagDndProps {
+    note?: string,
+    setNote?: (newNote: string) => void,
     bags: Map<number, Map<string, CategoryItem>>,
     phoId: String;
     showPho?: (isPho: boolean, bag: number, category: string, trackIndex: number, itemId: string) => void,
 };
-const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
+const BagDnd = ({ note, setNote, bags, phoId, showPho }: BagDndProps) => {
     const { table } = useContext(TableContext);
     const [refresh, setRefresh] = React.useState(false);
-    const [note, setNote] = useState<string>(table.customer || '');
+
+    const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -103,8 +106,9 @@ const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
                 label="Customer name, phone, pickup time, ..."
                 size='small'
                 sx={{ mt: 1, mb: 1 }}
+                disabled={lockedTable}
                 value={note}
-                onChange={(e) => setNote(e.target.value)}
+                onChange={(e) => setNote ? setNote(e.target.value) : null}
             />
             {Array.from(bags.entries()).map(([key, item], index) => {
                 return (

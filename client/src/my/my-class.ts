@@ -124,7 +124,7 @@ export class CategoryItem {
 
 export class Table {
     id: string;
-    customer?: string;
+    note?: string;
     status: TableStatus = TableStatus.AVAILABLE;
 
     @Type(() => String)

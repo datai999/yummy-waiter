@@ -28,6 +28,7 @@ export default function Waiter(props: WaiterProps) {
     const { table, orderTable, prepareChangeTable } = useContext(CONTEXT.Table);
     const [category, setCategory] = useState(Object.keys(MENU)[0]);
     const [openModal, setOpenModal] = useState(false);
+    const [note, setNote] = useState<string>(_.cloneDeep(table.note || ''));
 
     let refBags = useRef(_.cloneDeep(props.tempBags || table.bags));
     const bags = refBags.current;
@@ -44,6 +45,10 @@ export default function Waiter(props: WaiterProps) {
 
     const submitOrder = () => {
         let bagChange = false;
+        if (note !== table.note) {
+            bagChange = true;
+            table.note = note;
+        }
         let count = 0;
         bags.forEach((categoryItems, key) => {
             let hasItem = false;
@@ -100,7 +105,7 @@ export default function Waiter(props: WaiterProps) {
             <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
                 <Header props={childProps} />
             </Box>
-            <OrderTake bags={bags} props={childProps} />
+            <OrderTake note={note} setNote={setNote} bags={bags} props={childProps} />
             <Box sx={{ position: "sticky", bottom: 3, zIndex: 1, bgcolor: "background.paper", mt: 'auto' }}>
                 {/* <Box sx={{ mt: 'auto', mb: 1 }}> */}
                 <Footer addTogoBag={addTogoBag} changeTable={() => prepareChangeTable(bags)} submitOrder={submitOrder} customerInfo={takeCustomerInfo} doneOrder={doneOrder} />

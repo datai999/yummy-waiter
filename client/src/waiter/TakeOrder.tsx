@@ -24,8 +24,10 @@ import { CONTEXT } from '../App';
 import { SYNC_TYPE, syncServer } from '../my/my-ws';
 import { UTILS } from '../my/my-util';
 
-const OrderTake = ({ props, bags }: {
+const OrderTake = ({ props, note, setNote, bags }: {
     props: ChildWaiterProps,
+    note: string,
+    setNote: (newNote: string) => void,
     bags: Map<number, Map<string, CategoryItem>>
 }) => {
     const { auth } = useContext(CONTEXT.Auth);
@@ -125,7 +127,7 @@ const OrderTake = ({ props, bags }: {
                     />)}
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }} style={{ maxHeight: 600, overflow: 'auto' }}>
-                <BagDnd bags={bags} phoId={pho.id} showPho={showPho} />
+                <BagDnd note={note} setNote={setNote} bags={bags} phoId={pho.id} showPho={showPho} />
             </Grid2>
         </Grid2 >
     );

@@ -18,10 +18,10 @@ const modalStyle = {
 export default function TakeCustomerInfo(props: { openModal: boolean, closeModel: () => void }) {
     const { table } = useContext(CONTEXT.Table);
 
-    const [note, setNote] = useState<string>(table.customer || '');
+    const [note, setNote] = useState<string>(table.note || '');
 
     const doneTakeCustomerInfo = () => {
-        table.customer = note;
+        table.note = note;
         props.closeModel();
     }
 

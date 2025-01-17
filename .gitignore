@@ -32,3 +32,4 @@ FILE
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+server/public/data/active_tables.json
