@@ -37,14 +37,14 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
 }));
 
-const Header = (props: { setHistoryOrder: (state: boolean) => void, newTogo: () => void }) => {
+const Header = (props: { setHistoryOrder: (state: boolean) => void}) => {
     const { auth, logout } = useContext(AuthContext);
 
     return (
         <StyledPaper sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', direction: 'row', alignItems: 'center' }}>
-                <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} onClick={logout} />
-                <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} onClick={logout} />
+                <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} onClick={() => props.setHistoryOrder(false)} />
+                <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} onClick={() => props.setHistoryOrder(false)} />
                 <Typography fontWeight='fontWeightMedium' variant="h4" sx={{ textAlign: "center", display: 'flex', ml: 1 }}>
                     Yummy Phở 2
                 </Typography>
@@ -52,7 +52,7 @@ const Header = (props: { setHistoryOrder: (state: boolean) => void, newTogo: () 
                     : {auth.name}
                 </Typography>
             </Box>
-            <Box sx={{ mt: '2px' }}>
+            {/* <Box sx={{ mt: '2px' }}>
                 <CategoryButton variant="outlined" size='large' selected={false} sx={{ borderRadius: 5, pl: 2, pr: 2, mr: 1, height: '50px' }}
                     onClick={() => props.setHistoryOrder(true)}>
                     Order history
@@ -67,7 +67,7 @@ const Header = (props: { setHistoryOrder: (state: boolean) => void, newTogo: () 
                         <GiPaperBagFolded style={{ fontSize: 32, marginLeft: 3 }} />
                     </Box>
                 </CategoryButton>
-            </Box>
+            </Box> */}
         </StyledPaper >);
 }
 

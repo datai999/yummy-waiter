@@ -103,6 +103,7 @@ export default function Waiter(props: WaiterProps) {
     }
 
     const doneOrder = () => {
+        table.cleanTime = new Date();
         if (table.id.startsWith('Togo')) props.tables.delete(table.id);
         else props.tables.set(table.id, new Table(table.id));
         syncServer(SYNC_TYPE.DONE_ORDER, { [table.id]: table });

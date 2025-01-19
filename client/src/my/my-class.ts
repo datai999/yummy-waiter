@@ -131,6 +131,10 @@ export class Table {
     @UTILS.TransformTime()
     orderTime: Date | null = null;
 
+    @Type(() => String)
+    @UTILS.TransformTime()
+    cleanTime?: Date | null = null;
+
     @Exclude()
     timer: number = 0;
 

@@ -1,6 +1,6 @@
 const { readJsonFile } = require('./commonService');
 
-const loadUsers = () => readJsonFile('./public/data/users.json');
+const loadUsers = () => readJsonFile('users.json');
 
 module.exports = {
     loadUsers

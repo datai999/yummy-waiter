@@ -1,6 +1,6 @@
 const { readJsonFile } = require('./commonService');
 
-const loadMenu = () => readJsonFile('./public/data/menu.json');
+const loadMenu = () => readJsonFile('menu.json');
 
 module.exports = {
     loadMenu

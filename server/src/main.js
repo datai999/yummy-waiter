@@ -32,7 +32,7 @@ function createWindow() {
 // Some APIs can only be used after this event occurs.
 // This method is equivalent to 'app.on('ready', function())'
 app.whenReady().then(() => {
-  createWindow();
+  // createWindow();
   initWsServer();
 })
 

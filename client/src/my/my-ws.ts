@@ -1,6 +1,7 @@
 import { instanceToPlain, plainToInstance } from "class-transformer";
 import { LockedTable, Table } from "./my-class";
 import { JSON_replacer, JSON_reviver } from "./my-util";
+import { updateHistoryOrder } from "../order/OrderHistory";
 
 let websocket: WebSocket;
 let clienId: string;
@@ -12,6 +13,7 @@ export enum SYNC_TYPE {
     ACTIVE_TABLES,
     LOCKED_TABLES,
     DONE_ORDER,
+    HISTORY_ORDER,
 }
 
 export const syncServer = (type: SYNC_TYPE, data: any) => {
@@ -66,6 +68,10 @@ const initWsClient = (username: string,
             const tables = new Map(Object.entries(data.payload)
                 .map(([tableId, tableJson]) => [tableId, plainToInstance(Table, tableJson)]));
             onDoneOrders(data.senter, tables);
+        }
+        if (data.type === SYNC_TYPE[SYNC_TYPE.HISTORY_ORDER]) {
+            const tables = Array.from(data.payload).map(tableJson => plainToInstance(Table, tableJson));
+            updateHistoryOrder(tables);
         }
     };
 

@@ -1,7 +1,7 @@
 var fs = require('fs');
 
 const readJsonFile = (filePath) => {
-    const data = fs.readFileSync(filePath, 'utf8', (err, data) => {
+    const data = fs.readFileSync('./public/data/' + filePath, 'utf8', (err, data) => {
         if (err) {
             console.error({ "error": err });
             return;
@@ -9,6 +9,20 @@ const readJsonFile = (filePath) => {
     });
     return JSON.parse(data);
 }
+
+const readJsonDirectory = (directoryPath) => {
+    const fileNames = fs.readdirSync('./public/data/' + directoryPath, (err) => {
+        if (err) {
+            console.error('Error reading directory:', err);
+            return;
+        }
+    });
+    return fileNames.map(fileName => {
+        console.log(fileName);
+        return readJsonFile(directoryPath + '/' + fileName);
+    });
+}
+
 
 const writeJsonFile = (data, fileName, path = '') => {
     const dir = './public/data' + path;
@@ -34,5 +48,6 @@ const formatTime = (time) => {
 
 module.exports = {
     readJsonFile,
+    readJsonDirectory,
     writeJsonFile
 }

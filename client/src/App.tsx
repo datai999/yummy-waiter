@@ -10,6 +10,7 @@ import { Auth, CategoryItem, LockedTable, Table } from './my/my-class';
 import Login from './user/Login';
 import { TableStatus } from './my/my-constants';
 import { UTILS } from './my/my-util';
+import OrderHistory from './order/OrderHistory';
 
 interface IAuthContext {
   auth: any, logout: () => void
@@ -47,6 +48,7 @@ export default function App() {
   const [refresh, setRefresh] = useState<boolean>(false);
   const [refresh2, setRefresh2] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
+  const [historyOrder, setHistoryOrder] = useState(false);
 
   const holdTable = useRef<Table | null>();
   const toasMsg = useRef<string>();
@@ -56,6 +58,7 @@ export default function App() {
   useEffect(() => {
     closeInitWsClient = initWsClient(auth ? auth.name : "Client_" + Math.floor(Math.random() * 10),
       onSyncTables, onLockedTables, onDoneOrders);
+    onSetAuth(trung);
     // orderTable(tables.get('Table 12')!);
   }, []);
 
@@ -169,12 +172,15 @@ export default function App() {
               <Waiter tables={tables} tempBags={tempBags.current} />
             </TableContext.Provider>
             )
-            : (<>
-              <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
-                <Header newTogo={newTogo} />
-              </Box>
-              <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
-            </>)}
+            : historyOrder
+              ? <OrderHistory setHistoryOrder={setHistoryOrder} />
+              : (<>
+                <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
+                  <Header setHistoryOrder={setHistoryOrder} newTogo={newTogo} />
+                </Box>
+                <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
+              </>)
+          }
         </LockedTableContext.Provider>
         <Snackbar
           open={open}

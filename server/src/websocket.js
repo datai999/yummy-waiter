@@ -3,6 +3,7 @@ const WebSocket = require('ws');
 const { loadUsers } = require("./service/userService");
 const { loadMenu } = require('./service/menuService');
 const { readJsonFile, writeJsonFile } = require('./service/commonService.js');
+const { getHistoryOrder } = require('./service/orderService.js');
 
 let wss;
 
@@ -26,7 +27,7 @@ let ACTIVE_TABLES = {
 
 const initWsServer = () => {
     console.log('Init ws server');
-    ACTIVE_TABLES = readJsonFile('./public/data/active_tables.json');
+    ACTIVE_TABLES = readJsonFile('active_tables.json');
     wss = new WebSocket.Server({ port: 8080 });
     wss.on('connection', onConnection);
     console.log('Done: Init ws server');
@@ -73,6 +74,13 @@ const onConnection = (ws, req) => {
         if (data.type === 'DONE_ORDER') {
             doneOrder(data.payload);
             boardcastMessageExceptOwner(ws, messageConvert);
+        }
+        if (data.type === 'HISTORY_ORDER') {
+            sendMessageTo(ws, JSON.stringify({
+                senter: "SERVER",
+                type: data.type,
+                payload: getHistoryOrder(data.payload)
+            }));
         }
     });
 
