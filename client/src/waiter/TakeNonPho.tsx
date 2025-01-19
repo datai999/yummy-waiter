@@ -50,9 +50,8 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
                 {index > 0 && (<Divider sx={{ m: ['BEEF', 'CHICKEN'].includes(props.category) ? 0.2 : 1 }} />)}
                 <CheckButton
                     multi={true}
-                    allOptions={Object.keys(nonPho)}
+                    obj={nonPho}
                     options={[]}
-                    createLabel={(key) => key}
                     callback={(newSideOrder) => addItem(newSideOrder[0])}
                 />
             </Box>

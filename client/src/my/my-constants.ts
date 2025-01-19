@@ -52,88 +52,88 @@ export const CHICKEN_REFERENCES = {
 }
 
 export const BEEF_DINE_IN = {
-    'HD': 'HD',
-    'HT': 'HT',
-    'NB': 'NB',
-    'Giá sống': 'Giá sống',
+    'HD': null,
+    'HT': null,
+    'NB': null,
+    'Giá sống': null,
 }
 export const BEEF_SIDE = {
-    'XiQ': 'XiQ',
-    'Ch.Bánh': 'Ch.Bánh',
-    'Ch.BT': 'Ch.BT',
-    'Ch.Egg': 'Ch.Egg',
-    'Bread': 'Bread',
-    'Ch.Soup': 'Ch.Soup',
-    'Large.Soup': 'Large Soup',
-    'Egg rolls': 'Egg rolls',
-    '1 Egg roll': '1 Egg roll',
+    'XiQ': { price: '6' },
+    'Ch.Bánh': null,
+    'Ch.BT': null,
+    'Ch.Egg': null,
+    'Bread': null,
+    'Ch.Soup': null,
+    'Large.Soup': null,
+    'Egg rolls': null,
+    '1 Egg roll': null,
     '?': '?',
 }
 export const BEEF_MEAT_SIDE = {
-    'Dĩa Tái': "Dĩa T",
-    'Chén Tái': "Ch.T",
-    'Chén Chín': "Ch.C",
-    'Chén Gầu': "Ch.G`",
-    'Chén Gân': "Ch.g",
-    'Chén Sách': "Ch.S",
-    'Chén BV': "Ch.BV"
+    'Dĩa Tái': { code: "Dĩa T" },
+    'Chén Tái': { code: "Ch.T" },
+    'Chén Chín': { code: "Ch.C" },
+    'Chén Gầu': { code: "Ch.G`" },
+    'Chén Gân': { code: "Ch.g" },
+    'Chén Sách': { code: "Ch.S" },
+    'Chén BV': { code: "Ch.BV" }
 }
 
 export const CHICKEN_SIDE = {
-    "Giá trụng": "Giá trụng"
+    "Giá trụng": null
 }
 export const CHICKEN_SIDE_2 = {
-    "Extra bamboo": "Extra bamboo",
-    "Extra noodle": "Extra noodle",
+    "Extra bamboo": { price: '9999' },
+    "Extra noodle": { price: '9999' },
 }
 export const CHICKEN_SIDE_3 = {
-    "Dĩa ức": 'Dia.U',
-    'Dĩa cánh': 'Dia.C',
-    'Dĩa đùi': 'Dia.D'
+    "Dĩa ức": { code: 'Dia.U' },
+    'Dĩa cánh': { code: 'Dia.C' },
+    'Dĩa đùi': { code: 'Dia.D' }
 }
 export const CHICKEN_SIDE_4 = {
-    "Half chicken": 'Half chicken',
-    "Half chicken: Chop": 'Half chicken: Chop',
-    "Whole chicken": 'Whole chicken',
-    "Whole chicken: Chop": 'Whole chicken: Chop',
+    "Half chicken": { price: '13.5' },
+    "Half chicken: Chop": { price: '13.5' },
+    "Whole chicken": { price: '27' },
+    "Whole chicken: Chop": { price: '27' },
 }
 
 export const WATER = {
-    'Water': 'Water',
-    'Ice-water': 'Ice-water',
-    'Warm-water': 'Warm-water',
-    'Hot-water': 'Hot-water'
+    'Water': null,
+    'Ice-water': null,
+    'Warm-water': null,
+    'Hot-water': null
 }
 const TEA = {
-    'Ice-tea': 'Ice-tea',
-    'Hot-tea': 'Hot-tea',
+    'Ice-tea': null,
+    'Hot-tea': null
 }
 const COFFEE = {
-    'Coffee': 'Coffee',
-    'Black-coffee': 'Black-coffee',
-    'Hot Coffee': 'Hot Coffee',
-    'Hot Black-coffee': 'Hot Black-coffee',
+    'Coffee': { price: '6' },
+    'Black-coffee': { price: '6' },
+    'Hot Coffee': { price: '6' },
+    'Hot Black-coffee': { price: '6' },
 }
 const SOFT_DRINK = {
-    'Coke': 'Coke',
-    'Diet-Coke': 'Diet-Coke',
-    'Sprite': 'Sprite'
+    'Coke': { price: '3' },
+    'Diet-Coke': { price: '3' },
+    'Sprite': { price: '3' },
 }
 const TOFU = {
-    'Tofu soybean': 'Tofu soybean',
-    'Tofu matcha': 'Tofu matcha',
-    'Tofu ginger': 'Tofu ginger',
+    'Tofu soybean': { price: '3' },
+    'Tofu matcha': { price: '3' },
+    'Tofu ginger': { price: '3' },
 }
 const CHE = {
-    'Chè 3M': 'Chè 3M',
-    'Chè Yummy': 'Chè Yummy',
-    'Chè SSBL': 'Chè SSBL',
+    'Chè 3M': { price: '6' },
+    'Chè Yummy': { price: '6' },
+    'Chè SSBL': { price: '6' },
 }
 
 export const DESSERT = {
-    'FLan': 'Flan',
-    'Coconut jelly': 'Coconut jelly',
-    'Mixed jelly': 'Mixed jelly',
+    'FLan': { price: '3' },
+    'Coconut jelly': { price: '3' },
+    'Mixed jelly': { price: '6' },
 }
 
 export const MENU = {

@@ -6,6 +6,8 @@ import {
 } from 'react-icons/fa';
 
 import {
+    Badge,
+    Box,
     Button,
     Chip,
     Grid2,
@@ -22,10 +24,11 @@ import { Draggable } from '../waiter/BagDnd';
 
 interface CheckButtonProps {
     multi: boolean,
-    allOptions: string[],
+    obj?: Object,
+    allOptions?: string[],
     disabled?: string[],
     options: string[],
-    createLabel: (option: string) => string,
+    createLabel?: (option: string) => string,
     callback: (next: string[]) => void,
 }
 
@@ -35,7 +38,8 @@ interface CheckButtonProps {
 //     && [...prev.allOptions].sort().join(',') === [...next.allOptions].sort().join(',')
 //     && true;
 const checkButtonPropsEqual = () => false;
-const pCheckButton = ({ ...props }: CheckButtonProps) => {
+const VIEW_PRICE = true;
+const pCheckButton = (props: CheckButtonProps) => {
     const [options, setOptions] = useState<string[]>([...props.options]);
 
     useEffect(() => {
@@ -50,29 +54,43 @@ const pCheckButton = ({ ...props }: CheckButtonProps) => {
         props.callback([...newOptions]);
     }
 
+    const getPrice = (option: string) => {
+        if (!props.obj) return null;
+        const itemObj = props.obj[option as keyof typeof props.obj];
+        if (itemObj instanceof Object) {
+            return `$${itemObj['price' as keyof Object]}`;
+        }
+        return null;
+    }
+
     return (
         <>
             <Grid2 container spacing={0} sx={{ display: { xs: 'none', sm: 'flex', md: 'flex', lg: 'flex' }, mb: 0, mt: 0 }}>
-                {props.allOptions.map((option) => (
+                {(props.allOptions || Object.keys(props.obj!)).map((option) => (
                     <Grid2 key={option}>
-                        <CategoryButton
-                            disabled={props.disabled?.includes(option)}
-                            variant='outlined'
-                            size='large'
-                            onClick={() => onClick(option)}
-                            selected={options?.includes(option)}
-                            sx={{ minWidth: 100, maxWidth: 200, minHeight: 50 }}
-                        >
-                            {props.createLabel(option)}
-                        </CategoryButton>
+                        <Badge badgeContent={null} anchorOrigin={{ vertical: 'top', horizontal: 'right', }} >
+                            <CategoryButton
+                                disabled={props.disabled?.includes(option)}
+                                variant='outlined'
+                                size='large'
+                                onClick={() => onClick(option)}
+                                selected={options?.includes(option)}
+                                sx={{ minWidth: 100, maxWidth: 200, minHeight: 50 }}
+                            >
+                                {option}
+                            </CategoryButton>
+                            {VIEW_PRICE && <Box sx={{ position: "absolute", top: -3, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
+                                {getPrice(option)}
+                            </Box>}
+                        </Badge>
                     </Grid2>
                 ))}
-            </Grid2>
+            </Grid2 >
             <Grid2 container spacing={0} sx={{ display: { xs: 'flex', sm: 'none', md: 'none', lg: 'none' }, mb: 0 }}>
-                {props.allOptions.map((option) => (
+                {(props.allOptions || Object.keys(props.obj!)).map((option) => (
                     <Grid2 key={option}>
                         <Chip
-                            label={props.createLabel(option)}
+                            label={option}
                             onClick={() => onClick(option)}
                             color={options?.includes(option) ? "primary" : "default"}
                         />
