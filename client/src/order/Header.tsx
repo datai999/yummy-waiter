@@ -1,18 +1,17 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import {
     Box,
-    Grid2,
     Paper,
     styled,
     Typography,
 } from '@mui/material';
 
 import YummyLogo from '../assets/yummy.png';
-import { CategoryButton } from '../my/my-styled';
-import { GiPaperBagFolded } from 'react-icons/gi';
 import { AuthContext } from '../App';
-import { MdManageHistory } from 'react-icons/md';
+import { DatePicker } from '@mui/x-date-pickers';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import dayjs, { Dayjs } from 'dayjs';
 
 const LogoImage = styled("img")({
     width: "60px",
@@ -37,8 +36,17 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
 }));
 
-const Header = (props: { setHistoryOrder: (state: boolean) => void}) => {
-    const { auth, logout } = useContext(AuthContext);
+const Header = (props: {
+    setHistoryOrder: (state: boolean) => void,
+    historyDate: Date,
+    setHistoryDate: (date: Date) => void,
+}) => {
+    const { auth } = useContext(AuthContext);
+
+    const handleDateChange = (date: Dayjs | null) => {
+        date = date || dayjs();
+        props.setHistoryDate(date.toDate());
+    };
 
     return (
         <StyledPaper sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
@@ -52,22 +60,8 @@ const Header = (props: { setHistoryOrder: (state: boolean) => void}) => {
                     : {auth.name}
                 </Typography>
             </Box>
-            {/* <Box sx={{ mt: '2px' }}>
-                <CategoryButton variant="outlined" size='large' selected={false} sx={{ borderRadius: 5, pl: 2, pr: 2, mr: 1, height: '50px' }}
-                    onClick={() => props.setHistoryOrder(true)}>
-                    Order history
-                    <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                        <MdManageHistory style={{ fontSize: 25, marginLeft: 3 }} />
-                    </Box>
-                </CategoryButton>
-                <CategoryButton variant="outlined" size='large' selected={false} sx={{ borderRadius: 5, pl: 2, pr: 2, height: '50px' }}
-                    onClick={props.newTogo}>
-                    New togo
-                    <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                        <GiPaperBagFolded style={{ fontSize: 32, marginLeft: 3 }} />
-                    </Box>
-                </CategoryButton>
-            </Box> */}
+            <DatePicker label="History date" sx={{ mt: 2 }} slotProps={{ textField: { size: 'small' } }}
+                maxDate={dayjs()} value={dayjs(props.historyDate)} onChange={handleDateChange} />
         </StyledPaper >);
 }
 

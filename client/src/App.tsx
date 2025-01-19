@@ -11,6 +11,8 @@ import Login from './user/Login';
 import { TableStatus } from './my/my-constants';
 import { UTILS } from './my/my-util';
 import OrderHistory from './order/OrderHistory';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 interface IAuthContext {
   auth: any, logout: () => void
@@ -164,45 +166,47 @@ export default function App() {
   if (!auth) return (<Login setAuth={onSetAuth} />)
 
   return (
-    <ToastContext.Provider value={(msg: string) => { toasMsg.current = msg; setOpen(true) }}>
-      <AuthContext.Provider value={{ auth, logout }}>
-        <LockedTableContext.Provider value={(tableId: string) => LOCKED_TABLES.get(tableId)?.server}>
-          {table
-            ? (<TableContext.Provider value={{ table, orderTable, prepareChangeTable }}>
-              <Waiter tables={tables} tempBags={tempBags.current} />
-            </TableContext.Provider>
-            )
-            : historyOrder
-              ? <OrderHistory setHistoryOrder={setHistoryOrder} />
-              : (<>
-                <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
-                  <Header setHistoryOrder={setHistoryOrder} newTogo={newTogo} />
-                </Box>
-                <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
-              </>)
-          }
-        </LockedTableContext.Provider>
-        <Snackbar
-          open={open}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          onClose={() => setOpen(false)}
-          autoHideDuration={5000}
-          TransitionComponent={(props: SlideProps) => <Slide {...props} direction="down" />}
-        // message={`${toasMsg.current}`}
-        // action={action}
-        >
-          <Alert
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <ToastContext.Provider value={(msg: string) => { toasMsg.current = msg; setOpen(true) }}>
+        <AuthContext.Provider value={{ auth, logout }}>
+          <LockedTableContext.Provider value={(tableId: string) => LOCKED_TABLES.get(tableId)?.server}>
+            {table
+              ? (<TableContext.Provider value={{ table, orderTable, prepareChangeTable }}>
+                <Waiter tables={tables} tempBags={tempBags.current} />
+              </TableContext.Provider>
+              )
+              : historyOrder
+                ? <OrderHistory setHistoryOrder={setHistoryOrder} />
+                : (<>
+                  <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
+                    <Header setHistoryOrder={setHistoryOrder} newTogo={newTogo} />
+                  </Box>
+                  <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
+                </>)
+            }
+          </LockedTableContext.Provider>
+          <Snackbar
+            open={open}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             onClose={() => setOpen(false)}
-            severity="info"
-            color='error'
-            variant="filled"
-            sx={{ width: '100%' }}
+            autoHideDuration={5000}
+            TransitionComponent={(props: SlideProps) => <Slide {...props} direction="down" />}
+          // message={`${toasMsg.current}`}
+          // action={action}
           >
-            {`${toasMsg.current}`}
-          </Alert>
-        </Snackbar>
-      </AuthContext.Provider>
-    </ToastContext.Provider>
+            <Alert
+              onClose={() => setOpen(false)}
+              severity="info"
+              color='error'
+              variant="filled"
+              sx={{ width: '100%' }}
+            >
+              {`${toasMsg.current}`}
+            </Alert>
+          </Snackbar>
+        </AuthContext.Provider>
+      </ToastContext.Provider>
+    </LocalizationProvider>
     /**
      * waiter: 
      *  + communicate between devices in LAN

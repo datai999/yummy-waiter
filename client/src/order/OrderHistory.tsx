@@ -1,27 +1,31 @@
 import React, { useEffect, useState } from "react";
 import Header from "./Header";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowParams } from "@mui/x-data-grid";
 import { SYNC_TYPE, syncServer } from "../my/my-ws";
 import { UTILS } from "../my/my-util";
 import { Table } from "../my/my-class";
-import { useMediaQuery } from "@mui/material";
+import { Button, useMediaQuery } from "@mui/material";
 import { StyledPaper } from "../my/my-styled";
+import { FaPrint } from "react-icons/fa";
+import { GrView } from "react-icons/gr";
 
 const columns: GridColDef[] = [
     { field: 'id', headerName: 'Order', width: 110 },
     { field: 'cleanTime', headerName: 'Clean', width: 110 },
-    { field: 'orderName', headerName: 'Table', width: 120 },
-    { field: 'servers', headerName: 'Servers', sortable: false, width: 200 },
-    { field: 'note', headerName: 'Note', sortable: false, width: 200 },
+    { field: 'orderName', headerName: 'Table', width: 110 },
+    { field: 'servers', headerName: 'Servers', sortable: false, width: 150 },
+    { field: 'cashier', headerName: 'Cashier', sortable: false, width: 100 },
+    { field: 'amount', headerName: '$', width: 80 },
+    { field: 'note', headerName: 'Note', sortable: false, width: 230 },
     {
-        field: 'fullName',
-        headerName: 'Detail',
-        description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        width: 160,
-        valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
-
-    },
+        field: 'actions',
+        type: 'actions',
+        width: 135,
+        getActions: (params: GridRowParams) => [
+            <GridActionsCellItem onClick={() => { }} sx={{ width: 60 }} icon={<Button variant="outlined" size="small" sx={{ borderRadius: 5, margin: 0 }}>View</Button>} label="View" />,
+            <GridActionsCellItem onClick={() => { }} sx={{ width: 60 }} icon={<Button variant="outlined" size="small" sx={{ borderRadius: 5 }}>Receipt</Button>} label="Print" />,
+        ]
+    }
 ];
 
 class RowData {
@@ -29,40 +33,47 @@ class RowData {
     cleanTime: string;
     orderName: string;
     servers: string;
+    cashier: string;
     note: string;
 
     constructor(table: Table) {
-        this.id = UTILS.formatTime(table.orderTime).split(',')[1].trim();
-        this.cleanTime = !table.cleanTime ? '' : UTILS.formatTime(table.cleanTime).split(',')[1].trim();
+        this.id = UTILS.formatTime(table.orderTime).split(',')[1].substring(1, 9);
+        this.cleanTime = !table.cleanTime ? '' : UTILS.formatTime(table.cleanTime).split(',')[1].substring(1, 9);
         this.orderName = table.getName();
         this.servers = table.getServers().join(',');
+        this.cashier = table.cashier || '';
         this.note = table.note || '';
     }
 }
 
 let rowsData: RowData[] = [];
-let rerenderOutside: () => void = () => console.log('error');
+let setHistoryDateOutSide: () => void = () => console.log('error');
 
 export const updateHistoryOrder = (historyOrder: Table[]) => {
     rowsData = historyOrder.map(table => new RowData(table));
-    if (rerenderOutside)
-        rerenderOutside();
+    if (setHistoryDateOutSide) {
+        setHistoryDateOutSide();
+    }
 }
 
 export default function OrderHistory(props: { setHistoryOrder: (state: boolean) => void }) {
-    const [refresh, setRefresh] = useState(false);
+    const [historyDate, setHistoryDate] = useState<Date>(new Date());
 
-    const rerender = () => setRefresh(!refresh);
 
     useEffect(() => {
-        rerenderOutside = rerender;
+        setHistoryDateOutSide = () => setHistoryDate(new Date());
         syncServer(SYNC_TYPE.HISTORY_ORDER, UTILS.formatTime());
     }, [])
 
     const mdSize = useMediaQuery('(min-width:900px)');
 
+    const onChangeHistoryDate = (newDate: Date) => {
+        setHistoryDateOutSide = () => setHistoryDate(newDate);
+        syncServer(SYNC_TYPE.HISTORY_ORDER, UTILS.formatTime(newDate));
+    }
+
     return (<>
-        <Header setHistoryOrder={props.setHistoryOrder} />
+        <Header setHistoryOrder={props.setHistoryOrder} historyDate={historyDate} setHistoryDate={onChangeHistoryDate} />
         <StyledPaper sx={{ display: 'flex', margin: 1, pt: 0, pb: 0 }}>
             <DataGrid
                 rows={rowsData}

@@ -135,6 +135,8 @@ export class Table {
     @UTILS.TransformTime()
     cleanTime?: Date | null = null;
 
+    cashier?: string;
+
     @Exclude()
     timer: number = 0;
 

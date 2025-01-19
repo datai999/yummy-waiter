@@ -18,7 +18,6 @@ const readJsonDirectory = (directoryPath) => {
         }
     });
     return fileNames.map(fileName => {
-        console.log(fileName);
         return readJsonFile(directoryPath + '/' + fileName);
     });
 }
