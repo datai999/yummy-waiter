@@ -105,6 +105,7 @@ export default function Waiter(props: WaiterProps) {
     const doneOrder = () => {
         table.cleanTime = new Date();
         table.cashier = auth.name;
+        table.status = TableStatus.DONE;
         if (table.id.startsWith('Togo')) props.tables.delete(table.id);
         else props.tables.set(table.id, new Table(table.id));
         syncServer(SYNC_TYPE.DONE_ORDER, { [table.id]: table });
@@ -120,12 +121,12 @@ export default function Waiter(props: WaiterProps) {
                     <Header props={childProps} />
                 </Box>
                 <OrderTake note={note} setNote={setNote} bags={bags} props={childProps} />
-                <Box sx={{ position: "sticky", bottom: 5, zIndex: 1, bgcolor: "background.paper", mt: 'auto' }}>
+                <Box sx={{ position: "sticky", bottom: 3, zIndex: 1, bgcolor: "background.paper", mt: 'auto' }}>
                     {/* <Box sx={{ mt: 'auto', mb: 1 }}> */}
                     <Footer addTogoBag={addTogoBag} changeTable={() => prepareChangeTable(bags)} submitOrder={submitOrder} customerInfo={takeCustomerInfo} doneOrder={doneOrder} />
                 </Box>
-                <TakeCustomerInfo openModal={openModal} closeModel={doneTakeCustomerInfo} />
             </Box>
+            <TakeCustomerInfo openModal={openModal} closeModel={doneTakeCustomerInfo} />
         </WAITER_CONTEXT.lockOrder.Provider >
     );
 }

@@ -38,7 +38,8 @@ interface Props extends BagDndProps {
 };
 
 const OrderSummary = (props: Props) => {
-    const mdResponsive = props.showPho ? useMediaQuery('(min-width:900px)') ? 12 : 4 : 'grow';
+    const mdSize = useMediaQuery('(min-width:900px)');
+    const mdResponsive = props.showPho ? mdSize ? 12 : 4 : 'grow';
 
     return (
         <Grid2 container spacing={0.5} direction='row' sx={{ minHeight: props.bag === 0 ? 30 : 30 }}>
@@ -48,7 +49,7 @@ const OrderSummary = (props: Props) => {
                     return categoryItem.getPhoQty() + categoryItem.getNonPhoQty() > 0;
                 })
                 .map(category => (
-                    <Grid2 key={category} size={{ xs: 12, sm: props.showPho ? 4 : 12, md: mdResponsive }} >
+                    <Grid2 key={category} size={{ xs: 12, sm: 'grow', md: mdResponsive }} >
                         <PhoList key={category} props={{ ...props, category }} />
                     </Grid2>
                 ))
@@ -285,9 +286,8 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
                     />
                 </ListItemButton>
             </Draggable>
-            {(!refItem
-                || (showPho
-                    && !(props.trackedItem.time && refItem)
+            {showPho && (!refItem
+                || (!(props.trackedItem.time && refItem)
                     && (!props.trackedItem.time && refItem?.actualQty > 0)))
                 &&
                 <Button onClick={plus} variant='outlined' sx={{ m: 0, p: 1.1, mb: 0.2 }} style={{ maxWidth: '30px', minWidth: '34px', maxHeight: '30px', minHeight: '23px' }}>

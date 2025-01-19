@@ -4,10 +4,12 @@ import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRo
 import { SYNC_TYPE, syncServer } from "../my/my-ws";
 import { UTILS } from "../my/my-util";
 import { Table } from "../my/my-class";
-import { Button, useMediaQuery } from "@mui/material";
+import { Box, Button, Divider, Grid2, Modal, Stack, styled, Typography, useMediaQuery } from "@mui/material";
 import { StyledPaper } from "../my/my-styled";
-import { FaPrint } from "react-icons/fa";
-import { GrView } from "react-icons/gr";
+import BagDnd from "../waiter/BagDnd";
+import { TableContext } from "../App";
+
+let viewOrder = (index: number) => console.log(`viewOrder: ${index}`);
 
 const columns: GridColDef[] = [
     { field: 'id', headerName: 'Order', width: 110 },
@@ -22,13 +24,14 @@ const columns: GridColDef[] = [
         type: 'actions',
         width: 135,
         getActions: (params: GridRowParams) => [
-            <GridActionsCellItem onClick={() => { }} sx={{ width: 60 }} icon={<Button variant="outlined" size="small" sx={{ borderRadius: 5, margin: 0 }}>View</Button>} label="View" />,
+            <GridActionsCellItem onClick={() => viewOrder(params.row.index)} sx={{ width: 60 }} icon={<Button variant="outlined" size="small" sx={{ borderRadius: 5, margin: 0 }}>View</Button>} label="View" />,
             <GridActionsCellItem onClick={() => { }} sx={{ width: 60 }} icon={<Button variant="outlined" size="small" sx={{ borderRadius: 5 }}>Receipt</Button>} label="Print" />,
         ]
     }
 ];
 
 class RowData {
+    index: number;
     id: string;
     cleanTime: string;
     orderName: string;
@@ -36,7 +39,8 @@ class RowData {
     cashier: string;
     note: string;
 
-    constructor(table: Table) {
+    constructor(table: Table, index: number) {
+        this.index = index;
         this.id = UTILS.formatTime(table.orderTime).split(',')[1].substring(1, 9);
         this.cleanTime = !table.cleanTime ? '' : UTILS.formatTime(table.cleanTime).split(',')[1].substring(1, 9);
         this.orderName = table.getName();
@@ -46,11 +50,13 @@ class RowData {
     }
 }
 
+let HISTORY_ORDER: Table[] = [];
 let rowsData: RowData[] = [];
 let setHistoryDateOutSide: () => void = () => console.log('error');
 
 export const updateHistoryOrder = (historyOrder: Table[]) => {
-    rowsData = historyOrder.map(table => new RowData(table));
+    HISTORY_ORDER = historyOrder;
+    rowsData = historyOrder.map((table, index) => new RowData(table, index));
     if (setHistoryDateOutSide) {
         setHistoryDateOutSide();
     }
@@ -58,9 +64,12 @@ export const updateHistoryOrder = (historyOrder: Table[]) => {
 
 export default function OrderHistory(props: { setHistoryOrder: (state: boolean) => void }) {
     const [historyDate, setHistoryDate] = useState<Date>(new Date());
-
+    const [order, setOrder] = useState<Table | null>(null);
 
     useEffect(() => {
+        viewOrder = (orderIndex: number) => {
+            setOrder(HISTORY_ORDER[orderIndex])
+        };
         setHistoryDateOutSide = () => setHistoryDate(new Date());
         syncServer(SYNC_TYPE.HISTORY_ORDER, UTILS.formatTime());
     }, [])
@@ -86,5 +95,33 @@ export default function OrderHistory(props: { setHistoryOrder: (state: boolean) 
                 sx={{ border: 0 }}
             />
         </StyledPaper>
+        <Modal
+            open={Boolean(order)}
+            onClose={() => setOrder(null)}
+        >
+            <ModalContent>
+                {order && (
+                    <Box  >
+                        <Typography variant="h4" sx={{ mb: 2 }}>{order.id}</Typography>
+                        <TableContext.Provider value={{ table: order, orderTable: () => { }, prepareChangeTable: () => { } }}>
+                            <BagDnd bags={order.bags} phoId={''} />
+                        </TableContext.Provider>
+                    </Box>
+                )}
+            </ModalContent>
+        </Modal>
     </>);
 }
+
+const ModalContent = styled(Box)({
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "600px",
+    backgroundColor: "#fff",
+    borderRadius: "8px",
+    padding: "20px",
+    maxHeight: "80vh",
+    overflowY: "auto"
+});

@@ -1,6 +1,7 @@
 export enum TableStatus {
     AVAILABLE = "AVAILABLE",
-    ACTIVE = "ACTIVE"
+    ACTIVE = "ACTIVE",
+    DONE = "DONE",
 }
 
 export const BEEF_MEAT = {

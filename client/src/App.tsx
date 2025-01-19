@@ -229,7 +229,7 @@ export default function App() {
      *  + lock/unlock only user serve table
      *  + store order data
      *  + table note
-     *  - view order data
+     *  + view order data
      *  - UI for customer fill phone
      * kitchen: select part of bill, print bill & system change status to waiter
      * chicken: update number of chicken meats to waiter

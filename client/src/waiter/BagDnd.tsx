@@ -101,14 +101,15 @@ const BagDnd = ({ note, setNote, bags, phoId, showPho }: BagDndProps) => {
             // onDragStart={handleDragStart}
             onDragEnd={onDragEnd}
         >
-            <TextField
-                label="Customer name, phone, pickup time, reserved, ..."
-                size='small'
-                sx={{ mt: 1, mb: 1, ml: 1, width: '95%' }}
-                disabled={lockedTable}
-                value={note}
-                onChange={(e) => setNote ? setNote(e.target.value) : null}
-            />
+            {showPho &&
+                <TextField
+                    label="Customer name, phone, pickup time, reserved, ..."
+                    size='small'
+                    sx={{ mt: 1, mb: 1, ml: 1, width: '95%' }}
+                    disabled={lockedTable}
+                    value={note}
+                    onChange={(e) => setNote ? setNote(e.target.value) : null}
+                />}
             <Box style={{ maxHeight: 540, overflow: 'auto' }}>
                 {Array.from(bags.entries()).map(([key, item], index) => {
                     return (
