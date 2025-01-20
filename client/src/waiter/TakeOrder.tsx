@@ -15,7 +15,7 @@ import {
 import {
     MENU,
 } from '../my/my-constants';
-import BagDnd from './BagDnd';
+import BagDnd from '../order/BagDnd';
 import { ChildWaiterProps, WAITER_CONTEXT } from './Waiter';
 import { CategoryItem, Pho, TrackedItem, TrackedNonPho, TrackedPho } from '../my/my-class';
 import TakePho from './TakePho';

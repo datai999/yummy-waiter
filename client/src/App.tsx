@@ -230,6 +230,7 @@ export default function App() {
      *  + store order data
      *  + table note
      *  + view order data
+     *  - egg -> tcg -> tr
      *  - price
      *  - cashier
      *  - UI for customer fill phone

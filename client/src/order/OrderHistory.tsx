@@ -6,7 +6,7 @@ import { UTILS } from "../my/my-util";
 import { Table } from "../my/my-class";
 import { Box, Button, Divider, Grid2, Modal, Stack, styled, Typography, useMediaQuery } from "@mui/material";
 import { StyledPaper } from "../my/my-styled";
-import BagDnd from "../waiter/BagDnd";
+import BagDnd from "./BagDnd";
 import { TableContext } from "../App";
 
 let viewOrder = (index: number) => console.log(`viewOrder: ${index}`);

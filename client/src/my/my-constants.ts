@@ -28,9 +28,9 @@ export const BEEF_COMBO = {
 }
 
 export const CHICKEN_COMBO = {
-    'Ức': ['U'],
-    'Cánh': ['C'],
-    'Đùi': ['D'],
+    'Ức': [{ code: 'U', price: '13.5' }],
+    'Cánh': [{ code: 'C', price: '14.5' }],
+    'Đùi': [{ code: 'D', price: '16.5' }],
 }
 
 export const BEEF_NOODLE = ['BC', 'BT', 'BS', 'BTS'];
@@ -59,37 +59,37 @@ export const BEEF_DINE_IN = {
 }
 export const BEEF_SIDE = {
     'XiQ': { price: '6' },
-    'Ch.Bánh': null,
-    'Ch.BT': null,
-    'Ch.Egg': null,
-    'Bread': null,
+    'Ch.Bánh': { price: '3' },
+    'Ch.BT': { price: '3' },
+    'Ch.Egg': { price: '2' },
+    'Bread': { price: '1.25' },
     'Ch.Soup': null,
     'Large.Soup': null,
-    'Egg rolls': null,
+    'Egg rolls': { price: '5.95' },
     '1 Egg roll': null,
     '?': '?',
 }
 export const BEEF_MEAT_SIDE = {
-    'Dĩa Tái': { code: "Dĩa T" },
-    'Chén Tái': { code: "Ch.T" },
+    'Dĩa Tái': { code: "Dĩa T", price: '5.00' },
+    'Chén Tái': { code: "Ch.T", price: '5.00' },
     'Chén Chín': { code: "Ch.C" },
     'Chén Gầu': { code: "Ch.G`" },
     'Chén Gân': { code: "Ch.g" },
     'Chén Sách': { code: "Ch.S" },
-    'Chén BV': { code: "Ch.BV" }
+    'Chén BV': { code: "Ch.BV", price: "4.00" }
 }
 
 export const CHICKEN_SIDE = {
     "Giá trụng": null
 }
 export const CHICKEN_SIDE_2 = {
-    "Extra bamboo": { price: '9999' },
-    "Extra noodle": { price: '9999' },
+    "Extra bamboo": { price: '3' },
+    "Extra noodle": { price: '3' },
 }
 export const CHICKEN_SIDE_3 = {
-    "Dĩa ức": { code: 'Dia.U' },
-    'Dĩa cánh': { code: 'Dia.C' },
-    'Dĩa đùi': { code: 'Dia.D' }
+    "Dĩa ức": { code: 'Dia.U', price: '7.49' },
+    'Dĩa cánh': { code: 'Dia.C', price: '8.49' },
+    'Dĩa đùi': { code: 'Dia.D', price: '9.49' }
 }
 export const CHICKEN_SIDE_4 = {
     "Half chicken": { price: '13.5' },
@@ -109,15 +109,15 @@ const TEA = {
     'Hot-tea': null
 }
 const COFFEE = {
-    'Coffee': { price: '6' },
-    'Black-coffee': { price: '6' },
-    'Hot Coffee': { price: '6' },
-    'Hot Black-coffee': { price: '6' },
+    'Coffee': { price: '4.5' },
+    'Black-coffee': { price: '4.5' },
+    'Hot Coffee': { price: '4.5' },
+    'Hot Black-coffee': { price: '4.5' },
 }
 const SOFT_DRINK = {
-    'Coke': { price: '3' },
-    'Diet-Coke': { price: '3' },
-    'Sprite': { price: '3' },
+    'Coke': { price: '2.5' },
+    'Diet-Coke': { price: '2.5' },
+    'Sprite': { price: '2.5' },
 }
 const TOFU = {
     'Tofu soybean': { price: '3' },
@@ -133,7 +133,7 @@ const CHE = {
 export const DESSERT = {
     'FLan': { price: '3' },
     'Coconut jelly': { price: '3' },
-    'Mixed jelly': { price: '6' },
+    'Mixed jelly': { price: '99999' },
 }
 
 export const MENU = {

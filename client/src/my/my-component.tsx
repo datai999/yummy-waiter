@@ -20,7 +20,6 @@ import {
     OrderItem,
 } from './my-styled';
 import { NonPho } from './my-class';
-import { Draggable } from '../waiter/BagDnd';
 
 interface CheckButtonProps {
     multi: boolean,
@@ -58,7 +57,7 @@ const pCheckButton = (props: CheckButtonProps) => {
         if (!props.obj) return null;
         const itemObj = props.obj[option as keyof typeof props.obj];
         if (itemObj instanceof Object) {
-            return `$${itemObj['price' as keyof Object]}`;
+            return `${itemObj['price' as keyof Object]}`;
         }
         return null;
     }

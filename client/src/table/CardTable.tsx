@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { FiAlertCircle, FiCheckCircle, FiClock } from 'react-icons/fi';
 import { TableStatus } from '../my/my-constants';
-import OrderSummary from '../waiter/DetailOrder';
+import OrderSummary from '../order/DetailOrder';
 import { StyledPaper } from '../my/my-styled';
 import { Table } from '../my/my-class';
 import { GiChicken } from 'react-icons/gi';
