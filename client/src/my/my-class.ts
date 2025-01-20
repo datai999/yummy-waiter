@@ -20,15 +20,17 @@ export class NonPho {
     note?: String;
     qty: number = 1;
     actualQty: number = 1;
+    price: String = '';
 
     @Type(() => ItemRef)
     void?: ItemRef;
     @Type(() => ItemRef)
     voided?: ItemRef[];
 
-    public constructor(code: string) {
+    public constructor(code: string, price: String) {
         this.id = generateId();
         this.code = code;
+        this.price = price;
     }
 }
 
@@ -41,7 +43,7 @@ export class Pho extends NonPho {
     referCode?: string;
 
     public constructor() {
-        super('');
+        super('', '?');
         this.id = '';
     }
 

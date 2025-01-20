@@ -24,7 +24,7 @@ import {
 
 import { StyledPaper } from '../my/my-styled';
 import theme from '../theme';
-import OrderSummary from './DetailOrder';
+import OrderSummary from '../order/DetailOrder';
 import { CategoryItem, NonPho, Pho } from '../my/my-class';
 import { CONTEXT, TableContext } from '../App';
 

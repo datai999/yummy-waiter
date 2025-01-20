@@ -23,12 +23,13 @@ export const generateTables = () =>
 
 export const completePho = (category: any, pho: Pho) => {
     pho.id = pho.id.length > 0 ? pho.id : generateId();
-    const MEAT = category.pho.meat || {};
+    const MEAT = category.pho.meat;
     const REFER = category.pho.reference;
 
     if (pho.meats.length === 0) pho.code = 'BPN';
     else if (pho.meats.length === 6) pho.code = 'DB';
-    else pho.code = pho.meats.map(meat => MEAT[meat as keyof typeof MEAT]?.code || meat).join('');
+    else pho.code = MEAT ? pho.meats.map(meat => MEAT[meat as keyof typeof MEAT]?.code || meat).join('')
+        : category.pho.combo[pho.combo as keyof typeof Object][0]['code'];
 
     if (pho.combo && pho.combo.startsWith('#8b')) pho.noodle = 'Bread'
     else if (pho.combo && pho.combo.startsWith('#8c')) pho.noodle = 'Mì'
@@ -38,6 +39,14 @@ export const completePho = (category: any, pho: Pho) => {
         .sort((a, b) => a.sort - b.sort)
         .map(refer => refer.code)
         .join(',');
+
+    if (category.pho.meat) pho.price = '12.99';
+    else if (pho.combo) {
+        pho.price = category.pho.combo[pho.combo as keyof typeof Object][0].price;
+        const prices = pho.price.split('.');
+        pho.price = prices[0] + '.' + (prices[1] || '00').padEnd(2, '0');
+    }
+    if (pho.code === 'BPN') pho.price = '7.00';
 }
 
 export const changeTable = (auth: any, tables: Map<String, Table>, fromTable: Table, toTableId: string): Table | null => {

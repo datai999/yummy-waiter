@@ -22,10 +22,10 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
     const { table } = useContext(CONTEXT.Table);
     const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
 
-    const nonPhos = MENU[props.category as keyof typeof MENU]!.nonPho;
+    const NON_PHOS = MENU[props.category as keyof typeof MENU]!.nonPho;
     const nonPho = props.bags.get(0)!.get(props.category)?.lastNonPhos()!;
 
-    const addItem = (nonPhoCode: string) => {
+    const addItem = (index: number, nonPhoCode: string) => {
         if (lockedTable) return;
 
         let targetNonPho = Array.from(nonPho.values())
@@ -34,7 +34,19 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
         if (targetNonPho) {
             targetNonPho.qty++;
             targetNonPho.actualQty++;
-        } else targetNonPho = new NonPho(nonPhoCode);
+        } else {
+            const nonPhoGroupObj = NON_PHOS[index];
+            const nonPhoObj = nonPhoGroupObj[nonPhoCode as keyof typeof nonPhoGroupObj];
+            let price: String = '';
+            if (nonPhoObj) {
+                price = nonPhoObj['price'];
+                if (price && price.length > 0) {
+                    const prices = price.split('.');
+                    price = prices[0] + '.' + (prices[1] || '00').padEnd(2, '0');
+                }
+            }
+            targetNonPho = new NonPho(nonPhoCode, price || '');
+        }
 
         const dineIn = props.bags.get(0)!;
         const categoryItems = dineIn.get(props.category)!;
@@ -45,14 +57,14 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
     }
 
     return (<StyledPaper sx={{ mt: 1, mb: 0, p: 0, pl: 1, minHeight: '228px' }}>
-        {nonPhos.map((nonPho, index) => (
+        {NON_PHOS.map((nonPho, index) => (
             <Box key={index}>
                 {index > 0 && (<Divider sx={{ m: ['BEEF', 'CHICKEN'].includes(props.category) ? 0.2 : 1 }} />)}
                 <CheckButton
                     multi={true}
                     obj={nonPho}
                     options={[]}
-                    callback={(newSideOrder) => addItem(newSideOrder[0])}
+                    callback={(newSideOrder) => addItem(index, newSideOrder[0])}
                 />
             </Box>
         ))}

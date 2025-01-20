@@ -103,7 +103,7 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
                         trackedItem: trackedItem,
                         trackedIndex: index,
                         draggablePrefix: 'pho',
-                        renderPrimaryContent: (item: Pho) => (`${item.void ? 'Void:' : ''}${item.actualQty === 1 ? '' : item.actualQty + ' '}${item.meats.length % 6 === 0 ? item.code : item.meats.join(',')} (${item.noodle}) ${item.referCode}`),
+                        renderPrimaryContent: (item: Pho) => (`${item.void ? 'Void:' : ''}${item.actualQty === 1 ? '' : item.actualQty + ' '}${item.code ? (item.code.length === 1 ? item.combo : item.code) : item.meats.length % 6 === 0 ? item.code : item.meats.join(',')} (${item.noodle}) ${item.referCode}`),
                         copyItem: copyItem
                     }}
                 />)
@@ -285,6 +285,11 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
                             />}
                     />
                 </ListItemButton>
+                {!item.void && <Typography sx={{ mt: '3px' }} >
+                    {`${item.price}`}
+                </Typography>}
+                {props.bags.size > 1 && Boolean(showPho) && props.trackedItem.time
+                    && <Box sx={{ width: '30px' }} />}
             </Draggable>
             {showPho && (!refItem
                 || (!(props.trackedItem.time && refItem)
