@@ -88,6 +88,12 @@ const pTakePho = (props: TakePhoProps) => {
         } else if (combo.startsWith('#8c')) {
             pho.noodle = 'Mì'
         }
+        if (pho.combo
+            && (pho.combo.startsWith('#8b') || pho.combo.startsWith('#8c'))
+            && !(combo.startsWith('#8b') || combo.startsWith('#8c'))
+        ) {
+            pho.noodle = 'BC'
+        }
         const comboMeats = combos[combo as keyof typeof combos];
         setPho({
             ...pho,

@@ -33,7 +33,7 @@ export default function Waiter(props: WaiterProps) {
     const [category, setCategory] = useState(Object.keys(MENU)[0]);
     const [openModal, setOpenModal] = useState(false);
     const [note, setNote] = useState<string>(_.cloneDeep(table.note || ''));
-    const [locked, setLocked] = useState(false);
+    const locked = useRef(Boolean(useContext(CONTEXT.LockedTable)(table.id)) === auth.name);
 
     let refBags = useRef(_.cloneDeep(props.tempBags || table.bags));
     const bags = refBags.current;
@@ -49,8 +49,9 @@ export default function Waiter(props: WaiterProps) {
     }
 
     const onSetLocked = (nextLocked: boolean) => {
-        setLocked(nextLocked);
-        syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(true, auth.name) });
+        if (!locked.current)
+            syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(true, auth.name) });
+        locked.current = nextLocked;
     }
 
     const submitOrder = () => {
@@ -115,7 +116,7 @@ export default function Waiter(props: WaiterProps) {
     const childProps: ChildWaiterProps = { ...props, category: category, setCategory: setCategory, }
 
     return (
-        <WAITER_CONTEXT.lockOrder.Provider value={{ locked: locked, setLocked: onSetLocked }} >
+        <WAITER_CONTEXT.lockOrder.Provider value={{ locked: locked.current, setLocked: onSetLocked }} >
             <Box sx={{ display: 'flex', flexDirection: 'column' }} minHeight='96vh'>
                 <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
                     <Header props={childProps} />

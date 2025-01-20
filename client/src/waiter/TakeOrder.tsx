@@ -66,18 +66,12 @@ const OrderTake = ({ props, note, setNote, bags }: {
             categoryItems?.action.push(`${UTILS.formatTime()} [${auth.name}] ${newPho.qty} ${newPho.code}`);
         setItemRef({ bag: -1, trackedIndex: -1, server: '', time: undefined });
         setPho(new Pho());
-        lockTable();
-    }
-
-    const lockTable = () => {
-        if (!locked) {
-            setLocked(true);
-        }
+        setLocked(true);
     }
 
     const submitNonPho = () => {
         setRefresh(!refresh);
-        lockTable();
+        setLocked(true);
     }
 
     const showPho = (isPho: boolean, bag: number, category: string, trackIndex: number, selectedItemId: string) => {
