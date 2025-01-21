@@ -58,6 +58,21 @@ const OrderSummary = (props: Props) => {
     )
 }
 
+const renderPho = (item: Pho) => {
+    const voidItem = item.void ? 'Void:' : '';
+    const qty = item.actualQty === 1 ? '' : item.actualQty + ' ';
+    const code = item.code
+        ? (item.code === 'BPN' ? item.code : item.code)
+        : item.meats.length % 6 === 0 ? item.code : item.meats.join(',');
+
+    const noodle = item.noodle === 'BC'
+        ? 'Phở'
+        : ['BT', 'BS', 'BTS'].includes(item.noodle)
+            ? 'Phở ' + item.noodle
+            : item.noodle;
+    return `${voidItem}${qty} ${noodle} (${item.code}) ${item.referCode}`;
+}
+
 interface PhoListProps extends Props {
     category: string
 }
@@ -103,7 +118,7 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
                         trackedItem: trackedItem,
                         trackedIndex: index,
                         draggablePrefix: 'pho',
-                        renderPrimaryContent: (item: Pho) => (`${item.void ? 'Void:' : ''}${item.actualQty === 1 ? '' : item.actualQty + ' '}${item.code ? (item.code.length === 1 ? item.combo : item.code) : item.meats.length % 6 === 0 ? item.code : item.meats.join(',')} (${item.noodle}) ${item.referCode}`),
+                        renderPrimaryContent: renderPho,
                         copyItem: copyItem
                     }}
                 />)
