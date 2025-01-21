@@ -285,8 +285,8 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
                             />}
                     />
                 </ListItemButton>
-                {!item.void && <Typography sx={{ mt: '3px' }} >
-                    {`${item.price}`}
+                {!item.void && item.price > 0 && item.actualQty > 0 && <Typography sx={{ mt: '3px' }} >
+                    {`${Number(item.actualQty * item.price).toFixed(2)}`}
                 </Typography>}
                 {props.bags.size > 1 && Boolean(showPho) && props.trackedItem.time
                     && <Box sx={{ width: '30px' }} />}

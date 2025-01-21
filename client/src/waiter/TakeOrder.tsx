@@ -15,13 +15,13 @@ import {
 import {
     MENU,
 } from '../my/my-constants';
-import BagDnd from '../order/BagDnd';
 import { ChildWaiterProps, WAITER_CONTEXT } from './Waiter';
 import { CategoryItem, Pho, TrackedItem, TrackedNonPho, TrackedPho } from '../my/my-class';
 import TakePho from './TakePho';
 import TakeNonPho from './TakeNonPho';
 import { CONTEXT } from '../App';
 import { UTILS } from '../my/my-util';
+import OrderView from '../order/OrderView';
 
 const OrderTake = ({ props, note, setNote, bags }: {
     props: ChildWaiterProps,
@@ -118,7 +118,7 @@ const OrderTake = ({ props, note, setNote, bags }: {
                     />)}
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }}>
-                <BagDnd note={note} setNote={setNote} bags={bags} phoId={pho.id} showPho={showPho} />
+                <OrderView note={note} setNote={setNote} bags={bags} phoId={pho.id} showPho={showPho} />
             </Grid2>
         </Grid2 >
     );

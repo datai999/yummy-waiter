@@ -40,13 +40,11 @@ export const completePho = (category: any, pho: Pho) => {
         .map(refer => refer.code)
         .join(',');
 
-    if (category.pho.meat) pho.price = '12.99';
+    if (category.pho.meat) pho.price = 12.99;
     else if (pho.combo) {
         pho.price = category.pho.combo[pho.combo as keyof typeof Object][0].price;
-        const prices = pho.price.split('.');
-        pho.price = prices[0] + '.' + (prices[1] || '00').padEnd(2, '0');
     }
-    if (pho.code === 'BPN') pho.price = '7.00';
+    if (pho.code === 'BPN') pho.price = 7;
 }
 
 export const changeTable = (auth: any, tables: Map<String, Table>, fromTable: Table, toTableId: string): Table | null => {

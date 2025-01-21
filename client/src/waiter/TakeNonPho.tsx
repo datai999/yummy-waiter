@@ -37,15 +37,11 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
         } else {
             const nonPhoGroupObj = NON_PHOS[index];
             const nonPhoObj = nonPhoGroupObj[nonPhoCode as keyof typeof nonPhoGroupObj];
-            let price: String = '';
+            let price: number = 0;
             if (nonPhoObj) {
                 price = nonPhoObj['price'];
-                if (price && price.length > 0) {
-                    const prices = price.split('.');
-                    price = prices[0] + '.' + (prices[1] || '00').padEnd(2, '0');
-                }
             }
-            targetNonPho = new NonPho(nonPhoCode, price || '');
+            targetNonPho = new NonPho(nonPhoCode, price || 0);
         }
 
         const dineIn = props.bags.get(0)!;

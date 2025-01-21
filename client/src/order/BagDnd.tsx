@@ -26,17 +26,15 @@ import { StyledPaper } from '../my/my-styled';
 import theme from '../theme';
 import OrderSummary from '../order/DetailOrder';
 import { CategoryItem, NonPho, Pho } from '../my/my-class';
-import { CONTEXT, TableContext } from '../App';
+import { CONTEXT } from '../App';
 
 export interface BagDndProps {
-    note?: string,
-    setNote?: (newNote: string) => void,
     bags: Map<number, Map<string, CategoryItem>>,
     phoId: String;
     showPho?: (isPho: boolean, bag: number, category: string, trackIndex: number, itemId: string) => void,
 };
-const BagDnd = ({ note, setNote, bags, phoId, showPho }: BagDndProps) => {
-    const { table } = useContext(TableContext);
+const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
+    const { table } = useContext(CONTEXT.Table);
     const [refresh, setRefresh] = React.useState(false);
 
     const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
@@ -101,16 +99,7 @@ const BagDnd = ({ note, setNote, bags, phoId, showPho }: BagDndProps) => {
             // onDragStart={handleDragStart}
             onDragEnd={onDragEnd}
         >
-            {showPho &&
-                <TextField
-                    label="Customer name, phone, pickup time, reserved, ..."
-                    size='small'
-                    sx={{ mt: 1, mb: 1, ml: 1, width: '95%' }}
-                    disabled={lockedTable}
-                    value={note}
-                    onChange={(e) => setNote ? setNote(e.target.value) : null}
-                />}
-            <Box style={{ maxHeight: 540, overflow: 'auto' }}>
+            <Box style={{ maxHeight: 530, overflow: 'auto' }}>
                 {Array.from(bags.entries()).map(([key, item], index) => {
                     return (
                         <Droppable id={`${key}`} key={index}>

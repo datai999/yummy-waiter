@@ -6,8 +6,8 @@ import { UTILS } from "../my/my-util";
 import { Table } from "../my/my-class";
 import { Box, Button, Divider, Grid2, Modal, Stack, styled, Typography, useMediaQuery } from "@mui/material";
 import { StyledPaper } from "../my/my-styled";
-import BagDnd from "./BagDnd";
 import { TableContext } from "../App";
+import OrderView from "./OrderView";
 
 let viewOrder = (index: number) => console.log(`viewOrder: ${index}`);
 
@@ -104,7 +104,7 @@ export default function OrderHistory(props: { setHistoryOrder: (state: boolean) 
                     <Box  >
                         <Typography variant="h4" sx={{ mb: 2 }}>{order.id}</Typography>
                         <TableContext.Provider value={{ table: order, orderTable: () => { }, prepareChangeTable: () => { } }}>
-                            <BagDnd bags={order.bags} phoId={''} />
+                            <OrderView bags={order.bags} phoId={''} />
                         </TableContext.Provider>
                     </Box>
                 )}
