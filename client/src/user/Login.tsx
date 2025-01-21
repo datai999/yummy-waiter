@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import YummyLogoCut from '../assets/yummy_cut.png';
 import { Box, Button, Grid2, Stack, styled, Typography } from '@mui/material';
+import { NumPad } from '../my/my-component';
 
 const LogoImage = styled("img")({
     width: "160px",
@@ -18,18 +19,12 @@ export default function Login(props: {
 
     const users = JSON.parse(localStorage.getItem('users')!);
 
-    const inputKey = (key: string) => {
-        console.log(code);
-        if (key === 'x') code = '';
-        else if (key !== '->') code += key;
-        else {
-            const user = users[code];
-            if (!user) {
-                alert('Access code is invalid');
-            } else props.setAuth({ ...user, code: code });
-            code = '';
-        }
-
+    const login = () => {
+        const user = users[code];
+        if (!user) {
+            alert('Access code is invalid');
+        } else props.setAuth({ ...user, code: code });
+        code = '';
     }
 
     return (<Box
@@ -45,36 +40,7 @@ export default function Login(props: {
                     ummy Phở 2
                 </Typography>
             </Stack>
-            <Grid2 container spacing={1} sx={{ maxWidth: 500 }}>
-                {['7', '8', '9', '4', '5', '6', '1', '2', '3', 'x', '0'].map(key =>
-                    <Grid2 key={key} size={4}>
-                        <Button
-                            variant="outlined"
-                            color="primary"
-                            // onClick={() => inputKey(key)}
-                            onTouchStart={() => inputKey(key)}
-                            fullWidth
-                            sx={{ minHeight: 70, maxHeight: 5, borderRadius: '32px' }}
-                        >
-                            <Typography variant="h5">
-                                {key}
-                            </Typography>
-                        </Button>
-                    </Grid2>)}
-                <Grid2 size={4}>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => inputKey('->')}
-                        fullWidth
-                        sx={{ minHeight: 70, maxHeight: 5, borderRadius: '32px' }}
-                    >
-                        <Typography variant="h5">
-                            {'->'}
-                        </Typography>
-                    </Button>
-                </Grid2>
-            </Grid2>
+            <NumPad clear={() => code = ''} input={(key: string) => code += key} done={login} />
         </Stack>
     </Box>
     );

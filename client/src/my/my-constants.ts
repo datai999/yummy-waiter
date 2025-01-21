@@ -63,10 +63,10 @@ export const BEEF_SIDE = {
     'Ch.BT': { price: '3' },
     'Ch.Egg': { price: '2' },
     'Bread': { price: '1.25' },
-    'Ch.Soup': null,
-    'Large.Soup': null,
+    'Ch.Soup': {},
+    'Large.Soup': {},
     'Egg rolls': { price: '5.95' },
-    '1 Egg roll': null,
+    '1 Egg roll': {},
     '?': '?',
 }
 export const BEEF_MEAT_SIDE = {
@@ -133,7 +133,7 @@ const CHE = {
 export const DESSERT = {
     'FLan': { price: '3' },
     'Coconut jelly': { price: '3' },
-    'Mixed jelly': { price: '99999' },
+    'Mixed jelly': {},
 }
 
 export const MENU = {

@@ -14,6 +14,7 @@ import {
     List,
     ListItemText,
     TextField,
+    Typography,
 } from '@mui/material';
 import {
     CategoryButton,
@@ -146,4 +147,44 @@ export const NumberInput = (props: {
             props.onChange(num);
         }}
     />)
+}
+
+export const NumPad = (props: { clear: () => void, input: (key: string) => void, done: () => void }) => {
+
+    const inputKey = (key: string) => {
+        if (key === 'x') props.clear();
+        else if (key === '->') props.done();
+        else props.input(key);
+    }
+
+    return (<Grid2 container spacing={1} sx={{ maxWidth: 500 }}>
+        {['7', '8', '9', '4', '5', '6', '1', '2', '3', 'x', '0'].map(key =>
+            <Grid2 key={key} size={4}>
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    // onClick={() => inputKey(key)}
+                    onTouchStart={() => inputKey(key)}
+                    fullWidth
+                    sx={{ minHeight: 70, maxHeight: 5, borderRadius: '32px' }}
+                >
+                    <Typography variant="h5">
+                        {key}
+                    </Typography>
+                </Button>
+            </Grid2>)}
+        <Grid2 size={4}>
+            <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => inputKey('->')}
+                fullWidth
+                sx={{ minHeight: 70, maxHeight: 5, borderRadius: '32px' }}
+            >
+                <Typography variant="h5">
+                    {'->'}
+                </Typography>
+            </Button>
+        </Grid2>
+    </Grid2>)
 }
