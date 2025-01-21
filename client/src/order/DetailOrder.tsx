@@ -31,6 +31,7 @@ import { BagDndProps, Draggable } from './BagDnd';
 import { CategoryItem, ItemRef, NonPho, Pho, TrackedItem } from '../my/my-class';
 import { MENU } from '../my/my-constants';
 import { CONTEXT } from '../App';
+import { ORDER_CONTEXT } from './OrderView';
 
 interface Props extends BagDndProps {
     bag: number,
@@ -91,7 +92,6 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
         const copyItem = { ...item, qty: qtyValue, actualQty: qtyValue, id: generateId(), void: itemRef };
         if (item.meats) categoryItems.lastPhos().set(copyItem.id, copyItem);
         else categoryItems.lastNonPhos().set(copyItem.id, copyItem);
-        setRefresh(!refresh);
         return copyItem.id;
     }
 
@@ -114,7 +114,6 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
                 <TrackedItemsList key={index}
                     props={{
                         ...props,
-                        refreshPhoList: () => setRefresh(!refresh),
                         trackedItem: trackedItem,
                         trackedIndex: index,
                         draggablePrefix: 'pho',
@@ -128,7 +127,6 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
                 <TrackedItemsList key={index}
                     props={{
                         ...props,
-                        refreshPhoList: () => setRefresh(!refresh),
                         trackedItem: trackedItem,
                         trackedIndex: index,
                         draggablePrefix: 'nonPho',
@@ -140,7 +138,6 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
 }
 
 interface TrackedItemsListProps extends PhoListProps {
-    refreshPhoList: () => void,
     trackedItem: TrackedItem & { items: Map<String, any> },
     trackedIndex: number,
     draggablePrefix: string,
@@ -176,6 +173,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
     const secondaryRef = React.useRef<HTMLInputElement>();
     const { table } = useContext(CONTEXT.Table);
     const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
+    const refreshOrderView = useContext(ORDER_CONTEXT.refresh);
 
     const [refresh, setRefresh] = useState<Boolean>(false);
     const [note, setNote] = useState(props.item.note || null || undefined);
@@ -210,7 +208,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
                     voidItem.qty++;
                     voidItem.actualQty++;
                     item.actualQty--;
-                    props.refreshPhoList();
+                    refreshOrderView();
                     return;
                 }
             }
@@ -219,6 +217,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
             item.actualQty--;
             item.voided = (item.voided || []);
             item.voided.push(new ItemRef(lastTrackedIndex, copyItemId));
+            refreshOrderView();
             return;
         }
         if (item.qty > 1) {
@@ -233,13 +232,14 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
         if (refItem) {
             refItem.actualQty++;
         }
-        props.refreshPhoList();
+        refreshOrderView();
     }
 
     const plus = () => {
         if (lockedTable) return;
         if (props.trackedItem.time) {
             props.copyItem(props.trackedIndex, item, 1);
+            refreshOrderView();
             return;
         }
         if (refItem) {
@@ -248,7 +248,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
         }
         item.qty++;
         item.actualQty++;
-        props.refreshPhoList();
+        refreshOrderView();
     }
 
     const checkSelected = () => {

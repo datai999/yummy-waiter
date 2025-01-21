@@ -1,9 +1,13 @@
 import { Box, TextField, useMediaQuery } from "@mui/material";
-import React, { useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { CategoryItem } from "../my/my-class";
 import BagDnd from "./BagDnd";
 import { CONTEXT } from "../App";
 import { StyledPaper } from "../my/my-styled";
+
+export const ORDER_CONTEXT = {
+    refresh: createContext(() => { })
+}
 
 export default function OrderView(props: {
     note?: string,
@@ -16,8 +20,12 @@ export default function OrderView(props: {
     const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
     const mdSize = useMediaQuery('(min-width:900px)');
 
+    const [refresh, setRefresh] = useState<Boolean>(false);
+
     return (<Box>
-        <BagDnd bags={props.bags} phoId={props.phoId} showPho={props.showPho} />
+        <ORDER_CONTEXT.refresh.Provider value={() => setRefresh(!refresh)}>
+            <BagDnd bags={props.bags} phoId={props.phoId} showPho={props.showPho} />
+        </ORDER_CONTEXT.refresh.Provider>
         <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-around' }}>
             <TextField
                 label="Customer name, phone, pickup time, reserved, ..."
@@ -40,11 +48,11 @@ const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>> }) => {
         return acc + Array.from(categotyItems.values()).reduce((subAcc, categotyItem) => {
             const phoTotal = categotyItem.pho.reduce((trackedAcc, tracked) => {
                 return trackedAcc + Array.from(tracked.items.values())
-                    .reduce((phoAcc, pho) => phoAcc + pho.actualQty * pho.price, 0)
+                    .reduce((phoAcc, pho) => pho.void ? phoAcc : phoAcc + pho.actualQty * pho.price, 0)
             }, 0);
             const nonPhoTotal = categotyItem.nonPho.reduce((trackedAcc, tracked) => {
                 return trackedAcc + Array.from(tracked.items.values())
-                    .reduce((nonPhoAcc, nonPho) => nonPhoAcc + nonPho.actualQty * nonPho.price, 0)
+                    .reduce((nonPhoAcc, nonPho) => nonPho.void ? nonPhoAcc : nonPhoAcc + nonPho.actualQty * nonPho.price, 0)
             }, 0);
             return subAcc + phoTotal + nonPhoTotal;
         }, 0);
