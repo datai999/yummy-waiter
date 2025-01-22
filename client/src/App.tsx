@@ -232,7 +232,12 @@ export default function App() {
      *  + view order data
      *  + price
      *  + cashier
+     *  - print
+     *  - discount
      *  - UI for customer fill phone
+     *  - edit menu
+     *  - edit user
+     *  - config
      * kitchen: select part of bill, print bill & system change status to waiter
      * chicken: update number of chicken meats to waiter
      * 

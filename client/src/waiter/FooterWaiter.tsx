@@ -47,16 +47,16 @@ export default function Footer(props: {
         alignItems: "stretch",
     }}>
         <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={() => logout()} >
-            Cancel
+            Exit
             <RxExit style={iconStyle} />
-        </Button>
-        <Button variant="contained" color="primary" disabled={lockedTable} onClick={props.addTogoBag} >
-            Add togo
-            <GiPaperBagFolded style={iconStyle} />
         </Button>
         <Button variant="contained" color="primary" disabled={lockedTable} onClick={props.changeTable} >
             Change table
             <CgArrowsExchange style={iconStyle} />
+        </Button>
+        <Button variant="contained" color="primary" disabled={lockedTable} onClick={props.addTogoBag} >
+            Add togo
+            <GiPaperBagFolded style={iconStyle} />
         </Button>
         {/* <Button variant="contained" color="primary" disabled={lockedTable} onClick={props.customerInfo} >
             Customer

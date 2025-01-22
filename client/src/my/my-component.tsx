@@ -163,8 +163,7 @@ export const NumPad = (props: { clear: () => void, input: (key: string) => void,
                 <Button
                     variant="outlined"
                     color="primary"
-                    // onClick={() => inputKey(key)}
-                    onTouchStart={() => inputKey(key)}
+                    onMouseDown={() => inputKey(key)}
                     fullWidth
                     sx={{ minHeight: 70, maxHeight: 5, borderRadius: '32px' }}
                 >

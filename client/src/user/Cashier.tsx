@@ -1,4 +1,4 @@
-import { Modal, Box, Typography, styled, TextField, Button, Stack } from "@mui/material";
+import { Modal, Box, Typography, styled, TextField, Button, Stack, Badge } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { CONTEXT, TableContext } from "../App";
 import OrderView, { ORDER_CONTEXT, TotalBill } from "../order/OrderView";
@@ -10,6 +10,10 @@ import { MdOutlineCallSplit } from "react-icons/md";
 import { TableStatus } from "../my/my-constants";
 import { syncServer, SYNC_TYPE } from "../my/my-ws";
 import BagDnd from "../order/BagDnd";
+import { IoPrint } from "react-icons/io5";
+import { AiOutlineFileDone } from "react-icons/ai";
+import { IoMdClose } from "react-icons/io";
+import { BsCashCoin } from "react-icons/bs";
 
 export default function Cashier(props: {
     view: boolean,
@@ -28,6 +32,8 @@ export default function Cashier(props: {
     }, [props.view]);
 
     const receipt = SERVICE.calculateTotal(props.bags);
+    const numTendered = Number(tendered) / 100;
+    const change = numTendered - receipt.total;
 
     const onInput = (key: string) => {
         if (tendered.length > 4) return;
@@ -35,9 +41,8 @@ export default function Cashier(props: {
     }
 
     const checkTendered = () => {
-        const numTendered = Number(tendered) / 100;
         if (numTendered < receipt.total) {
-            alert('Not enough');
+            alert('Amount not enough');
             return;
         }
         if (props.note !== (table.note || '')) {
@@ -47,7 +52,7 @@ export default function Cashier(props: {
         table.cleanTime = new Date();
         table.status = TableStatus.DONE;
         table.bags = SERVICE.cleanBags(props.bags).cleanBags;
-        table.receipts = [{ ...receipt, tendered: numTendered, change: receipt.total - numTendered }];
+        table.receipts = [{ ...receipt, tendered: numTendered, change }];
         if (table.id.startsWith('Togo')) props.orders.delete(table.id);
         else props.orders.set(table.id, new Table(table.id));
         syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(false, auth.name) });
@@ -77,15 +82,23 @@ export default function Cashier(props: {
                                 <TotalBill bags={props.bags} />
                             </Box>
                         </Box>
+
                         <Box sx={{ witdh: '300px', maxWidth: '300px' }}>
-                            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', ml: 5, mb: 1 }}>
-                                {/* <TotalBill bags={props.bags} /> */}
-                                <Typography variant="h4" sx={{ display: 'flex', flexDirection: 'row-reverse', mb: 2, p: 1, border: 'solid 1px', borderRadius: 2, minHeight: '45px', minWidth: '130px' }}>
-                                    {(Number(tendered) / 100).toFixed(2)}
-                                </Typography>
+                            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', mb: 0 }}>
+                                <Badge badgeContent={<Box sx={{ ml: 8, bgcolor: '#fff', fontSize: 14 }}>Tendered</Box>} anchorOrigin={{ vertical: 'top', horizontal: 'left', }} >
+                                    <Typography variant="h4" sx={{ display: 'flex', flexDirection: 'row-reverse', mb: 2, p: 1, border: 'solid 1px', borderRadius: 2, minHeight: '45px', minWidth: '130px' }}>
+                                        {(Number(tendered) / 100).toFixed(2)}
+                                    </Typography>
+                                </Badge>
+                                <Badge badgeContent={<Box sx={{ ml: 8, bgcolor: '#fff', fontSize: 14 }}>Change</Box>} anchorOrigin={{ vertical: 'top', horizontal: 'left', }} >
+                                    <Typography variant="h4" sx={{ display: 'flex', flexDirection: 'row-reverse', mb: 2, p: 1, border: 'solid 1px', borderRadius: 2, minHeight: '45px', minWidth: '130px' }}>
+                                        {change.toFixed(2)}
+                                    </Typography>
+                                </Badge>
                             </Box>
                             <NumPad clear={() => setTendered('')} input={onInput} done={checkTendered} />
                         </Box>
+
                         <Box sx={{ mt: 0.5 }}>
                             {['100', '50', '30', '20', receipt.total.toFixed(2)].map((suggestTendered, index) =>
                                 <Button
@@ -93,8 +106,7 @@ export default function Cashier(props: {
                                     variant="outlined"
                                     color="primary"
                                     disabled={Number(suggestTendered) < receipt.total}
-                                    // onClick={() => inputKey(key)}
-                                    onTouchStart={() => setTendered(index === 4 ? (Number(receipt.total) * 100 + '') : suggestTendered + '00')}
+                                    onMouseDown={() => setTendered(index === 4 ? (Number(receipt.total) * 100 + '') : suggestTendered + '00')}
                                     fullWidth
                                     sx={{ minHeight: 70, maxHeight: 5, width: '90px', mb: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse' }}
                                 >
@@ -104,19 +116,29 @@ export default function Cashier(props: {
                                 </Button>)}
                         </Box>
                     </Box>
-                    {/* <Stack direction="row" spacing={3} sx={{
+
+                    <Stack direction="row" spacing={4} sx={{
+                        mt: 2,
                         justifyContent: "center",
                         alignItems: "stretch",
                     }}>
                         <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={props.close} >
-                            Cancel
-                            <RxExit style={iconStyle} />
+                            Close
+                            <IoMdClose style={iconStyle} />
                         </Button>
-                        <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={props.close} >
+                        <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={() => alert('TODO')} >
                             Split bill
-                            <MdOutlineCallSplit  style={iconStyle} />
+                            <MdOutlineCallSplit style={iconStyle} />
                         </Button>
-                    </Stack> */}
+                        <Button variant="contained" color="primary" onClick={() => { }} >
+                            Receipt
+                            <IoPrint style={iconStyle} />
+                        </Button>
+                        <Button variant="contained" color="primary" onClick={checkTendered} >
+                            Cash
+                            <BsCashCoin style={iconStyle} />
+                        </Button>
+                    </Stack>
                 </Box>
             )}
         </ModalContent>
