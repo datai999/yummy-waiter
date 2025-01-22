@@ -70,7 +70,7 @@ const pTakePho = (props: TakePhoProps) => {
 
     const calDisabledPrefers = (pho: Pho): string[] => {
         const disabledPrefers = [
-            ...(pho.meats.includes('Xi') || pho.combo?.startsWith('#8') ? ['Tái riêng', 'Tái băm'] : []),
+            ...(pho.meats.includes('Xi') || pho.combo?.startsWith('#8') ? ['Tái riêng', 'Tái băm', 'Tái cook'] : []),
             pho.combo?.startsWith('#8b') ? 'Ít bánh' : '',
             pho.combo?.startsWith('C') ? 'Không xương' : '',
             ['BC', 'BT', 'BS', 'BTS'].includes(pho.noodle) ? 'Măng' : '',
@@ -118,7 +118,7 @@ const pTakePho = (props: TakePhoProps) => {
         }
         if (!nextMeats.includes('Tái')) {
             const nextPrefer = (pho.preferences || [])
-                .filter(p => !['Tái riêng', 'Tái băm'].includes(p));
+                .filter(p => !['Tái riêng', 'Tái băm', 'Tái cook'].includes(p));
             if (nextPrefer.length !== pho.preferences?.length) {
                 pho.preferences = nextPrefer;
             }
@@ -140,7 +140,7 @@ const pTakePho = (props: TakePhoProps) => {
 
     const onPreferChange = (prefers: string[]) => {
         if (pho.noodle === 'Mì' && !prefers.includes('Khô')) return;
-        if (prefers.includes('Tái riêng') || prefers.includes('Tái băm')) {
+        if (prefers.includes('Tái riêng') || prefers.includes('Tái băm') || prefers.includes('Tái cook')) {
             if (!pho.meats.includes('Tái')) {
                 pho.preferences = prefers;
                 onMeatChange(['Tái', ...pho.meats]);

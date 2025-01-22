@@ -40,8 +40,9 @@ export const BEEF_REFERENCES = {
     'Không hành': { sort: 4, code: '0onion', },
     'Không béo': { sort: 5, code: '0Béo', },
     'Ít bánh': { sort: 3, code: '-b', },
-    'Tái riêng': { sort: 2, code: 'R', },
-    'Tái băm': { sort: 1, code: 'Bam', },
+    'Tái riêng': { sort: 2, code: 'T-r', },
+    'Tái băm': { sort: 1, code: 'T-bam', },
+    'Tái cook': { sort: 1, code: 'T-cook', },
 }
 export const CHICKEN_REFERENCES = {
     'Không hành': { sort: 5, code: '0onion', },

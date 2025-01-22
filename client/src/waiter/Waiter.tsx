@@ -117,7 +117,7 @@ export default function Waiter(props: WaiterProps) {
                 </Box>
             </Box>
             <TakeCustomerInfo openModal={openModal} closeModel={doneTakeCustomerInfo} />
-            <Cashier view={viewCashier} close={() => setViewCashier(false)} orders={props.tables} bags={bags} />
+            <Cashier view={viewCashier} close={() => setViewCashier(false)} orders={props.tables} note={note} bags={bags} />
         </WAITER_CONTEXT.lockOrder.Provider >
     );
 }

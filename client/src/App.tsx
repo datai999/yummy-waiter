@@ -61,7 +61,7 @@ export default function App() {
     closeInitWsClient = initWsClient(auth ? auth.name : "Client_" + Math.floor(Math.random() * 10),
       onSyncTables, onLockedTables, onDoneOrders);
     onSetAuth(trung);
-    // orderTable(tables.get('Table 12')!);
+    // orderTable(tables.get('Table 21')!);
   }, []);
 
   useEffect(() => {

@@ -78,6 +78,7 @@ interface PhoListProps extends Props {
     category: string
 }
 const PhoList = ({ props }: { props: PhoListProps }) => {
+    const { expand } = useContext(ORDER_CONTEXT);
     const [refresh, setRefresh] = useState<Boolean>(false);
 
     const category = props.category;
@@ -97,19 +98,21 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
 
     return (
         <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0 }}>
-            <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} >
-                <Badge badgeContent={categoryItems.getPhoActualQty()} color="primary" anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                    sx={{ mb: 0, pb: 0, ml: 1 }}>
-                    {category}
-                    {category === 'BEEF' && <PiCow style={{ fontSize: 25, marginLeft: 6 }} />}
-                    {category === 'CHICKEN' && <GiChicken style={{ fontSize: 25, marginLeft: 6 }} />}
-                    {category === 'DRINK' && <RiDrinks2Line style={{ fontSize: 25, marginLeft: 6 }} />}
-                </Badge>
-            </Typography>
-            <Divider />
+            {expand && <Box>
+                <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} >
+                    <Badge badgeContent={categoryItems.getPhoActualQty()} color="primary" anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                        sx={{ mb: 0, pb: 0, ml: 1 }}>
+                        {category}
+                        {category === 'BEEF' && <PiCow style={{ fontSize: 25, marginLeft: 6 }} />}
+                        {category === 'CHICKEN' && <GiChicken style={{ fontSize: 25, marginLeft: 6 }} />}
+                        {category === 'DRINK' && <RiDrinks2Line style={{ fontSize: 25, marginLeft: 6 }} />}
+                    </Badge>
+                </Typography>
+                <Divider />
+            </Box>}
             {categoryItems.pho.map((trackedItem, index) =>
                 <TrackedItemsList key={index}
                     props={{
@@ -147,21 +150,24 @@ interface TrackedItemsListProps extends PhoListProps {
 
 const TrackedItemsList = ({ props }: { props: TrackedItemsListProps }) => {
     const [refresh, setRefresh] = useState<Boolean>(false);
+    const { expand } = useContext(ORDER_CONTEXT);
 
     if (props.trackedItem.items.size === 0) return (<></>);
 
     return (<Box key={props.trackedItem.time?.toLocaleString()}>
-        <Typography variant='caption' sx={{ ml: 1 }}>
+        {expand && <Typography variant='caption' sx={{ ml: 1 }}>
             {`${props.trackedItem.time?.toLocaleTimeString() || ''} ${props.trackedItem.server}`}
-        </Typography>
+        </Typography>}
         <List dense sx={{ width: '100%', p: 0 }}>
-            {Array.from(props.trackedItem.items.entries()).map(([id, item], index) => {
-                return (<ItemList key={index}
-                    props={{
-                        ...props,
-                        item: item
-                    }} />);
-            })}
+            {Array.from(props.trackedItem.items.entries())
+                .filter(([id, item]) => expand || (!item.void && item.actualQty > 0))
+                .map(([id, item], index) => {
+                    return (<ItemList key={index}
+                        props={{
+                            ...props,
+                            item: item
+                        }} />);
+                })}
         </List>
     </Box>);
 }
@@ -173,7 +179,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
     const secondaryRef = React.useRef<HTMLInputElement>();
     const { table } = useContext(CONTEXT.Table);
     const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
-    const refreshOrderView = useContext(ORDER_CONTEXT.refresh);
+    const { refreshOrderView } = useContext(ORDER_CONTEXT);
 
     const [refresh, setRefresh] = useState<Boolean>(false);
     const [note, setNote] = useState(props.item.note || null || undefined);

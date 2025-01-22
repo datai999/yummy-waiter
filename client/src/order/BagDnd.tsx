@@ -99,11 +99,11 @@ const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
             // onDragStart={handleDragStart}
             onDragEnd={onDragEnd}
         >
-            <Box style={{ maxHeight: 530, overflow: 'auto' }}>
+            <Box style={{ maxHeight: 480, overflow: 'auto' }}>
                 {Array.from(bags.entries()).map(([key, item], index) => {
                     return (
                         <Droppable id={`${key}`} key={index}>
-                            <StyledPaper sx={{ m: 0, mb: 1, p: 0 }} onClick={() => { }}>
+                            <StyledPaper sx={{ m: 0, mb: 1, p: 0, border: 'solid 0.1px' }} onClick={() => { }}>
                                 <Typography variant="h6" style={{ fontWeight: 'bold' }} sx={{ ml: 0.5 }} >
                                     {table.id.startsWith('Togo')
                                         ? `Togo ${key + 1}`

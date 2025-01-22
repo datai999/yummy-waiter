@@ -104,7 +104,10 @@ export default function OrderHistory(props: { setHistoryOrder: (state: boolean) 
             <ModalContent>
                 {order && (
                     <Box  >
-                        <Typography variant="h4" sx={{ mb: 2 }}>{order.id}</Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                            <Typography variant="h4" sx={{ mb: 2 }}>{order.id}</Typography>
+                            {order.note && <Typography variant="h6" sx={{ mt: '10px' }}>: {order.note}</Typography>}
+                        </Box>
                         <TableContext.Provider value={{ table: order, orderTable: () => { }, prepareChangeTable: () => { } }}>
                             <OrderView bags={order.bags} phoId={''} />
                         </TableContext.Provider>
