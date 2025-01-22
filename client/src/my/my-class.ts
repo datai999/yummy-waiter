@@ -41,6 +41,8 @@ export class Pho extends NonPho {
     noodle: string = 'BC';
     preferences?: string[];
     referCode?: string;
+    discountQty?: number;
+    discountPercent?: number;
 
     public constructor() {
         super('', 0);
@@ -180,13 +182,28 @@ export class Table {
 export class Order extends Table {
 }
 
+export class Discount {
+    discount: number[];
+    discountSum: number;
+    amount?: number;
+
+    public constructor(discount: number[]) {
+        this.discount = discount;
+        this.discountSum = this.discount.reduce((acc, dc) => acc + dc, 0);
+    }
+}
+
 export class Receipt extends Order {
     cashier: string;
     subTotal: number = 0;
-    tax: number = 0;
     total: number = 0;
+    tax: number = 0;
+    finalTotal: number = 0;
     tendered?: number;
     change?: number;
+
+    discountPercent?: Discount;
+    discountSubtract?: Discount;
 
     public constructor(cashier: string, order: Order) {
         if (!order) order = new Order('?');
@@ -199,7 +216,7 @@ export class Receipt extends Order {
         this.timer = order.timer;
     }
 
-    public calculateTotal(bags: Map<number, Map<string, CategoryItem>>): Receipt {
+    public calculateTotal(bags: Map<number, Map<string, CategoryItem>>, discountPercents?: number[], discountSubtracts?: number[]): Receipt {
         this.bags = bags;
         let subTotal: number = Array.from(this.bags.values()).reduce((acc, categotyItems) => {
             return acc + Array.from(categotyItems.values()).reduce((subAcc, categotyItem) => {
@@ -215,9 +232,27 @@ export class Receipt extends Order {
             }, 0);
         }, 0);
         this.subTotal = Math.ceil(subTotal * 100) / 100;
-        this.tax = Math.ceil(0.0925 * subTotal * 100) / 100;
-        this.total = subTotal + this.tax;
+        this.total = this.subTotal;
+
+        if (discountPercents && discountPercents.length > 0) this.discountPercent = new Discount(discountPercents);
+        if (discountSubtracts && discountSubtracts.length > 0) this.discountSubtract = new Discount(discountSubtracts);
+
+        if (this.discountPercent) {
+            this.discountPercent.amount = this.total * this.discountPercent.discountSum / 100;
+            this.total -= this.discountPercent.amount;
+        }
+        if (this.discountSubtract) {
+            this.discountSubtract.amount = this.discountSubtract.discountSum;
+            this.total -= this.discountSubtract.amount;
+        }
+        this.total = Math.max(this.total, 0);
+        this.tax = Math.ceil(0.0925 * this.total * 100) / 100;
+        this.finalTotal = this.total + this.tax;
         return this;
+    }
+
+    public hasDiscount(): boolean {
+        return this.total < this.subTotal;
     }
 }
 

@@ -20,6 +20,7 @@ import {
     TextField,
     Typography,
     useMediaQuery,
+    useTheme,
 } from '@mui/material';
 
 import { generateId } from '../my/my-service';
@@ -182,6 +183,7 @@ interface ItemListProps extends TrackedItemsListProps {
     item: NonPho & {}
 }
 const ItemList = ({ props }: { props: ItemListProps }) => {
+    const theme = useTheme();
     const secondaryRef = React.useRef<HTMLInputElement>();
     const { table } = useContext(CONTEXT.Table);
     const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
@@ -295,7 +297,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
                     <ListItemText
                         id={item.id}
                         primaryTypographyProps={{ style: { fontWeight: "bold", fontSize: 14 } }}
-                        secondaryTypographyProps={{ style: { color: "#d32f2f", fontSize: 12, padding: 0 } }}
+                        secondaryTypographyProps={{ style: { color: theme.palette.text.primary, fontSize: 12, padding: 0 } }}
                         sx={{ p: 0, m: 0 }}
                         primary={props.renderPrimaryContent(item)}
                         secondary={note === undefined || note === null ? null : props.draggablePrefix === 'pho' ? `${item.note}` :

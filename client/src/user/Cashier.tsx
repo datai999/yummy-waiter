@@ -1,4 +1,4 @@
-import { Modal, Box, Typography, styled, TextField, Button, Stack, Badge } from "@mui/material";
+import { Modal, Box, Typography, styled, TextField, Button, Stack, Badge, useTheme } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { CONTEXT, TableContext } from "../App";
 import OrderView, { ORDER_CONTEXT, TotalBill } from "../order/OrderView";
@@ -23,18 +23,32 @@ export default function Cashier(props: {
     note: string,
     bags: Map<number, Map<string, CategoryItem>>
 }) {
+    const theme = useTheme();
     const { auth } = useContext(CONTEXT.Auth);
     const { order, setOrder } = useContext(CONTEXT.Order);
     const [tendered, setTendered] = useState('');
     const [expand, setExpand] = useState<boolean>(false);
+    const [discountPercents, setDiscountPercent] = useState<number[]>([]);
+    const [discountSubtracts, setDiscountSubtract] = useState<number[]>([]);
 
     useEffect(() => {
         setTendered('');
+        setDiscountPercent([]);
+        setDiscountSubtract([]);
     }, [props.view]);
 
-    const receipt: Receipt = new Receipt(auth.name, order).calculateTotal(props.bags);
+    const receipt: Receipt = new Receipt(auth.name, order).calculateTotal(props.bags, discountPercents, discountSubtracts);
     const numTendered = Number(tendered) / 100;
     const change = numTendered - receipt.total;
+
+    const onDiscount = (amount: number, discounts: number[], setDiscounts: (discounts: number[]) => void) => {
+        const index = discounts.indexOf(amount);
+        if (index === -1) {
+            setDiscounts([...discounts, amount]);
+        } else {
+            setDiscounts(discounts.filter((_, i) => i !== index));
+        }
+    }
 
     const onInput = (key: string) => {
         if (tendered.length > 4) return;
@@ -84,35 +98,43 @@ export default function Cashier(props: {
                                 {`Discount: `}
                                 <Box sx={{ display: 'flex', flexDirection: 'column', }}>
                                     <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                                        {[10, 25, 50, '?'].map(discountPecent => <Button
+                                        {[10, 25, 50, 0].map(discountPecent => <Button
                                             key={discountPecent}
                                             variant="outlined"
                                             color="primary"
-                                            onMouseDown={() => setTendered(discountPecent + '00')}
+                                            onMouseDown={() => onDiscount(discountPecent, discountPercents, setDiscountPercent)}
                                             fullWidth
-                                            sx={{ maxHeight: '35px', width: '50px', mb: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse' }}
+                                            sx={{
+                                                backgroundColor: discountPercents.includes(discountPecent) ? theme.palette.primary.main : "#fff",
+                                                color: discountPercents.includes(discountPecent) ? "#fff" : theme.palette.text.primary,
+                                                maxHeight: '35px', width: '50px', mb: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse'
+                                            }}
                                         >
                                             <Typography variant="caption">
-                                                {discountPecent}%
+                                                {discountPecent === 0 ? '?' : discountPecent}%
                                             </Typography>
                                         </Button>)}
                                     </Box>
                                     <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                                        {[1, 2, 4, '?'].map(discountSubtract => <Button
+                                        {[1, 2, 4, 0].map(discountSubtract => <Button
                                             key={discountSubtract}
                                             variant="outlined"
                                             color="primary"
-                                            onMouseDown={() => setTendered(discountSubtract + '00')}
+                                            onMouseDown={() => onDiscount(discountSubtract, discountSubtracts, setDiscountSubtract)}
                                             fullWidth
-                                            sx={{ maxHeight: '35px', width: '50px', mb: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse' }}
+                                            sx={{
+                                                backgroundColor: discountSubtracts.includes(discountSubtract) ? theme.palette.primary.main : "#fff",
+                                                color: discountSubtracts.includes(discountSubtract) ? "#fff" : theme.palette.text.primary,
+                                                maxHeight: '35px', width: '50px', mb: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse'
+                                            }}
                                         >
                                             <Typography variant="caption">
-                                                ${discountSubtract}
+                                                ${discountSubtract === 0 ? '?' : discountSubtract}
                                             </Typography>
                                         </Button>)}
                                     </Box>
                                 </Box>
-                                <TotalBill bags={receipt.bags} />
+                                <TotalBill bags={receipt.bags} discountPercents={discountPercents} discountSubtracts={discountSubtracts} />
                             </Box>
                         </Box>
 
