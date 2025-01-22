@@ -32,6 +32,7 @@ import { CategoryItem, ItemRef, NonPho, Pho, TrackedItem } from '../my/my-class'
 import { MENU } from '../my/my-constants';
 import { CONTEXT } from '../App';
 import { ORDER_CONTEXT } from './OrderView';
+import { IoPrint } from 'react-icons/io5';
 
 interface Props extends BagDndProps {
     bag: number,
@@ -98,20 +99,25 @@ const PhoList = ({ props }: { props: PhoListProps }) => {
 
     return (
         <StyledPaper sx={{ pt: 0, mb: 0, pb: 0, pl: 0, pr: 0 }}>
-            {expand && <Box>
-                <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} >
-                    <Badge badgeContent={categoryItems.getPhoActualQty()} color="primary" anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                    }}
-                        sx={{ mb: 0, pb: 0, ml: 1 }}>
-                        {category}
-                        {category === 'BEEF' && <PiCow style={{ fontSize: 25, marginLeft: 6 }} />}
-                        {category === 'CHICKEN' && <GiChicken style={{ fontSize: 25, marginLeft: 6 }} />}
-                        {category === 'DRINK' && <RiDrinks2Line style={{ fontSize: 25, marginLeft: 6 }} />}
-                    </Badge>
-                </Typography>
-                <Divider />
+            {expand && <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Box>
+                    <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} >
+                        <Badge badgeContent={categoryItems.getPhoActualQty()} color="primary" anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                            sx={{ mb: 0, pb: 0, ml: 1 }}>
+                            {category}
+                            {category === 'BEEF' && <PiCow style={{ fontSize: 25, marginLeft: 6 }} />}
+                            {category === 'CHICKEN' && <GiChicken style={{ fontSize: 25, marginLeft: 6 }} />}
+                            {category === 'DRINK' && <RiDrinks2Line style={{ fontSize: 25, marginLeft: 6 }} />}
+                        </Badge>
+                    </Typography>
+                    <Divider />
+                </Box>
+                {/* <Button variant="outlined" color="primary" sx={{ p: 0 }} onClick={() => { }} >
+                    <IoPrint style={{ fontSize: 24 }} />
+                </Button> */}
             </Box>}
             {categoryItems.pho.map((trackedItem, index) =>
                 <TrackedItemsList key={index}

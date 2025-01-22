@@ -3,7 +3,7 @@ import Header from "./Header";
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowParams } from "@mui/x-data-grid";
 import { SYNC_TYPE, syncServer } from "../my/my-ws";
 import { UTILS } from "../my/my-util";
-import { Table } from "../my/my-class";
+import { Order, Receipt } from "../my/my-class";
 import { Box, Button, Divider, Grid2, Modal, Stack, styled, Typography, useMediaQuery } from "@mui/material";
 import { StyledPaper } from "../my/my-styled";
 import { TableContext } from "../App";
@@ -40,24 +40,24 @@ class RowData {
     amount: string;
     note: string;
 
-    constructor(table: Table, index: number) {
+    constructor(receipt: Receipt, index: number) {
         this.index = index;
-        this.id = UTILS.formatTime(table.orderTime).split(',')[1].substring(1, 9);
-        this.cleanTime = !table.cleanTime ? '' : UTILS.formatTime(table.cleanTime).split(',')[1].substring(1, 9);
-        this.orderName = table.getName();
-        this.servers = table.getServers().join(',');
-        this.cashier = table.cashier || '';
-        this.amount = (table.receipts || []).map(receipt => receipt.total).join(',');
-        this.note = table.note || '';
+        this.id = UTILS.formatTime(receipt.orderTime).split(',')[1].substring(1, 9);
+        this.cleanTime = !receipt.cleanTime ? '' : UTILS.formatTime(receipt.cleanTime).split(',')[1].substring(1, 9);
+        this.orderName = receipt.getName();
+        this.servers = receipt.getServers().join(',');
+        this.cashier = receipt.cashier || '';
+        this.amount = receipt.total.toFixed(2) || '';
+        this.note = receipt.note || '';
     }
 }
 
-let HISTORY_ORDER: Table[] = [];
+let HISTORY_RECEIPT: Receipt[] = [];
 let rowsData: RowData[] = [];
 let setHistoryDateOutSide: () => void = () => console.log('error');
 
-export const updateHistoryOrder = (historyOrder: Table[]) => {
-    HISTORY_ORDER = historyOrder;
+export const updateHistoryOrder = (historyOrder: Receipt[]) => {
+    HISTORY_RECEIPT = historyOrder;
     rowsData = historyOrder.map((table, index) => new RowData(table, index));
     if (setHistoryDateOutSide) {
         setHistoryDateOutSide();
@@ -66,11 +66,11 @@ export const updateHistoryOrder = (historyOrder: Table[]) => {
 
 export default function OrderHistory(props: { setHistoryOrder: (state: boolean) => void }) {
     const [historyDate, setHistoryDate] = useState<Date>(new Date());
-    const [order, setOrder] = useState<Table | null>(null);
+    const [order, setOrder] = useState<Receipt | null>(null);
 
     useEffect(() => {
         viewOrder = (orderIndex: number) => {
-            setOrder(HISTORY_ORDER[orderIndex])
+            setOrder(HISTORY_RECEIPT[orderIndex])
         };
         setHistoryDateOutSide = () => setHistoryDate(new Date());
         syncServer(SYNC_TYPE.HISTORY_ORDER, UTILS.formatTime());
@@ -108,7 +108,7 @@ export default function OrderHistory(props: { setHistoryOrder: (state: boolean) 
                             <Typography variant="h4" sx={{ mb: 2 }}>{order.getName()}</Typography>
                             {order.note && <Typography variant="h6" sx={{ mt: '10px' }}>: {order.note}</Typography>}
                         </Box>
-                        <TableContext.Provider value={{ table: order, orderTable: () => { }, prepareChangeTable: () => { } }}>
+                        <TableContext.Provider value={{ table: order, order: order, orderTable: () => { }, setOrder: () => { }, prepareChangeTable: () => { } }}>
                             <OrderView bags={order.bags} phoId={''} />
                         </TableContext.Provider>
                     </Box>

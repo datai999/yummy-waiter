@@ -2,7 +2,7 @@ import { Modal, Box, Typography, styled, TextField, Button, Stack, Badge } from 
 import React, { useContext, useEffect, useState } from "react";
 import { CONTEXT, TableContext } from "../App";
 import OrderView, { ORDER_CONTEXT, TotalBill } from "../order/OrderView";
-import { CategoryItem, LockedTable, Table } from "../my/my-class";
+import { CategoryItem, LockedTable, Order, Receipt, Table } from "../my/my-class";
 import { NumPad } from "../my/my-component";
 import { SERVICE } from "../my/my-service";
 import { RxExit } from "react-icons/rx";
@@ -23,7 +23,7 @@ export default function Cashier(props: {
     bags: Map<number, Map<string, CategoryItem>>
 }) {
     const { auth } = useContext(CONTEXT.Auth);
-    const { table, orderTable } = useContext(CONTEXT.Table);
+    const { order, setOrder } = useContext(CONTEXT.Order);
     const [tendered, setTendered] = useState('');
     const [expand, setExpand] = useState<boolean>(false);
 
@@ -31,7 +31,7 @@ export default function Cashier(props: {
         setTendered('');
     }, [props.view]);
 
-    const receipt = SERVICE.calculateTotal(props.bags);
+    const receipt: Receipt = new Receipt(auth.name, order).calculateTotal(props.bags);
     const numTendered = Number(tendered) / 100;
     const change = numTendered - receipt.total;
 
@@ -45,19 +45,20 @@ export default function Cashier(props: {
             alert('Amount not enough');
             return;
         }
-        if (props.note !== (table.note || '')) {
-            table.note = props.note;
+        receipt.tendered = numTendered;
+        receipt.change = change;
+        if (props.note !== (receipt.note || '')) {
+            receipt.note = props.note;
         }
-        table.cashier = auth.name;
-        table.cleanTime = new Date();
-        table.status = TableStatus.DONE;
-        table.bags = SERVICE.cleanBags(props.bags).cleanBags;
-        table.receipts = [{ ...receipt, tendered: numTendered, change }];
-        if (table.id.startsWith('Togo')) props.orders.delete(table.id);
-        else props.orders.set(table.id, new Table(table.id));
-        syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(false, auth.name) });
-        syncServer(SYNC_TYPE.DONE_ORDER, { [table.id]: table });
-        orderTable(null);
+        receipt.cleanTime = new Date();
+        receipt.status = TableStatus.DONE;
+        receipt.bags = SERVICE.cleanBags(receipt.bags).cleanBags;
+
+        if (receipt.id.startsWith('Togo')) props.orders.delete(receipt.id);
+        else props.orders.set(receipt.id, new Order(receipt.id));
+        syncServer(SYNC_TYPE.LOCKED_TABLES, { [order.id]: new LockedTable(false, auth.name) });
+        syncServer(SYNC_TYPE.DONE_ORDER, { [order.id]: receipt });
+        setOrder(null);
     }
 
     return (<Modal
@@ -70,16 +71,16 @@ export default function Cashier(props: {
                     <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
                         <Box sx={{ width: '500px' }}>
                             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                                <Typography variant="h4" sx={{ mb: 2 }}>{table.getName()}</Typography>
+                                <Typography variant="h4" sx={{ mb: 2 }}>{order.getName()}</Typography>
                                 {props.note && <Typography variant="h6" sx={{ mt: '10px' }}>: {props.note}</Typography>}
                             </Box>
-                            <TableContext.Provider value={{ table: table, orderTable: () => { }, prepareChangeTable: () => { } }}>
+                            <TableContext.Provider value={{ table: order, order: order, orderTable: () => { }, setOrder: () => { }, prepareChangeTable: () => { } }}>
                                 <ORDER_CONTEXT.Provider value={{ refreshOrderView: () => { }, expand }}>
                                     <BagDnd bags={props.bags} phoId={''} />
                                 </ORDER_CONTEXT.Provider>
                             </TableContext.Provider>
                             <Box sx={{ display: 'flex', flexDirection: 'row-reverse', }}>
-                                <TotalBill bags={props.bags} />
+                                <TotalBill bags={receipt.bags} />
                             </Box>
                         </Box>
 

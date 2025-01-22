@@ -137,11 +137,6 @@ export class Table {
     @UTILS.TransformTime()
     cleanTime?: Date | null = null;
 
-    cashier?: string;
-
-    @Type(() => OrderReceipt)
-    receipts?: OrderReceipt[];
-
     @Exclude()
     timer: number = 0;
 
@@ -182,17 +177,47 @@ export class Table {
     }
 }
 
-export class OrderReceipt {
+export class Order extends Table {
+}
+
+export class Receipt extends Order {
+    cashier: string;
     subTotal: number = 0;
     tax: number = 0;
     total: number = 0;
     tendered?: number;
     change?: number;
 
-    public constructor(subTotal: number) {
-        this.subTotal = subTotal;
+    public constructor(cashier: string, order: Order) {
+        if (!order) order = new Order('?');
+        super(order.id);
+        this.cashier = cashier;
+        this.note = order.note;
+        this.status = order.status;
+        this.orderTime = order.orderTime;
+        this.cleanTime = order.cleanTime;
+        this.timer = order.timer;
+    }
+
+    public calculateTotal(bags: Map<number, Map<string, CategoryItem>>): Receipt {
+        this.bags = bags;
+        let subTotal: number = Array.from(this.bags.values()).reduce((acc, categotyItems) => {
+            return acc + Array.from(categotyItems.values()).reduce((subAcc, categotyItem) => {
+                const phoTotal = categotyItem.pho.reduce((trackedAcc, tracked) => {
+                    return trackedAcc + Array.from(tracked.items.values())
+                        .reduce((phoAcc, pho) => pho.void ? phoAcc : phoAcc + pho.actualQty * pho.price, 0)
+                }, 0);
+                const nonPhoTotal = categotyItem.nonPho.reduce((trackedAcc, tracked) => {
+                    return trackedAcc + Array.from(tracked.items.values())
+                        .reduce((nonPhoAcc, nonPho) => nonPho.void ? nonPhoAcc : nonPhoAcc + nonPho.actualQty * nonPho.price, 0)
+                }, 0);
+                return subAcc + phoTotal + nonPhoTotal;
+            }, 0);
+        }, 0);
+        this.subTotal = Math.ceil(subTotal * 100) / 100;
         this.tax = Math.ceil(0.0925 * subTotal * 100) / 100;
         this.total = subTotal + this.tax;
+        return this;
     }
 }
 

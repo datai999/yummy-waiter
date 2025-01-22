@@ -6,7 +6,7 @@ import Waiter from './waiter/Waiter';
 import { Alert, Box, Slide, SlideProps, Snackbar } from '@mui/material';
 import { changeTable, generateTables } from './my/my-service';
 import initWsClient, { SYNC_TYPE, syncServer } from './my/my-ws';
-import { Auth, CategoryItem, LockedTable, Table } from './my/my-class';
+import { Auth, CategoryItem, LockedTable, Order, Table } from './my/my-class';
 import Login from './user/Login';
 import { TableStatus } from './my/my-constants';
 import { UTILS } from './my/my-util';
@@ -19,7 +19,9 @@ interface IAuthContext {
 }
 interface ITableContext {
   table: Table,
+  order: Order,
   orderTable: (table: null | Table) => void,
+  setOrder: (order: null | Table) => void,
   prepareChangeTable: (bags: Map<number, Map<string, CategoryItem>>) => void
 }
 
@@ -35,6 +37,7 @@ export const CONTEXT = {
   Auth: AuthContext,
   LockedTable: LockedTableContext,
   Table: TableContext,
+  Order: TableContext,
   Toast: ToastContext
 }
 
@@ -171,7 +174,7 @@ export default function App() {
         <AuthContext.Provider value={{ auth, logout }}>
           <LockedTableContext.Provider value={(tableId: string) => LOCKED_TABLES.get(tableId)?.server}>
             {table
-              ? (<TableContext.Provider value={{ table, orderTable, prepareChangeTable }}>
+              ? (<TableContext.Provider value={{ table, order: table, orderTable, setOrder: orderTable, prepareChangeTable }}>
                 <Waiter tables={tables} tempBags={tempBags.current} />
               </TableContext.Provider>
               )

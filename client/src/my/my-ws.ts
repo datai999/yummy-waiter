@@ -1,5 +1,5 @@
 import { instanceToPlain, plainToInstance } from "class-transformer";
-import { LockedTable, Table } from "./my-class";
+import { LockedTable, Receipt, Table } from "./my-class";
 import { JSON_replacer, JSON_reviver } from "./my-util";
 import { updateHistoryOrder } from "../order/OrderHistory";
 
@@ -70,8 +70,8 @@ const initWsClient = (username: string,
             onDoneOrders(data.senter, tables);
         }
         if (data.type === SYNC_TYPE[SYNC_TYPE.HISTORY_ORDER]) {
-            const tables = Array.from(data.payload).map(tableJson => plainToInstance(Table, tableJson));
-            updateHistoryOrder(tables);
+            const receipts = Array.from(data.payload).map(tableJson => plainToInstance(Receipt, tableJson));
+            updateHistoryOrder(receipts);
         }
     };
 

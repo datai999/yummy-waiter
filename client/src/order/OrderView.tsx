@@ -1,6 +1,6 @@
 import { Box, Button, TextField, useMediaQuery } from "@mui/material";
 import React, { createContext, useContext, useState } from "react";
-import { CategoryItem } from "../my/my-class";
+import { CategoryItem, Receipt } from "../my/my-class";
 import BagDnd from "./BagDnd";
 import { CONTEXT } from "../App";
 import { StyledPaper } from "../my/my-styled";
@@ -22,7 +22,7 @@ export default function OrderView(props: {
     phoId: String;
     showPho?: (isPho: boolean, bag: number, category: string, trackIndex: number, itemId: string) => void,
 }) {
-    const { table } = useContext(CONTEXT.Table);
+    const { table, order } = useContext(CONTEXT.Order);
     const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
 
     const [refresh, setRefresh] = useState<Boolean>(false);
@@ -43,8 +43,8 @@ export default function OrderView(props: {
                 onChange={(e) => props.setNote ? props.setNote(e.target.value) : null}
             />
             <Button onClick={() => setExpand(!expand)} size="medium" variant="outlined"
-                sx={{ pl: 0, pr: 0, borderRadius: 2, backgroundColor: expand ? '#d32f2f' : "#fff", color: expand ? '#fff' : "#d32f2f" }} >
-                <MdManageHistory style={{ fontSize: 18, minHeight: '24px' }} />
+                sx={{ p: 0, pt: '2px', pb: '2px', mt: 1, borderRadius: 2, backgroundColor: expand ? '#d32f2f' : "#fff", color: expand ? '#fff' : "#d32f2f" }} >
+                <MdManageHistory style={{ fontSize: 28, minHeight: '24px' }} />
             </Button>
         </Box>}
         <ORDER_CONTEXT.Provider value={contextValue}>
@@ -57,7 +57,8 @@ export default function OrderView(props: {
 }
 
 export const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>> }) => {
-    const receipt = SERVICE.calculateTotal(props.bags);
+    const { order } = useContext(CONTEXT.Order);
+    const receipt: Receipt = new Receipt('', order).calculateTotal(props.bags);
 
     return (<StyledPaper sx={{ p: 1, pb: 0, pt: 0, m: 0, ml: 1, mr: 1, minWidth: '160px', maxWidth: '200px', maxHeight: '70px' }}>
         <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
