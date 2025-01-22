@@ -1,20 +1,16 @@
-import { Modal, Box, Typography, styled, TextField, Button, Stack, Badge, useTheme } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
-import { CONTEXT, TableContext } from "../App";
-import OrderView, { ORDER_CONTEXT, TotalBill } from "../order/OrderView";
+import { Modal, Box, Typography, styled, Button, Stack, Badge } from "@mui/material";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { CONTEXT } from "../App";
 import { CategoryItem, LockedTable, Order, Receipt, Table } from "../my/my-class";
 import { NumPad } from "../my/my-component";
 import { SERVICE } from "../my/my-service";
-import { RxExit } from "react-icons/rx";
 import { MdOutlineCallSplit } from "react-icons/md";
 import { TableStatus } from "../my/my-constants";
 import { syncServer, SYNC_TYPE } from "../my/my-ws";
-import BagDnd from "../order/BagDnd";
 import { IoPrint } from "react-icons/io5";
-import { AiOutlineFileDone } from "react-icons/ai";
 import { IoMdClose } from "react-icons/io";
 import { BsCashCoin } from "react-icons/bs";
-import { TbBasketDiscount } from "react-icons/tb";
+import AddDiscount from "./AddDiscount";
 
 export default function Cashier(props: {
     view: boolean,
@@ -22,33 +18,20 @@ export default function Cashier(props: {
     orders: Map<String, Table>,
     note: string,
     bags: Map<number, Map<string, CategoryItem>>
+    receipt: Receipt
 }) {
-    const theme = useTheme();
     const { auth } = useContext(CONTEXT.Auth);
     const { order, setOrder } = useContext(CONTEXT.Order);
     const [tendered, setTendered] = useState('');
-    const [expand, setExpand] = useState<boolean>(false);
-    const [discountPercents, setDiscountPercent] = useState<number[]>([]);
-    const [discountSubtracts, setDiscountSubtract] = useState<number[]>([]);
+    const [refresh, setRefresh] = useState(false);
+    const [change, setChange] = useState(0 - props.receipt.finalTotal);
+
+    let receipt: Receipt = props.receipt;
+    const numTendered = Number(tendered) / 100;
 
     useEffect(() => {
         setTendered('');
-        setDiscountPercent([]);
-        setDiscountSubtract([]);
     }, [props.view]);
-
-    const receipt: Receipt = new Receipt(auth.name, order).calculateTotal(props.bags, discountPercents, discountSubtracts);
-    const numTendered = Number(tendered) / 100;
-    const change = numTendered - receipt.total;
-
-    const onDiscount = (amount: number, discounts: number[], setDiscounts: (discounts: number[]) => void) => {
-        const index = discounts.indexOf(amount);
-        if (index === -1) {
-            setDiscounts([...discounts, amount]);
-        } else {
-            setDiscounts(discounts.filter((_, i) => i !== index));
-        }
-    }
 
     const onInput = (key: string) => {
         if (tendered.length > 4) return;
@@ -56,15 +39,12 @@ export default function Cashier(props: {
     }
 
     const checkTendered = () => {
-        if (numTendered < receipt.total) {
+        if (numTendered < receipt.finalTotal) {
             alert('Amount not enough');
             return;
         }
         receipt.tendered = numTendered;
         receipt.change = change;
-        if (props.note !== (receipt.note || '')) {
-            receipt.note = props.note;
-        }
         receipt.cleanTime = new Date();
         receipt.status = TableStatus.DONE;
         receipt.bags = SERVICE.cleanBags(receipt.bags).cleanBags;
@@ -84,59 +64,7 @@ export default function Cashier(props: {
             {props.view && (
                 <Box>
                     <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                        <Box sx={{ width: '500px' }}>
-                            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                                <Typography variant="h4" sx={{ mb: 2 }}>{order.getName()}</Typography>
-                                {props.note && <Typography variant="h6" sx={{ mt: '10px' }}>: {props.note}</Typography>}
-                            </Box>
-                            <TableContext.Provider value={{ table: order, order: order, orderTable: () => { }, setOrder: () => { }, prepareChangeTable: () => { } }}>
-                                <ORDER_CONTEXT.Provider value={{ refreshOrderView: () => { }, expand, discount: true }}>
-                                    <BagDnd bags={props.bags} phoId={''} />
-                                </ORDER_CONTEXT.Provider>
-                            </TableContext.Provider>
-                            <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                                {`Discount: `}
-                                <Box sx={{ display: 'flex', flexDirection: 'column', }}>
-                                    <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                                        {[10, 25, 50, 0].map(discountPecent => <Button
-                                            key={discountPecent}
-                                            variant="outlined"
-                                            color="primary"
-                                            onMouseDown={() => onDiscount(discountPecent, discountPercents, setDiscountPercent)}
-                                            fullWidth
-                                            sx={{
-                                                backgroundColor: discountPercents.includes(discountPecent) ? theme.palette.primary.main : "#fff",
-                                                color: discountPercents.includes(discountPecent) ? "#fff" : theme.palette.text.primary,
-                                                maxHeight: '35px', width: '50px', mb: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse'
-                                            }}
-                                        >
-                                            <Typography variant="caption">
-                                                {discountPecent === 0 ? '?' : discountPecent}%
-                                            </Typography>
-                                        </Button>)}
-                                    </Box>
-                                    <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                                        {[1, 2, 4, 0].map(discountSubtract => <Button
-                                            key={discountSubtract}
-                                            variant="outlined"
-                                            color="primary"
-                                            onMouseDown={() => onDiscount(discountSubtract, discountSubtracts, setDiscountSubtract)}
-                                            fullWidth
-                                            sx={{
-                                                backgroundColor: discountSubtracts.includes(discountSubtract) ? theme.palette.primary.main : "#fff",
-                                                color: discountSubtracts.includes(discountSubtract) ? "#fff" : theme.palette.text.primary,
-                                                maxHeight: '35px', width: '50px', mb: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse'
-                                            }}
-                                        >
-                                            <Typography variant="caption">
-                                                ${discountSubtract === 0 ? '?' : discountSubtract}
-                                            </Typography>
-                                        </Button>)}
-                                    </Box>
-                                </Box>
-                                <TotalBill bags={receipt.bags} discountPercents={discountPercents} discountSubtracts={discountSubtracts} />
-                            </Box>
-                        </Box>
+                        <AddDiscount view={props.view} receipt={receipt} addDiscount={(finalTotal) => setChange(numTendered - finalTotal)} />
 
                         <Box sx={{ witdh: '300px', maxWidth: '300px' }}>
                             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', mb: 0 }}>
@@ -155,13 +83,13 @@ export default function Cashier(props: {
                         </Box>
 
                         <Box sx={{ mt: 0.5 }}>
-                            {['100', '50', '30', '20', receipt.total.toFixed(2)].map((suggestTendered, index) =>
+                            {['100', '50', '30', '20', receipt.finalTotal.toFixed(2)].map((suggestTendered, index) =>
                                 <Button
                                     key={suggestTendered}
                                     variant="outlined"
                                     color="primary"
-                                    disabled={Number(suggestTendered) < receipt.total}
-                                    onMouseDown={() => setTendered(index === 4 ? (Number(receipt.total) * 100 + '') : suggestTendered + '00')}
+                                    disabled={Number(suggestTendered) < receipt.finalTotal}
+                                    onMouseDown={() => setTendered(index === 4 ? (Number(receipt.finalTotal) * 100 + '') : suggestTendered + '00')}
                                     fullWidth
                                     sx={{ minHeight: 70, maxHeight: 5, width: '90px', mb: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse' }}
                                 >

@@ -205,11 +205,11 @@ export class Receipt extends Order {
     discountPercent?: Discount;
     discountSubtract?: Discount;
 
-    public constructor(cashier: string, order: Order) {
+    public constructor(cashier: string, order: Order, note?: string) {
         if (!order) order = new Order('?');
         super(order.id);
         this.cashier = cashier;
-        this.note = order.note;
+        this.note = order.note || note;
         this.status = order.status;
         this.orderTime = order.orderTime;
         this.cleanTime = order.cleanTime;

@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 
 import Header from './HeaderWaiter';
 import OrderTake from './TakeOrder';
-import { CategoryItem, LockedTable, Table, TrackedNonPho, TrackedPho } from '../my/my-class';
+import { CategoryItem, LockedTable, Receipt, Table, TrackedNonPho, TrackedPho } from '../my/my-class';
 import { MENU, TableStatus } from '../my/my-constants';
 import Footer from './FooterWaiter';
 import _ from 'lodash';
@@ -118,7 +118,8 @@ export default function Waiter(props: WaiterProps) {
                 </Box>
             </Box>
             <TakeCustomerInfo openModal={openModal} closeModel={doneTakeCustomerInfo} />
-            <Cashier view={viewCashier} close={() => setViewCashier(false)} orders={props.tables} note={note} bags={bags} />
+            <Cashier view={viewCashier} close={() => setViewCashier(false)} orders={props.tables} note={note} bags={bags}
+                receipt={new Receipt(auth.name, table, note).calculateTotal(bags)} />
         </WAITER_CONTEXT.lockOrder.Provider >
     );
 }
