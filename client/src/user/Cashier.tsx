@@ -14,6 +14,7 @@ import { IoPrint } from "react-icons/io5";
 import { AiOutlineFileDone } from "react-icons/ai";
 import { IoMdClose } from "react-icons/io";
 import { BsCashCoin } from "react-icons/bs";
+import { TbBasketDiscount } from "react-icons/tb";
 
 export default function Cashier(props: {
     view: boolean,
@@ -75,11 +76,42 @@ export default function Cashier(props: {
                                 {props.note && <Typography variant="h6" sx={{ mt: '10px' }}>: {props.note}</Typography>}
                             </Box>
                             <TableContext.Provider value={{ table: order, order: order, orderTable: () => { }, setOrder: () => { }, prepareChangeTable: () => { } }}>
-                                <ORDER_CONTEXT.Provider value={{ refreshOrderView: () => { }, expand }}>
+                                <ORDER_CONTEXT.Provider value={{ refreshOrderView: () => { }, expand, discount: true }}>
                                     <BagDnd bags={props.bags} phoId={''} />
                                 </ORDER_CONTEXT.Provider>
                             </TableContext.Provider>
-                            <Box sx={{ display: 'flex', flexDirection: 'row-reverse', }}>
+                            <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                                {`Discount: `}
+                                <Box sx={{ display: 'flex', flexDirection: 'column', }}>
+                                    <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                                        {[10, 25, 50, '?'].map(discountPecent => <Button
+                                            key={discountPecent}
+                                            variant="outlined"
+                                            color="primary"
+                                            onMouseDown={() => setTendered(discountPecent + '00')}
+                                            fullWidth
+                                            sx={{ maxHeight: '35px', width: '50px', mb: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse' }}
+                                        >
+                                            <Typography variant="caption">
+                                                {discountPecent}%
+                                            </Typography>
+                                        </Button>)}
+                                    </Box>
+                                    <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                                        {[1, 2, 4, '?'].map(discountSubtract => <Button
+                                            key={discountSubtract}
+                                            variant="outlined"
+                                            color="primary"
+                                            onMouseDown={() => setTendered(discountSubtract + '00')}
+                                            fullWidth
+                                            sx={{ maxHeight: '35px', width: '50px', mb: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse' }}
+                                        >
+                                            <Typography variant="caption">
+                                                ${discountSubtract}
+                                            </Typography>
+                                        </Button>)}
+                                    </Box>
+                                </Box>
                                 <TotalBill bags={receipt.bags} />
                             </Box>
                         </Box>
@@ -131,6 +163,10 @@ export default function Cashier(props: {
                             Split bill
                             <MdOutlineCallSplit style={iconStyle} />
                         </Button>
+                        {/* <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={() => alert('TODO')} >
+                            Discount
+                            <TbBasketDiscount style={iconStyle} />
+                        </Button> */}
                         <Button variant="contained" color="primary" onClick={() => { }} >
                             Receipt
                             <IoPrint style={iconStyle} />

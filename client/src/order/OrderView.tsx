@@ -4,16 +4,15 @@ import { CategoryItem, Receipt } from "../my/my-class";
 import BagDnd from "./BagDnd";
 import { CONTEXT } from "../App";
 import { StyledPaper } from "../my/my-styled";
-import { SERVICE } from "../my/my-service";
-import { BsArrowsCollapse, BsArrowsExpand } from "react-icons/bs";
 import { MdManageHistory } from "react-icons/md";
 
 interface OrderContext {
     refreshOrderView: () => void;
     expand: boolean;
+    discount: boolean;
 }
 
-export const ORDER_CONTEXT = createContext<OrderContext>({ refreshOrderView: () => { }, expand: true })
+export const ORDER_CONTEXT = createContext<OrderContext>({ refreshOrderView: () => { }, expand: true, discount: false })
 
 export default function OrderView(props: {
     note?: string,
@@ -29,7 +28,7 @@ export default function OrderView(props: {
     const [expand, setExpand] = useState<boolean>(true);
 
     const mdSize = useMediaQuery('(min-width:900px)');
-    const contextValue = { refreshOrderView: () => setRefresh(!refresh), expand };
+    const contextValue = { refreshOrderView: () => setRefresh(!refresh), expand, discount: false };
 
     return (<Box>
         {props.showPho && <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '95%' }}>

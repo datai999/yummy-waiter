@@ -285,10 +285,10 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
                         if (lockedTable || item.void) return;
                         if (showPho) {
                             showPho(props.draggablePrefix === 'pho', bag, category, props.trackedIndex, phoId === item.id ? "" : item.id);
-                        }
-                        if (props.draggablePrefix !== 'pho') {
-                            if (!note) setNote(' ');
-                            else secondaryRef.current?.focus();
+                            if (props.draggablePrefix !== 'pho') {
+                                if (!note) setNote(' ');
+                                else secondaryRef.current?.focus();
+                            }
                         }
                     }}
                     dense sx={{ p: 0, m: 0 }}>
