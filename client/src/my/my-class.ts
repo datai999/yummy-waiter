@@ -139,6 +139,9 @@ export class Table {
 
     cashier?: string;
 
+    @Type(() => OrderReceipt)
+    receipts?: OrderReceipt[];
+
     @Exclude()
     timer: number = 0;
 
@@ -176,6 +179,20 @@ export class Table {
     public getName(): string {
         const time = this.id.split(' ')[1].split(':');
         return this.id.startsWith('Table') ? this.id : 'Togo' + ':' + time[0] + ':' + time[1];
+    }
+}
+
+export class OrderReceipt {
+    subTotal: number = 0;
+    tax: number = 0;
+    total: number = 0;
+    tendered?: number;
+    change?: number;
+
+    public constructor(subTotal: number) {
+        this.subTotal = subTotal;
+        this.tax = Math.ceil(0.0925 * subTotal * 100) / 100;
+        this.total = subTotal + this.tax;
     }
 }
 

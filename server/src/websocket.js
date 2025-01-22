@@ -121,6 +121,7 @@ const doneOrder = (syncTables) => {
         const filePath = `/orders/${paths[0]}/${paths[1]}/${paths[2]}`;
 
         writeJsonFile(syncTable, fileName, filePath);
+        delete LOCKED_TABLES[tableId];
         delete ACTIVE_TABLES[tableId];
     });
 }

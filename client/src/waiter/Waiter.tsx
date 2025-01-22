@@ -11,6 +11,8 @@ import _ from 'lodash';
 import { CONTEXT } from '../App';
 import { syncServer, SYNC_TYPE } from '../my/my-ws';
 import TakeCustomerInfo from './TakeCustomerInfo';
+import Cashier from '../user/Cashier';
+import { SERVICE } from '../my/my-service';
 
 interface WaiterProps {
     tables: Map<String, Table>,
@@ -33,6 +35,8 @@ export default function Waiter(props: WaiterProps) {
     const [category, setCategory] = useState(Object.keys(MENU)[0]);
     const [openModal, setOpenModal] = useState(false);
     const [note, setNote] = useState<string>(_.cloneDeep(table.note || ''));
+    const [viewCashier, setViewCashier] = useState(false);
+
     const locked = useRef(Boolean(useContext(CONTEXT.LockedTable)(table.id)) === auth.name);
 
     let refBags = useRef(_.cloneDeep(props.tempBags || table.bags));
@@ -60,28 +64,9 @@ export default function Waiter(props: WaiterProps) {
             bagChange = true;
             table.note = note;
         }
-        let count = 0;
-        bags.forEach((categoryItems, key) => {
-            let hasItem = false;
-            categoryItems.forEach(categoryItem => {
-                const lastPho = categoryItem.pho.pop()!;
-                if (lastPho.items.size > 0) {
-                    bagChange = true;
-                    lastPho.time = new Date();
-                    categoryItem.pho.push(lastPho);
-                }
-                const lastNonPho = categoryItem.nonPho.pop()!;
-                if (lastNonPho.items.size > 0) {
-                    bagChange = true;
-                    lastNonPho.time = new Date();
-                    categoryItem.nonPho.push(lastNonPho);
-                }
-                if (categoryItem.pho.length > 0 || categoryItem.nonPho.length > 0)
-                    hasItem = true;
-            });
-            if (!hasItem) bags.delete(Number(key));
-            else table.bags.set(count++, categoryItems);
-        });
+        const cleanBags = SERVICE.cleanBags(bags);
+        if (!bagChange) bagChange = cleanBags.bagChange;
+        table.bags = cleanBags.cleanBags;
         syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(false, auth.name) });
         if (bagChange) {
             if (table.status === TableStatus.AVAILABLE) {
@@ -103,9 +88,13 @@ export default function Waiter(props: WaiterProps) {
         setOpenModal(false)
     }
 
+    const openCashier = () => {
+        syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(true, auth.name) });
+        setViewCashier(true);
+    }
+
     const doneOrder = () => {
         table.cleanTime = new Date();
-        table.cashier = auth.name;
         table.status = TableStatus.DONE;
         if (table.id.startsWith('Togo')) props.tables.delete(table.id);
         else props.tables.set(table.id, new Table(table.id));
@@ -124,10 +113,11 @@ export default function Waiter(props: WaiterProps) {
                 <OrderTake note={note} setNote={setNote} bags={bags} props={childProps} />
                 <Box sx={{ position: "sticky", bottom: 3, zIndex: 1, bgcolor: "background.paper", mt: 'auto' }}>
                     {/* <Box sx={{ mt: 'auto', mb: 1 }}> */}
-                    <Footer addTogoBag={addTogoBag} changeTable={() => prepareChangeTable(bags)} submitOrder={submitOrder} customerInfo={takeCustomerInfo} doneOrder={doneOrder} />
+                    <Footer addTogoBag={addTogoBag} changeTable={() => prepareChangeTable(bags)} submitOrder={submitOrder} customerInfo={takeCustomerInfo} openCashier={openCashier} doneOrder={doneOrder} />
                 </Box>
             </Box>
             <TakeCustomerInfo openModal={openModal} closeModel={doneTakeCustomerInfo} />
+            <Cashier view={viewCashier} close={() => setViewCashier(false)} orders={props.tables} bags={bags} />
         </WAITER_CONTEXT.lockOrder.Provider >
     );
 }

@@ -10,6 +10,7 @@ import { RxExit } from "react-icons/rx";
 import { CONTEXT } from '../App';
 import { FaFileSignature } from "react-icons/fa";
 import { SiCcleaner } from "react-icons/si";
+import { BsCashCoin } from "react-icons/bs";
 
 const iconStyle = {
     fontSize: 30, marginLeft: 8
@@ -32,6 +33,7 @@ export default function Footer(props: {
     changeTable: () => void,
     submitOrder: () => void,
     customerInfo: () => void,
+    openCashier: () => void,
     doneOrder: () => void
 }) {
     const { logout } = useContext(CONTEXT.Auth);
@@ -60,10 +62,10 @@ export default function Footer(props: {
             Customer
             <MdOutlinePersonPin style={iconStyle} />
         </Button> */}
-        <Button variant="contained" color="primary" disabled={lockedTable} sx={{ minHeight: 50 }} onClick={() => setOpen(true)} >
+        {/* <Button variant="contained" color="primary" disabled={lockedTable} sx={{ minHeight: 50 }} onClick={() => setOpen(true)} >
             Clean
             <SiCcleaner style={iconStyle} />
-        </Button>
+        </Button> */}
         <Button variant="contained" color="primary" disabled={lockedTable} onClick={() => {
             props.submitOrder();
             orderTable(null);
@@ -77,6 +79,10 @@ export default function Footer(props: {
         }} >
             Done order
             <AiOutlineFileDone style={iconStyle} />
+        </Button>
+        <Button variant="contained" color="primary" disabled={lockedTable} onClick={props.openCashier} >
+            Cash
+            <BsCashCoin style={iconStyle} />
         </Button>
         <Modal
             open={openModal}

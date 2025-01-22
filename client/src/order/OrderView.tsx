@@ -4,6 +4,7 @@ import { CategoryItem } from "../my/my-class";
 import BagDnd from "./BagDnd";
 import { CONTEXT } from "../App";
 import { StyledPaper } from "../my/my-styled";
+import { SERVICE } from "../my/my-service";
 
 export const ORDER_CONTEXT = {
     refresh: createContext(() => { })
@@ -43,21 +44,7 @@ export default function OrderView(props: {
 }
 
 const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>> }) => {
-
-    const subTotal: number = Array.from(props.bags.values()).reduce((acc, categotyItems) => {
-        return acc + Array.from(categotyItems.values()).reduce((subAcc, categotyItem) => {
-            const phoTotal = categotyItem.pho.reduce((trackedAcc, tracked) => {
-                return trackedAcc + Array.from(tracked.items.values())
-                    .reduce((phoAcc, pho) => pho.void ? phoAcc : phoAcc + pho.actualQty * pho.price, 0)
-            }, 0);
-            const nonPhoTotal = categotyItem.nonPho.reduce((trackedAcc, tracked) => {
-                return trackedAcc + Array.from(tracked.items.values())
-                    .reduce((nonPhoAcc, nonPho) => nonPho.void ? nonPhoAcc : nonPhoAcc + nonPho.actualQty * nonPho.price, 0)
-            }, 0);
-            return subAcc + phoTotal + nonPhoTotal;
-        }, 0);
-    }, 0);
-    let tax: number = Math.ceil(0.0925 * subTotal * 100) / 100;
+    const receipt = SERVICE.calculateTotal(props.bags);
 
     return (<StyledPaper sx={{ p: 1, pb: 0, pt: 0, m: 0, ml: 1, minWidth: '140px', maxHeight: '70px' }}>
         <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
@@ -65,7 +52,7 @@ const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>> }) => {
                 {`Sub total:`}
             </Box>
             <Box>
-                {subTotal.toFixed(2)}
+                {receipt.subTotal.toFixed(2)}
             </Box>
         </Box>
         <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
@@ -73,7 +60,7 @@ const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>> }) => {
                 {`Tax:`}
             </Box>
             <Box>
-                {tax.toFixed(2)}
+                {receipt.tax.toFixed(2)}
             </Box>
         </Box>
         <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
@@ -81,7 +68,7 @@ const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>> }) => {
                 {`Total:`}
             </Box>
             <Box>
-                {(subTotal + tax).toFixed(2)}
+                {receipt.total.toFixed(2)}
             </Box>
         </Box>
     </StyledPaper>)

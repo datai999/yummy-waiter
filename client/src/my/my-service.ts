@@ -4,7 +4,7 @@ import {
 } from './my-constants';
 import _ from 'lodash';
 import { syncServer, SYNC_TYPE } from './my-ws';
-import { LockedTable, Pho, Table } from './my-class';
+import { CategoryItem, LockedTable, OrderReceipt, Pho, Table } from './my-class';
 import { UTILS } from './my-util';
 
 const lodash = _;
@@ -74,4 +74,57 @@ export const changeTable = (auth: any, tables: Map<String, Table>, fromTable: Ta
     }
 
     return toTable;
+}
+
+const cleanBags = (bags: Map<number, Map<string, CategoryItem>>) => {
+    let bagChange = false;
+    let count = 0;
+    const cleanBags = new Map<number, Map<string, CategoryItem>>();
+    bags.forEach((categoryItems, key) => {
+        let hasItem = false;
+        categoryItems.forEach(categoryItem => {
+            const lastPho = categoryItem.pho.pop()!;
+            if (lastPho.items.size > 0) {
+                bagChange = true;
+                lastPho.time = new Date();
+                categoryItem.pho.push(lastPho);
+            }
+            const lastNonPho = categoryItem.nonPho.pop()!;
+            if (lastNonPho.items.size > 0) {
+                bagChange = true;
+                lastNonPho.time = new Date();
+                categoryItem.nonPho.push(lastNonPho);
+            }
+            if (categoryItem.pho.length > 0 || categoryItem.nonPho.length > 0)
+                hasItem = true;
+        });
+        if (!hasItem) bags.delete(Number(key));
+        else cleanBags.set(count++, categoryItems);
+    });
+    return {bagChange, cleanBags};
+}
+
+const calculateTotal = (bags: Map<number, Map<string, CategoryItem>>): OrderReceipt => {
+    let subTotal: number = Array.from(bags.values()).reduce((acc, categotyItems) => {
+        return acc + Array.from(categotyItems.values()).reduce((subAcc, categotyItem) => {
+            const phoTotal = categotyItem.pho.reduce((trackedAcc, tracked) => {
+                return trackedAcc + Array.from(tracked.items.values())
+                    .reduce((phoAcc, pho) => pho.void ? phoAcc : phoAcc + pho.actualQty * pho.price, 0)
+            }, 0);
+            const nonPhoTotal = categotyItem.nonPho.reduce((trackedAcc, tracked) => {
+                return trackedAcc + Array.from(tracked.items.values())
+                    .reduce((nonPhoAcc, nonPho) => nonPho.void ? nonPhoAcc : nonPhoAcc + nonPho.actualQty * nonPho.price, 0)
+            }, 0);
+            return subAcc + phoTotal + nonPhoTotal;
+        }, 0);
+    }, 0);
+    subTotal = Math.ceil(subTotal * 100) / 100;
+    const tax: number = Math.ceil(0.0925 * subTotal * 100) / 100;
+    const total = subTotal + tax;
+    return new OrderReceipt(subTotal);
+}
+
+export const SERVICE = {
+    cleanBags,
+    calculateTotal
 }

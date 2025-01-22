@@ -37,6 +37,7 @@ class RowData {
     orderName: string;
     servers: string;
     cashier: string;
+    amount: string;
     note: string;
 
     constructor(table: Table, index: number) {
@@ -46,6 +47,7 @@ class RowData {
         this.orderName = table.getName();
         this.servers = table.getServers().join(',');
         this.cashier = table.cashier || '';
+        this.amount = (table.receipts || []).map(receipt => receipt.total).join(',');
         this.note = table.note || '';
     }
 }
