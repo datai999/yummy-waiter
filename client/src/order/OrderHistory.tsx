@@ -105,7 +105,7 @@ export default function OrderHistory(props: { setHistoryOrder: (state: boolean) 
                 {order && (
                     <Box  >
                         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                            <Typography variant="h4" sx={{ mb: 2 }}>{order.id}</Typography>
+                            <Typography variant="h4" sx={{ mb: 2 }}>{order.getName()}</Typography>
                             {order.note && <Typography variant="h6" sx={{ mt: '10px' }}>: {order.note}</Typography>}
                         </Box>
                         <TableContext.Provider value={{ table: order, orderTable: () => { }, prepareChangeTable: () => { } }}>

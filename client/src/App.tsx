@@ -230,9 +230,8 @@ export default function App() {
      *  + store order data
      *  + table note
      *  + view order data
-     *  - egg -> tcg -> tr
-     *  - price
-     *  - cashier
+     *  + price
+     *  + cashier
      *  - UI for customer fill phone
      * kitchen: select part of bill, print bill & system change status to waiter
      * chicken: update number of chicken meats to waiter

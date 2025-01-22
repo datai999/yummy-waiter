@@ -66,7 +66,8 @@ export default function Waiter(props: WaiterProps) {
         }
         const cleanBags = SERVICE.cleanBags(bags);
         if (!bagChange) bagChange = cleanBags.bagChange;
-        table.bags = cleanBags.cleanBags;
+        if (cleanBags.cleanBags.size !== 0)
+            table.bags = cleanBags.cleanBags;
         syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(false, auth.name) });
         if (bagChange) {
             if (table.status === TableStatus.AVAILABLE) {

@@ -114,16 +114,19 @@ const CardTable = ({ table, orderTable, doneTable }: {
       <CardContent sx={{ p: 1, pb: 0, pt: 0, maxHeight: '90px' }}>
         <Grid2 container>
           <Grid2 size='grow' >
-            <Typography variant="h5" sx={{ mb: 1, ml: table.id.startsWith('Table') ? '30%' : '20%' }}>{table.getName()}</Typography>
+            <Box sx={{ mb: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Typography variant="h5" sx={{ textAlign: 'center' }}>{table.getName()}</Typography>
+              {table.note && <Typography variant="caption" sx={{ textAlign: 'center' }}>{` ${table.note}`}</Typography>}
+            </Box>
             {table.status !== TableStatus.AVAILABLE &&
-              <Stack direction="row" spacing={1} sx={{ justifyContent: "center", alignItems: "stretch", }}>
+              <Stack direction="row" spacing={table.bags.size > 2 ? 0 : 2} sx={{ justifyContent: "center", alignItems: "stretch", }}>
                 {Array.from(table.bags.entries()).map(([key, item], index) => <Box key={index} >
                   <Badge badgeContent={item.get('BEEF')?.getPhoActualQty()} color="primary" anchorOrigin={{ vertical: 'top', horizontal: 'right', }}
-                    sx={{ mb: 0, pb: 0, ml: 1 }}>
+                    sx={{ mb: 0, pb: 0, ml: 0 }}>
                     <PiCow style={{ fontSize: 24, marginLeft: 6 }} />
                   </Badge>
                   <Badge badgeContent={item.get('CHICKEN')?.getPhoActualQty()} color="primary" anchorOrigin={{ vertical: 'top', horizontal: 'right', }}
-                    sx={{ mb: 0, pb: 0, ml: 1 }}>
+                    sx={{ mb: 0, pb: 0, ml: 0 }}>
                     <GiChicken style={{ fontSize: 24, marginLeft: 6 }} />
                   </Badge>
                 </Box>)}

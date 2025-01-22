@@ -65,7 +65,7 @@ export default function Cashier(props: {
                     <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
                         <Box sx={{ width: '500px' }}>
                             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                                <Typography variant="h4" sx={{ mb: 2 }}>{table.id}</Typography>
+                                <Typography variant="h4" sx={{ mb: 2 }}>{table.getName()}</Typography>
                                 {props.note && <Typography variant="h6" sx={{ mt: '10px' }}>: {props.note}</Typography>}
                             </Box>
                             <TableContext.Provider value={{ table: table, orderTable: () => { }, prepareChangeTable: () => { } }}>
