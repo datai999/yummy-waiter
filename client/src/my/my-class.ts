@@ -234,20 +234,24 @@ export class Receipt extends Order {
         this.subTotal = Math.ceil(subTotal * 100) / 100;
         this.total = this.subTotal;
 
-        if (discountPercents && discountPercents.length > 0) this.discountPercent = new Discount(discountPercents);
-        if (discountSubtracts && discountSubtracts.length > 0) this.discountSubtract = new Discount(discountSubtracts);
-
-        if (this.discountPercent) {
+        if (!discountPercents || discountPercents.length === 0)
+            this.discountPercent = undefined;
+        else {
+            this.discountPercent = new Discount(discountPercents);
             this.discountPercent.amount = this.total * this.discountPercent.discountSum / 100;
             this.total -= this.discountPercent.amount;
         }
-        if (this.discountSubtract) {
+        if (!discountSubtracts || discountSubtracts.length === 0)
+            this.discountSubtract = undefined;
+        else {
+            this.discountSubtract = new Discount(discountSubtracts);
             this.discountSubtract.amount = this.discountSubtract.discountSum;
             this.total -= this.discountSubtract.amount;
         }
-        this.total = Math.max(this.total, 0);
+
+        this.total = Math.ceil(Math.max(this.total, 0) * 100) / 100;
         this.tax = Math.ceil(0.0925 * this.total * 100) / 100;
-        this.finalTotal = this.total + this.tax;
+        this.finalTotal = Math.ceil((this.total + this.tax) * 100) / 100;
         return this;
     }
 

@@ -24,10 +24,10 @@ export default function Cashier(props: {
     const { order, setOrder } = useContext(CONTEXT.Order);
     const [tendered, setTendered] = useState('');
     const [refresh, setRefresh] = useState(false);
-    const [change, setChange] = useState(0 - props.receipt.finalTotal);
 
     let receipt: Receipt = props.receipt;
     const numTendered = Number(tendered) / 100;
+    const change = Math.ceil((numTendered - receipt.finalTotal) * 100) / 100;
 
     useEffect(() => {
         setTendered('');
@@ -64,7 +64,7 @@ export default function Cashier(props: {
             {props.view && (
                 <Box>
                     <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                        <AddDiscount view={props.view} receipt={receipt} addDiscount={(finalTotal) => setChange(numTendered - finalTotal)} />
+                        <AddDiscount view={props.view} receipt={receipt} addDiscount={() => setRefresh(!refresh)} />
 
                         <Box sx={{ witdh: '300px', maxWidth: '300px' }}>
                             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', mb: 0 }}>

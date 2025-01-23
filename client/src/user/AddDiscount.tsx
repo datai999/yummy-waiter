@@ -7,7 +7,7 @@ import { Receipt } from '../my/my-class';
 
 export default function AddDiscount(props: {
     view: boolean,
-    addDiscount: (finalTotal: number) => void,
+    addDiscount: () => void,
     receipt: Receipt
 }) {
     const theme = useTheme();
@@ -21,16 +21,15 @@ export default function AddDiscount(props: {
         setDiscountSubtract([]);
     }, [props.view]);
 
-    const onDiscount = (amount: number, discounts: number[], setDiscounts: (discounts: number[]) => void) => {
+    const onDiscount = (type: string, amount: number, discounts: number[], setDiscounts: (discounts: number[]) => void) => {
         const index = discounts.indexOf(amount);
-        if (index === -1) {
-            setDiscounts([...discounts, amount]);
-        } else {
-            setDiscounts(discounts.filter((_, i) => i !== index));
-        }
-        const finalTotal = props.receipt.calculateTotal(props.receipt.bags, discountPercents, discountSubtracts).finalTotal;
-        // TODO
-        props.addDiscount(finalTotal);
+        const nextDiscount = index === -1 ? [...discounts, amount] : discounts.filter((_, i) => i !== index);
+        setDiscounts(nextDiscount);
+
+        if (type === 'percent') props.receipt.calculateTotal(props.receipt.bags, nextDiscount, discountSubtracts);
+        else props.receipt.calculateTotal(props.receipt.bags, discountPercents, nextDiscount);
+
+        props.addDiscount();
     }
 
     return (<Box sx={{ width: '500px' }}>
@@ -51,7 +50,7 @@ export default function AddDiscount(props: {
                         key={discountPecent}
                         variant="outlined"
                         color="primary"
-                        onMouseDown={() => onDiscount(discountPecent, discountPercents, setDiscountPercent)}
+                        onMouseDown={() => onDiscount('percent', discountPecent, discountPercents, setDiscountPercent)}
                         fullWidth
                         sx={{
                             backgroundColor: discountPercents.includes(discountPecent) ? theme.palette.primary.main : "#fff",
@@ -69,7 +68,7 @@ export default function AddDiscount(props: {
                         key={discountSubtract}
                         variant="outlined"
                         color="primary"
-                        onMouseDown={() => onDiscount(discountSubtract, discountSubtracts, setDiscountSubtract)}
+                        onMouseDown={() => onDiscount('subtract', discountSubtract, discountSubtracts, setDiscountSubtract)}
                         fullWidth
                         sx={{
                             backgroundColor: discountSubtracts.includes(discountSubtract) ? theme.palette.primary.main : "#fff",
