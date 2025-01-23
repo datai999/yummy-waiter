@@ -183,13 +183,11 @@ export class Order extends Table {
 }
 
 export class Discount {
-    discount: number[];
-    discountSum: number;
+    discount: number;
     amount?: number;
 
-    public constructor(discount: number[]) {
+    public constructor(discount: number) {
         this.discount = discount;
-        this.discountSum = this.discount.reduce((acc, dc) => acc + dc, 0);
     }
 }
 
@@ -216,7 +214,7 @@ export class Receipt extends Order {
         this.timer = order.timer;
     }
 
-    public calculateTotal(bags: Map<number, Map<string, CategoryItem>>, discountPercents?: number[], discountSubtracts?: number[]): Receipt {
+    public calculateTotal(bags: Map<number, Map<string, CategoryItem>>, discountPercents?: number, discountSubtracts?: number): Receipt {
         this.bags = bags;
         let subTotal: number = Array.from(this.bags.values()).reduce((acc, categotyItems) => {
             return acc + Array.from(categotyItems.values()).reduce((subAcc, categotyItem) => {
@@ -234,18 +232,18 @@ export class Receipt extends Order {
         this.subTotal = Math.ceil(subTotal * 100) / 100;
         this.total = this.subTotal;
 
-        if (!discountPercents || discountPercents.length === 0)
+        if (!discountPercents)
             this.discountPercent = undefined;
         else {
             this.discountPercent = new Discount(discountPercents);
-            this.discountPercent.amount = this.total * this.discountPercent.discountSum / 100;
+            this.discountPercent.amount = this.total * this.discountPercent.discount / 100;
             this.total -= this.discountPercent.amount;
         }
-        if (!discountSubtracts || discountSubtracts.length === 0)
+        if (!discountSubtracts)
             this.discountSubtract = undefined;
         else {
             this.discountSubtract = new Discount(discountSubtracts);
-            this.discountSubtract.amount = this.discountSubtract.discountSum;
+            this.discountSubtract.amount = this.discountSubtract.discount;
             this.total -= this.discountSubtract.amount;
         }
 

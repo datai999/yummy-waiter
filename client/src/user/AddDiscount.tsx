@@ -1,4 +1,4 @@
-import { Box, Typography, Button, useTheme } from '@mui/material';
+import { Box, Typography, Button, useTheme, TextField, InputAdornment } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { CONTEXT } from '../App';
 import BagDnd from '../order/BagDnd';
@@ -11,24 +11,23 @@ export default function AddDiscount(props: {
     receipt: Receipt
 }) {
     const theme = useTheme();
-    const [discountPercents, setDiscountPercent] = useState<number[]>([]);
-    const [discountSubtracts, setDiscountSubtract] = useState<number[]>([]);
-    const [customDiscountPercent, setCustomDiscountPercent] = useState<number>(0);
-    const [customDiscountSubtract, setCustomDiscountSubtract] = useState<number>(0);
+    const [percent, setPercent] = useState<number>(0);
+    const [subtract, setSubtract] = useState<number>(0);
 
     useEffect(() => {
-        setDiscountPercent([]);
-        setDiscountSubtract([]);
+        setPercent(0);
+        setSubtract(0);
     }, [props.view]);
 
-    const onDiscount = (type: string, amount: number, discounts: number[], setDiscounts: (discounts: number[]) => void) => {
-        const index = discounts.indexOf(amount);
-        const nextDiscount = index === -1 ? [...discounts, amount] : discounts.filter((_, i) => i !== index);
-        setDiscounts(nextDiscount);
-
-        if (type === 'percent') props.receipt.calculateTotal(props.receipt.bags, nextDiscount, discountSubtracts);
-        else props.receipt.calculateTotal(props.receipt.bags, discountPercents, nextDiscount);
-
+    const onDiscount = (type: string, amount: number) => {
+        if (type === 'percent') {
+            setPercent(amount);
+            props.receipt.calculateTotal(props.receipt.bags, amount, subtract);
+        }
+        else {
+            setSubtract(amount);
+            props.receipt.calculateTotal(props.receipt.bags, percent, amount)
+        };
         props.addDiscount();
     }
 
@@ -42,47 +41,93 @@ export default function AddDiscount(props: {
                 <BagDnd bags={props.receipt.bags} phoId={''} />
             </ORDER_CONTEXT.Provider>
         </CONTEXT.Table.Provider>
-        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-            {`Discount: `}
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            {/* {`Discount: `} */}
             <Box sx={{ display: 'flex', flexDirection: 'column', }}>
-                <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                    {[customDiscountPercent, 10, 25, 50].map((discountPecent, index) => <Button
+                <Box sx={{ display: 'flex', flexDirection: 'row', mt: '2px' }}>
+                    <DiscountInput label={'% Discount'} value={percent} onChange={(num) => onDiscount('percent', num)} />
+                    {[10, 25, 50].map((discountPecent) => <Button
                         key={discountPecent}
                         variant="outlined"
                         color="primary"
-                        onMouseDown={() => onDiscount('percent', discountPecent, discountPercents, setDiscountPercent)}
+                        onMouseDown={() => onDiscount('percent', percent === discountPecent ? 0 : discountPecent)}
                         fullWidth
                         sx={{
-                            backgroundColor: discountPercents.includes(discountPecent) ? theme.palette.primary.main : "#fff",
-                            color: discountPercents.includes(discountPecent) ? "#fff" : theme.palette.text.primary,
-                            maxHeight: '35px', width: '50px', mb: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse'
+                            backgroundColor: percent === discountPecent ? theme.palette.primary.main : "#fff",
+                            color: percent === discountPecent ? "#fff" : theme.palette.text.primary,
+                            maxHeight: '35px', width: '50px', mr: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse'
                         }}
                     >
                         <Typography variant="caption">
-                            {index === 0 && discountPecent === 0 ? '?' : discountPecent}%
+                            {discountPecent}%
                         </Typography>
                     </Button>)}
                 </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                    {[customDiscountSubtract, 1, 2, 4].map((discountSubtract, index) => <Button
+                <Box sx={{ display: 'flex', flexDirection: 'row', mt: 1 }}>
+                    <DiscountInput label={'Sub-Discount'} value={subtract} onChange={(num) => onDiscount('subtract', num)} />
+                    {[2, 4, 8].map((discountSubtract) => <Button
                         key={discountSubtract}
                         variant="outlined"
                         color="primary"
-                        onMouseDown={() => onDiscount('subtract', discountSubtract, discountSubtracts, setDiscountSubtract)}
+                        onMouseDown={() => onDiscount('subtract', subtract === discountSubtract ? 0 : discountSubtract)}
                         fullWidth
                         sx={{
-                            backgroundColor: discountSubtracts.includes(discountSubtract) ? theme.palette.primary.main : "#fff",
-                            color: discountSubtracts.includes(discountSubtract) ? "#fff" : theme.palette.text.primary,
-                            maxHeight: '35px', width: '50px', mb: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse'
+                            backgroundColor: subtract === discountSubtract ? theme.palette.primary.main : "#fff",
+                            color: subtract === discountSubtract ? "#fff" : theme.palette.text.primary,
+                            maxHeight: '35px', width: '50px', mr: 1, borderRadius: '16px', display: 'flex', flexDirection: 'row-reverse'
                         }}
                     >
                         <Typography variant="caption">
-                            ${index === 0 && discountSubtract === 0 ? '?' : discountSubtract}
+                            ${discountSubtract}
                         </Typography>
                     </Button>)}
                 </Box>
             </Box>
-            <TotalBill bags={props.receipt.bags} discountPercents={discountPercents} discountSubtracts={discountSubtracts} />
+            <TotalBill bags={props.receipt.bags} discountPercent={percent} discountSubtract={subtract} />
         </Box>
     </Box>);
+}
+
+const DiscountInput = (props: { label: string, value: number, onChange: (num: number) => void }) => {
+    return (<TextField margin="none" size='small'
+        type='number'
+        label={props.label}
+        inputProps={{ inputMode: 'numeric', style: { fontSize: 14, textAlign: 'center' }, }}
+        InputProps={{
+            type: "number",
+            sx: {
+                '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                    display: 'none'
+                },
+                '& input[type=number]': {
+                    MozAppearance: 'textfield'
+                },
+            }
+        }}
+        fullWidth={true}
+        sx={{
+            p: 0, m: 0, mr: 1, maxWidth: '100px',
+            textAlign: 'center',
+            input: {
+                color: 'primary',
+                "&::placeholder": {
+                    opacity: 1,
+                },
+            },
+            "& fieldset": { border: '' },
+        }}
+        slotProps={{
+            input: {
+                startAdornment: props.label !== '% Discount' ? <InputAdornment position="start" sx={{ m: 0, p: 0 }}>$</InputAdornment> : '',
+                endAdornment: props.label === '% Discount' ? <InputAdornment position="end" sx={{ m: 0, p: 0 }}>%</InputAdornment> : '',
+            },
+        }}
+        // placeholder={props.value.toString()}
+        value={props.value}
+        onChange={(e) => {
+            const num = Number(e.target.value);
+            if (num > 100) return;
+            props.onChange(num);
+        }}
+    />);
 }

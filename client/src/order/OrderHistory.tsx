@@ -109,7 +109,7 @@ export default function OrderHistory(props: { setHistoryOrder: (state: boolean) 
                             {order.note && <Typography variant="h6" sx={{ mt: '10px' }}>: {order.note}</Typography>}
                         </Box>
                         <TableContext.Provider value={{ table: order, order: order, orderTable: () => { }, setOrder: () => { }, prepareChangeTable: () => { } }}>
-                            <OrderView bags={order.bags} phoId={''} discountPercents={order.discountPercent?.discount} discountSubtracts={order.discountSubtract?.discount}/>
+                            <OrderView bags={order.bags} phoId={''} discountPercent={order.discountPercent?.discount} discountSubtract={order.discountSubtract?.discount}/>
                         </TableContext.Provider>
                     </Box>
                 )}

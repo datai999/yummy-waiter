@@ -20,7 +20,7 @@ export default function OrderView(props: {
     bags: Map<number, Map<string, CategoryItem>>,
     phoId: String;
     showPho?: (isPho: boolean, bag: number, category: string, trackIndex: number, itemId: string) => void,
-    discountPercents?: number[], discountSubtracts?: number[]
+    discountPercent?: number, discountSubtract?: number
 }) {
     const theme = useTheme();
     const { table, order } = useContext(CONTEXT.Order);
@@ -52,14 +52,14 @@ export default function OrderView(props: {
             <BagDnd bags={props.bags} phoId={props.phoId} showPho={props.showPho} />
         </ORDER_CONTEXT.Provider>
         <Box sx={{ display: 'flex', flexDirection: 'row-reverse', }}>
-            <TotalBill bags={props.bags} discountPercents={props.discountPercents} discountSubtracts={props.discountSubtracts}/>
+            <TotalBill bags={props.bags} discountPercent={props.discountPercent} discountSubtract={props.discountSubtract} />
         </Box>
     </Box >)
 }
 
-export const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>>, discountPercents?: number[], discountSubtracts?: number[] }) => {
+export const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>>, discountPercent?: number, discountSubtract?: number }) => {
     const { order } = useContext(CONTEXT.Order);
-    const receipt: Receipt = new Receipt('', order).calculateTotal(props.bags, props.discountPercents, props.discountSubtracts);
+    const receipt: Receipt = new Receipt('', order).calculateTotal(props.bags, props.discountPercent, props.discountSubtract);
 
     return (<StyledPaper sx={{ p: 1, pb: 0, pt: 0, m: 0, ml: 1, mr: 1, minWidth: '160px', maxWidth: '200px', maxHeight: '150px' }}>
         {receipt.hasDiscount() && <>
@@ -73,7 +73,7 @@ export const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>>,
             </Box>
             {receipt.discountPercent && <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
                 <Box>
-                    {`Discount:${receipt.discountPercent.discountSum}%`}
+                    {`Discount:${receipt.discountPercent.discount}%`}
                 </Box>
                 <Box>
                     -{receipt.discountPercent.amount!.toFixed(2)}
