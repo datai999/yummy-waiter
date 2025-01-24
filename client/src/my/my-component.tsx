@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useContext, useEffect, useState } from 'react';
 
 import {
     FaMinus,
@@ -13,14 +13,16 @@ import {
     Grid2,
     List,
     ListItemText,
+    Paper,
+    styled,
     TextField,
     Typography,
 } from '@mui/material';
 import {
     CategoryButton,
-    OrderItem,
 } from './my-styled';
-import { NonPho } from './my-class';
+import { AuthContext } from '../App';
+import YummyLogo from '../assets/yummy.png';
 
 interface CheckButtonProps {
     multi: boolean,
@@ -186,4 +188,53 @@ export const NumPad = (props: { clear: () => void, input: (key: string) => void,
             </Button>
         </Grid2>
     </Grid2>)
+}
+
+const LogoImage = styled("img")({
+    width: "60px",
+    height: "60px",
+    marginLeft: "16px",
+    objectFit: "contain"
+});
+
+const LogoImageXS = styled("img")({
+    width: "40px",
+    height: "40px",
+    marginLeft: "10px",
+    marginRight: "10px",
+    objectFit: "contain"
+});
+
+const StyledHeaderPaper = styled(Paper)(({ theme }) => ({
+    padding: theme.spacing(1),
+    paddingTop: 2,
+    paddingBottom: 1,
+    backgroundColor: "#fff",
+    borderRadius: theme.shape.borderRadius,
+}));
+
+const Header = (props: {
+    back: () => void,
+    actions: () => ReactNode,
+}) => {
+    const { auth } = useContext(AuthContext);
+
+    return (
+        <StyledHeaderPaper sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', direction: 'row', alignItems: 'center' }}>
+                <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} onClick={() => props.back()} />
+                <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} onClick={() => props.back()} />
+                <Typography fontWeight='fontWeightMedium' variant="h4" sx={{ textAlign: "center", display: 'flex', ml: 1 }}>
+                    Yummy Phở 2
+                </Typography>
+                <Typography fontWeight='fontWeightMedium' variant="h5" sx={{ textAlign: "center", display: 'flex', ml: 1, mt: 1 }}>
+                    : {auth.name}
+                </Typography>
+            </Box>
+            {props.actions()}
+        </StyledHeaderPaper >);
+}
+
+export const COMPONENT = {
+    Header
 }

@@ -212,6 +212,9 @@ export class Receipt extends Order {
         this.orderTime = order.orderTime;
         this.cleanTime = order.cleanTime;
         this.timer = order.timer;
+
+        if (order.status === TableStatus.AVAILABLE)
+            this.orderTime = new Date();
     }
 
     public calculateTotal(bags: Map<number, Map<string, CategoryItem>>, discountPercents?: number, discountSubtracts?: number): Receipt {
