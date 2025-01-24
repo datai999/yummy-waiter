@@ -14,13 +14,14 @@ import { UTILS } from '../my/my-util';
 interface TakeNonPhoProps {
     category: string,
     bags: Map<number, Map<string, CategoryItem>>,
-    onSubmit: () => void
+    onSubmit: (index: number, nonPhoCode: string) => void,
+    viewPrice?: boolean,
 }
 
 const TakeNonPho = (props: TakeNonPhoProps) => {
     const { auth } = useContext(CONTEXT.Auth);
     const { table } = useContext(CONTEXT.Table);
-    const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
+    const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table?.id));
 
     const NON_PHOS = MENU[props.category as keyof typeof MENU]!.nonPho;
     const nonPho = props.bags.get(0)!.get(props.category)?.lastNonPhos()!;
@@ -49,7 +50,7 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
         categoryItems.lastNonPhos().set(targetNonPho.id, targetNonPho);
         categoryItems.action.push(`${UTILS.formatTime()}:${auth.name}:${nonPhoCode}`);
 
-        props.onSubmit();
+        props.onSubmit(index, nonPhoCode);
     }
 
     return (<StyledPaper sx={{ mt: 1, mb: 0, p: 0, pl: 1, minHeight: '228px' }}>
@@ -61,6 +62,7 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
                     obj={nonPho}
                     options={[]}
                     callback={(newSideOrder) => addItem(index, newSideOrder[0])}
+                    viewPrice={props.viewPrice}
                 />
             </Box>
         ))}

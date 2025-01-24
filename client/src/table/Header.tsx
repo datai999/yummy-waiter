@@ -12,7 +12,7 @@ import YummyLogo from '../assets/yummy.png';
 import { CategoryButton } from '../my/my-styled';
 import { GiPaperBagFolded } from 'react-icons/gi';
 import { AuthContext } from '../App';
-import { MdManageHistory } from 'react-icons/md';
+import { MdManageHistory, MdOutlineSettings } from 'react-icons/md';
 
 const LogoImage = styled("img")({
     width: "60px",
@@ -37,7 +37,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
 }));
 
-const Header = (props: { setHistoryOrder: (state: boolean) => void, newTogo: () => void }) => {
+const Header = (props: { setSetting: (state: boolean) => void, setHistoryOrder: (state: boolean) => void, newTogo: () => void }) => {
     const { auth, logout } = useContext(AuthContext);
 
     return (
@@ -53,6 +53,13 @@ const Header = (props: { setHistoryOrder: (state: boolean) => void, newTogo: () 
                 </Typography>
             </Box>
             <Box sx={{ mt: '2px' }}>
+                <CategoryButton variant="outlined" size='large' selected={false} sx={{ borderRadius: 5, pl: 2, pr: 2, mr: 1, height: '50px' }}
+                    onClick={() => props.setSetting(true)}>
+                    Setting
+                    <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                        <MdOutlineSettings style={{ fontSize: 25, marginLeft: 3 }} />
+                    </Box>
+                </CategoryButton>
                 <CategoryButton variant="outlined" size='large' selected={false} sx={{ borderRadius: 5, pl: 2, pr: 2, mr: 1, height: '50px' }}
                     onClick={() => props.setHistoryOrder(true)}>
                     Order history

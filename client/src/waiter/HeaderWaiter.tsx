@@ -24,6 +24,7 @@ import { PiCow } from 'react-icons/pi';
 import { RiDrinks2Line } from 'react-icons/ri';
 import { FaPen } from 'react-icons/fa';
 import { syncServer, SYNC_TYPE } from '../my/my-ws';
+import { COMPONENT } from '../my/my-component';
 
 const LogoImage = styled("img")({
     width: "60px",
@@ -78,7 +79,7 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
                 </Box>
                 <Box>
                     {Object.keys(MENU).map((category) => (
-                        <WrapCategoryButton key={category} props={{
+                        <COMPONENT.WrapCategoryButton key={category} props={{
                             selectedCategory: props.category, category: category, setCategory: props.setCategory,
                             size: mdSize ? 'xlarge' : 'xlarge',
                         }} />
@@ -89,36 +90,6 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
                 </Box>
             </Box>
         </StyledPaper >);
-}
-
-const iconStyle = {
-    fontSize: 25, marginLeft: 12
-}
-
-const WrapCategoryButton = ({ props }: {
-    props: {
-        size: string,
-        selectedCategory: string,
-        category: string, setCategory: React.Dispatch<string>
-    }
-}) => {
-    return (<CategoryButton
-        key={props.category}
-        selected={props.selectedCategory === props.category}
-        onClick={() => props.setCategory(props.category)}
-        variant="contained"
-        size={props.size == "small" ? "small" : props.size == "medium" ? "medium" : "large"}
-        sx={{
-            minHeight: props.size == 'xlarge' ? 50 : 0,
-            minWidth: props.size == 'xlarge' ? 120 : props.size === 'large' ? 120 : 0,
-            ml: '5px'
-        }}
-    >
-        {props.category}
-        {props.size === 'xlarge' && props.category === 'BEEF' && <PiCow style={iconStyle} />}
-        {props.size === 'xlarge' && props.category === 'CHICKEN' && <GiChicken style={iconStyle} />}
-        {props.size === 'xlarge' && props.category === 'DRINK' && <RiDrinks2Line style={iconStyle} />}
-    </CategoryButton>)
 }
 
 const TableSelections = ({ props, size }: { props: ChildWaiterProps, size: string }) => {

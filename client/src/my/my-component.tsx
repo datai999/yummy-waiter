@@ -23,6 +23,9 @@ import {
 } from './my-styled';
 import { AuthContext } from '../App';
 import YummyLogo from '../assets/yummy.png';
+import { GiChicken } from 'react-icons/gi';
+import { PiCow } from 'react-icons/pi';
+import { RiDrinks2Line } from 'react-icons/ri';
 
 interface CheckButtonProps {
     multi: boolean,
@@ -32,6 +35,7 @@ interface CheckButtonProps {
     options: string[],
     createLabel?: (option: string) => string,
     callback: (next: string[]) => void,
+    viewPrice?: boolean,
 }
 
 // TODO: improve performance
@@ -40,7 +44,6 @@ interface CheckButtonProps {
 //     && [...prev.allOptions].sort().join(',') === [...next.allOptions].sort().join(',')
 //     && true;
 const checkButtonPropsEqual = () => false;
-const VIEW_PRICE = true;
 const pCheckButton = (props: CheckButtonProps) => {
     const [options, setOptions] = useState<string[]>([...props.options]);
 
@@ -81,7 +84,7 @@ const pCheckButton = (props: CheckButtonProps) => {
                             >
                                 {option}
                             </CategoryButton>
-                            {VIEW_PRICE && <Box sx={{ position: "absolute", top: -3, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
+                            {props.viewPrice && <Box sx={{ position: "absolute", top: -3, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
                                 {getPrice(option)}
                             </Box>}
                         </Badge>
@@ -215,12 +218,12 @@ const StyledHeaderPaper = styled(Paper)(({ theme }) => ({
 
 const Header = (props: {
     back: () => void,
-    actions: () => ReactNode,
+    actions: ReactNode,
 }) => {
     const { auth } = useContext(AuthContext);
 
     return (
-        <StyledHeaderPaper sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
+        <StyledHeaderPaper sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Box sx={{ display: 'flex', direction: 'row', alignItems: 'center' }}>
                 <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} onClick={() => props.back()} />
                 <LogoImageXS src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'block', sm: 'none' } }} onClick={() => props.back()} />
@@ -231,10 +234,39 @@ const Header = (props: {
                     : {auth.name}
                 </Typography>
             </Box>
-            {props.actions()}
+            {props.actions}
         </StyledHeaderPaper >);
 }
 
+const WrapCategoryButton = ({ props }: {
+    props: {
+        size: string,
+        selectedCategory: string,
+        category: string, setCategory: React.Dispatch<string>,
+        icon?: ReactNode
+    }
+}) => {
+    return (<CategoryButton
+        key={props.category}
+        selected={props.selectedCategory === props.category}
+        onClick={() => props.setCategory(props.category)}
+        variant="contained"
+        size={props.size == "small" ? "small" : props.size == "medium" ? "medium" : "large"}
+        sx={{
+            minHeight: props.size == 'xlarge' ? 50 : 0,
+            minWidth: props.size == 'xlarge' ? 120 : props.size === 'large' ? 120 : 0,
+            ml: '5px'
+        }}
+    >
+        {props.category}
+        {props.size === 'xlarge' && props.category === 'BEEF' && <PiCow style={{ fontSize: 25, marginLeft: 12 }} />}
+        {props.size === 'xlarge' && props.category === 'CHICKEN' && <GiChicken style={{ fontSize: 25, marginLeft: 12 }} />}
+        {props.size === 'xlarge' && props.category === 'DRINK' && <RiDrinks2Line style={{ fontSize: 25, marginLeft: 12 }} />}
+        {props.size === 'xlarge' && props.icon && props.icon}
+    </CategoryButton>)
+}
+
 export const COMPONENT = {
-    Header
+    Header,
+    WrapCategoryButton
 }

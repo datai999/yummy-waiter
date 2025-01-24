@@ -13,6 +13,7 @@ import { UTILS } from './my/my-util';
 import OrderHistory from './order/OrderHistory';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import MenuSetting from './setting/MenuSetting';
 
 interface IAuthContext {
   auth: any, logout: () => void
@@ -54,6 +55,7 @@ export default function App() {
   const [refresh2, setRefresh2] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const [historyOrder, setHistoryOrder] = useState(false);
+  const [setting, setSetting] = useState(false);
 
   const holdTable = useRef<Table | null>();
   const toasMsg = useRef<string>();
@@ -180,12 +182,14 @@ export default function App() {
               )
               : historyOrder
                 ? <OrderHistory setHistoryOrder={setHistoryOrder} />
-                : (<>
-                  <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
-                    <Header setHistoryOrder={setHistoryOrder} newTogo={newTogo} />
-                  </Box>
-                  <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
-                </>)
+                : setting ?
+                  <MenuSetting close={() => setSetting(false)} />
+                  : (<>
+                    <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
+                      <Header setSetting={setSetting} setHistoryOrder={setHistoryOrder} newTogo={newTogo} />
+                    </Box>
+                    <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
+                  </>)
             }
           </LockedTableContext.Provider>
           <Snackbar
@@ -236,7 +240,7 @@ export default function App() {
      *  + price
      *  + cashier
      *  - print
-     *  - discount
+     *  + discount
      *  - UI for customer fill phone
      *  - edit menu
      *  - edit user
