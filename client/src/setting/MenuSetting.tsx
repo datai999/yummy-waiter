@@ -22,7 +22,7 @@ export default function MenuSetting(props: { close: () => void }) {
 
     const mdSize = useMediaQuery('(min-width:900px)');
 
-    const NON_PHOS = menuClone.current[selectedCategory as keyof typeof MENU]!.nonPho;
+    const NON_PHOS: Object[] = menuClone.current[selectedCategory as keyof typeof MENU]!.nonPho;
 
     // useEffect(() => {
     //     setPrinters(MENU[selectedCategory as keyof typeof MENU].printers);
@@ -38,7 +38,29 @@ export default function MenuSetting(props: { close: () => void }) {
         let nonPhoGroupObj = NON_PHOS[item.groupIndex];
         if (selectedItem.displayName !== item.displayName)
             delete nonPhoGroupObj[selectedItem.displayName as keyof typeof nonPhoGroupObj];
-        NON_PHOS[item.groupIndex] = { ...NON_PHOS[item.groupIndex], [item.displayName]: item };
+        NON_PHOS[item.groupIndex] = { ...nonPhoGroupObj, [item.displayName]: item };
+        setSelectedItem(item);
+    }
+
+    const deleteItem = () => {
+        let nonPhoGroupObj = NON_PHOS[selectedItem.groupIndex];
+        delete nonPhoGroupObj[selectedItem.displayName as keyof typeof nonPhoGroupObj];
+        if (Object.keys(nonPhoGroupObj).length === 0) {
+            NON_PHOS.splice(selectedItem.groupIndex, 1);
+        }
+        setSelectedItem({} as NonPho)
+    }
+
+    const addItem = () => {
+        const item = { ...selectedItem, displayName: selectedItem.displayName + ' 2' }
+        let nonPhoGroupObj = NON_PHOS[selectedItem.groupIndex];
+        NON_PHOS[item.groupIndex] = { ...nonPhoGroupObj, [item.displayName]: item };
+        setSelectedItem(item);
+    }
+
+    const addGroup = () => {
+        const item = { ...selectedItem, groupIndex: NON_PHOS.length, displayName: `new item:${NON_PHOS.length}` }
+        NON_PHOS.push({ [item.displayName]: item });
         setSelectedItem(item);
     }
 
@@ -76,7 +98,7 @@ export default function MenuSetting(props: { close: () => void }) {
                         </Box>
                     ))}
                 </StyledPaper>
-                <Button sx={{ minHeight: 50, m: 1 }} onClick={() => { }} variant="contained" color="primary" size='small'>
+                <Button sx={{ minHeight: 50, m: 1 }} onClick={addGroup} variant="contained" color="primary" size='small'>
                     Add new group
                     <IoMdBarcode style={{ fontSize: 30, marginLeft: 8 }} />
                 </Button>
@@ -152,17 +174,19 @@ export default function MenuSetting(props: { close: () => void }) {
                         />
                     </Box>
                     <Box sx={{ mt: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                        <CategoryButton sx={{ minHeight: 50 }} onClick={() => { }} selected={selectedItem.displayName?.length > 0 && selectedItem.disabled} disabled={(selectedItem.displayName || '').length === 0} variant="outlined" color="primary" size='small'>
+                        <CategoryButton sx={{ minHeight: 50 }} onClick={() => {
+                            setItem({ ...selectedItem, disabled: !selectedItem.disabled });
+                        }} selected={selectedItem.displayName?.length > 0 && selectedItem.disabled} disabled={(selectedItem.displayName || '').length === 0} variant="outlined" color="primary" size='small'>
                             Disabled
                             <FaEye style={{ fontSize: 30, marginLeft: 8 }} />
                         </CategoryButton>
-                        <CategoryButton sx={{ minHeight: 50 }} onClick={() => { }} selected={true} disabled={(selectedItem.displayName || '').length === 0} variant="contained" color="primary" size='small'>
+                        <CategoryButton sx={{ minHeight: 50 }} onClick={deleteItem} selected={true} disabled={(selectedItem.displayName || '').length === 0} variant="contained" color="primary" size='small'>
                             Delete
                             <FaTrash style={{ fontSize: 30, marginLeft: 8 }} />
                         </CategoryButton>
                     </Box>
                     <Divider sx={{ mt: 2, mb: 1 }} />
-                    <Button sx={{ minHeight: 50 }} onClick={() => { }} disabled={(selectedItem.displayName || '').length === 0} variant="contained" color="primary" size='small'>
+                    <Button sx={{ minHeight: 50 }} onClick={addItem} disabled={(selectedItem.displayName || '').length === 0} variant="contained" color="primary" size='small'>
                         Add new item to this group
                         <FaPlus style={{ fontSize: 30, marginLeft: 8 }} />
                     </Button>
