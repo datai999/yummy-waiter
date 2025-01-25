@@ -67,8 +67,7 @@ export const BEEF_SIDE = {
     'Ch.Soup': {},
     'Large.Soup': {},
     'Egg rolls': { price: '5.95' },
-    '1 Egg roll': {},
-    '?': '?',
+    '1 Egg roll': {}
 }
 export const BEEF_MEAT_SIDE = {
     'Dĩa Tái': { code: "Dĩa T", price: '5.00' },
@@ -85,7 +84,11 @@ export const CHICKEN_SIDE = {
 }
 export const CHICKEN_SIDE_2 = {
     "Extra bamboo": { price: '3' },
-    "Extra noodle": { price: '3' },
+    "Extra BC": { price: '3' },
+    "Extra BT": { price: '3' },
+    "Extra Bún": { price: '3' },
+    "Extra Miến": { price: '3' },
+    "Extra Mì": { price: '3' },
 }
 export const CHICKEN_SIDE_3 = {
     "Dĩa ức": { code: 'Dia.U', price: '7.49' },
@@ -137,6 +140,13 @@ export const DESSERT = {
     'Mixed jelly': {},
 }
 
+export const PRINTER = {
+    'beef': null,
+    'chicken': null,
+    'vegetable': null,
+    'beverage': null
+}
+
 export const MENU = {
     'BEEF': {
         'pho': {
@@ -145,7 +155,8 @@ export const MENU = {
             'noodle': BEEF_NOODLE,
             'reference': BEEF_REFERENCES
         },
-        'nonPho': [BEEF_DINE_IN, BEEF_SIDE, BEEF_MEAT_SIDE]
+        'nonPho': [BEEF_DINE_IN, BEEF_SIDE, BEEF_MEAT_SIDE],
+        'printers': ['beef', 'vegetable']
     },
     'CHICKEN': {
         'pho': {
@@ -154,10 +165,12 @@ export const MENU = {
             'noodle': CHICKEN_NOODLE,
             'reference': CHICKEN_REFERENCES
         },
-        'nonPho': [CHICKEN_SIDE, CHICKEN_SIDE_2, CHICKEN_SIDE_3, CHICKEN_SIDE_4]
+        'nonPho': [CHICKEN_SIDE, CHICKEN_SIDE_2, CHICKEN_SIDE_3, CHICKEN_SIDE_4],
+        'printers': ['chicken', 'vegetable']
     },
     'DRINK': {
         'pho': null,
-        'nonPho': [WATER, TEA, COFFEE, SOFT_DRINK, CHE, TOFU, DESSERT]
+        'nonPho': [WATER, TEA, COFFEE, SOFT_DRINK, CHE, TOFU, DESSERT],
+        'printers': ['beverage']
     }
 }

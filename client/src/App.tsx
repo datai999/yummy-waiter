@@ -244,6 +244,7 @@ export default function App() {
      *  - UI for customer fill phone
      *  - edit menu
      *  - edit user
+     *  - devices
      *  - config
      * kitchen: select part of bill, print bill & system change status to waiter
      * chicken: update number of chicken meats to waiter

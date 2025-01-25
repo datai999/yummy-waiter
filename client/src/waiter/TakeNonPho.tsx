@@ -15,7 +15,6 @@ interface TakeNonPhoProps {
     category: string,
     bags: Map<number, Map<string, CategoryItem>>,
     onSubmit: (index: number, nonPhoCode: string) => void,
-    viewPrice?: boolean,
 }
 
 const TakeNonPho = (props: TakeNonPhoProps) => {
@@ -62,7 +61,6 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
                     obj={nonPho}
                     options={[]}
                     callback={(newSideOrder) => addItem(index, newSideOrder[0])}
-                    viewPrice={props.viewPrice}
                 />
             </Box>
         ))}

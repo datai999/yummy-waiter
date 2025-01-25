@@ -35,7 +35,7 @@ interface CheckButtonProps {
     options: string[],
     createLabel?: (option: string) => string,
     callback: (next: string[]) => void,
-    viewPrice?: boolean,
+    setting?: boolean,
 }
 
 // TODO: improve performance
@@ -56,14 +56,20 @@ const pCheckButton = (props: CheckButtonProps) => {
             ? options.filter((e) => e !== option)
             : props.multi ? [...options, option] : [option];
         // setOptions([...newOptions]);
-        props.callback([...newOptions]);
+        props.callback([...newOptions.filter(e => e!)]);
     }
 
-    const getPrice = (option: string) => {
+    const getProperty = (option: string, name: string) => {
         if (!props.obj) return null;
         const itemObj = props.obj[option as keyof typeof props.obj];
         if (itemObj instanceof Object) {
-            return `${itemObj['price' as keyof Object]}`;
+            const property = `${itemObj[name as keyof Object]}`;
+            console.log(name);
+            if (name === 'code') {
+                console.log({ option, name, property });
+                return property !== 'undefined' ? property : '';
+            }
+            return property;
         }
         return null;
     }
@@ -84,8 +90,11 @@ const pCheckButton = (props: CheckButtonProps) => {
                             >
                                 {option}
                             </CategoryButton>
-                            {props.viewPrice && <Box sx={{ position: "absolute", top: -3, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
-                                {getPrice(option)}
+                            {props.setting && <Box sx={{ position: "absolute", top: -3, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
+                                {getProperty(option, 'code')}
+                            </Box>}
+                            {props.setting && <Box sx={{ position: "absolute", top: 34, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
+                                {getProperty(option, 'price')}
                             </Box>}
                         </Badge>
                     </Grid2>
