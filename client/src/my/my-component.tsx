@@ -64,9 +64,7 @@ const pCheckButton = (props: CheckButtonProps) => {
         const itemObj = props.obj[option as keyof typeof props.obj];
         if (itemObj instanceof Object) {
             const property = `${itemObj[name as keyof Object]}`;
-            console.log(name);
             if (name === 'code') {
-                console.log({ option, name, property });
                 return property !== 'undefined' ? property : '';
             }
             return property;

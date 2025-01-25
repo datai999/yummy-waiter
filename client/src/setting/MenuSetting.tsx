@@ -1,35 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { CheckButton, COMPONENT } from '../my/my-component';
-import { Order } from '../my/my-class';
-import { Box, Divider, Grid2, TextField, Typography, useMediaQuery } from '@mui/material';
+import { Box, Button, Divider, Grid2, TextField, Typography, useMediaQuery } from '@mui/material';
 import { MENU, PRINTER } from '../my/my-constants';
 import { MdOutlineBrowserUpdated } from 'react-icons/md';
-import { StyledPaper } from '../my/my-styled';
+import { CategoryButton, StyledPaper } from '../my/my-styled';
+import _ from 'lodash';
+import { FaEye, FaPlus, FaTrash } from "react-icons/fa";
+import { IoMdBarcode } from "react-icons/io";
+import { NonPhoConfig } from '../my/my-class';
 
-interface NonPho {
-    displayName: string;
-    code?: string;
-    price?: number;
-    printers?: string[];
+interface NonPho extends NonPhoConfig {
+    groupIndex: number;
 }
 
 export default function MenuSetting(props: { close: () => void }) {
     const [selectedCategory, setCategory] = useState('BEEF');
-    const [selectedItem, setItem] = useState<NonPho>({} as NonPho);
+    const [selectedItem, setSelectedItem] = useState<NonPho>({} as NonPho);
+
+    const menuClone = useRef(_.cloneDeep(MENU));
     // const [printers, setPrinters] = useState<string[]>(MENU[selectedCategory as keyof typeof MENU].printers);
 
     const mdSize = useMediaQuery('(min-width:900px)');
 
-    const NON_PHOS = MENU[selectedCategory as keyof typeof MENU]!.nonPho;
+    const NON_PHOS = menuClone.current[selectedCategory as keyof typeof MENU]!.nonPho;
 
     // useEffect(() => {
     //     setPrinters(MENU[selectedCategory as keyof typeof MENU].printers);
     // }, [selectedCategory]);
 
-    const onClickNonPho = (index: number, nonPhoCode: string) => {
-        const nonPhoGroupObj = NON_PHOS[index];
-        const nonPhoObj = nonPhoGroupObj[nonPhoCode as keyof typeof nonPhoGroupObj] as Object;
-        setItem({ ...nonPhoObj, displayName: nonPhoCode } as NonPho);
+    const onClickNonPho = (groupIndex: number, displayName: string) => {
+        const nonPhoGroupObj = NON_PHOS[groupIndex];
+        const nonPhoObj = nonPhoGroupObj[displayName as keyof typeof nonPhoGroupObj] as Object;
+        setSelectedItem({ ...nonPhoObj, groupIndex, displayName } as NonPho);
+    }
+
+    const setItem = (item: NonPho) => {
+        let nonPhoGroupObj = NON_PHOS[item.groupIndex];
+        if (selectedItem.displayName !== item.displayName)
+            delete nonPhoGroupObj[selectedItem.displayName as keyof typeof nonPhoGroupObj];
+        NON_PHOS[item.groupIndex] = { ...NON_PHOS[item.groupIndex], [item.displayName]: item };
+        setSelectedItem(item);
     }
 
     const doneThenSync = () => { }
@@ -45,7 +55,7 @@ export default function MenuSetting(props: { close: () => void }) {
 
             <Box sx={{ ml: 5 }}>
                 <COMPONENT.WrapCategoryButton props={{
-                    selectedCategory: selectedCategory, category: 'Done & Sync', setCategory: doneThenSync,
+                    selectedCategory: 'Done & Sync', category: 'Done & Sync', setCategory: doneThenSync,
                     size: mdSize ? 'xlarge' : 'xlarge', icon: <MdOutlineBrowserUpdated style={{ fontSize: 25, marginLeft: 2 }} />,
                 }} />
             </Box>
@@ -66,6 +76,10 @@ export default function MenuSetting(props: { close: () => void }) {
                         </Box>
                     ))}
                 </StyledPaper>
+                <Button sx={{ minHeight: 50, m: 1 }} onClick={() => { }} variant="contained" color="primary" size='small'>
+                    Add new group
+                    <IoMdBarcode style={{ fontSize: 30, marginLeft: 8 }} />
+                </Button>
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }}>
                 <StyledPaper sx={{ mt: 1 }}>
@@ -76,7 +90,7 @@ export default function MenuSetting(props: { close: () => void }) {
                         options={printers}
                         callback={(next) => setPrinters(next)}
                     />
-                    <Divider sx={{ mt: 1 }} /> */}
+                     */}
                     <Box sx={{ display: 'flex', flexDirection: 'row', ml: 2 }}>
                         <Box sx={{ width: '110px', alignContent: 'center', fontWeight: 600 }}>
                             Display name:
@@ -137,6 +151,21 @@ export default function MenuSetting(props: { close: () => void }) {
                             }}
                         />
                     </Box>
+                    <Box sx={{ mt: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+                        <CategoryButton sx={{ minHeight: 50 }} onClick={() => { }} selected={selectedItem.displayName?.length > 0 && selectedItem.disabled} disabled={(selectedItem.displayName || '').length === 0} variant="outlined" color="primary" size='small'>
+                            Disabled
+                            <FaEye style={{ fontSize: 30, marginLeft: 8 }} />
+                        </CategoryButton>
+                        <CategoryButton sx={{ minHeight: 50 }} onClick={() => { }} selected={true} disabled={(selectedItem.displayName || '').length === 0} variant="contained" color="primary" size='small'>
+                            Delete
+                            <FaTrash style={{ fontSize: 30, marginLeft: 8 }} />
+                        </CategoryButton>
+                    </Box>
+                    <Divider sx={{ mt: 2, mb: 1 }} />
+                    <Button sx={{ minHeight: 50 }} onClick={() => { }} disabled={(selectedItem.displayName || '').length === 0} variant="contained" color="primary" size='small'>
+                        Add new item to this group
+                        <FaPlus style={{ fontSize: 30, marginLeft: 8 }} />
+                    </Button>
                 </StyledPaper>
             </Grid2>
         </Grid2 >
