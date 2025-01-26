@@ -64,7 +64,9 @@ export default function MenuSetting(props: { close: () => void }) {
         setSelectedItem(item);
     }
 
-    const doneThenSync = () => { }
+    const doneThenSync = () => {
+        // TODO: check unique
+    }
 
     return (<>
         <COMPONENT.Header back={props.close} actions={<Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -77,7 +79,7 @@ export default function MenuSetting(props: { close: () => void }) {
 
             <Box sx={{ ml: 5 }}>
                 <COMPONENT.WrapCategoryButton props={{
-                    selectedCategory: 'Done & Sync', category: 'Done & Sync', setCategory: doneThenSync,
+                    selectedCategory: 'Save & Sync', category: 'Save & Sync', setCategory: doneThenSync,
                     size: mdSize ? 'xlarge' : 'xlarge', icon: <MdOutlineBrowserUpdated style={{ fontSize: 25, marginLeft: 2 }} />,
                 }} />
             </Box>
@@ -105,14 +107,6 @@ export default function MenuSetting(props: { close: () => void }) {
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }}>
                 <StyledPaper sx={{ mt: 1 }}>
-                    {/* Printer:
-                    <CheckButton
-                        multi={true}
-                        obj={PRINTER}
-                        options={printers}
-                        callback={(next) => setPrinters(next)}
-                    />
-                     */}
                     <Box sx={{ display: 'flex', flexDirection: 'row', ml: 2 }}>
                         <Box sx={{ width: '110px', alignContent: 'center', fontWeight: 600 }}>
                             Display name:

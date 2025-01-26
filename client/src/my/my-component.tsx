@@ -29,8 +29,7 @@ import { RiDrinks2Line } from 'react-icons/ri';
 
 interface CheckButtonProps {
     multi: boolean,
-    obj?: Object,
-    allOptions?: string[],
+    obj: Object,
     disabled?: string[],
     options: string[],
     createLabel?: (option: string) => string,
@@ -44,7 +43,7 @@ interface CheckButtonProps {
 //     && [...prev.allOptions].sort().join(',') === [...next.allOptions].sort().join(',')
 //     && true;
 const checkButtonPropsEqual = () => false;
-const pCheckButton = (props: CheckButtonProps) => {
+export const CheckButton = (props: CheckButtonProps) => {
     const [options, setOptions] = useState<string[]>([...props.options]);
 
     useEffect(() => {
@@ -75,36 +74,39 @@ const pCheckButton = (props: CheckButtonProps) => {
     return (
         <>
             <Grid2 container spacing={0} sx={{ display: { xs: 'none', sm: 'flex', md: 'flex', lg: 'flex' }, mb: 0, mt: 0 }}>
-                {(props.allOptions || Object.keys(props.obj!)).map((option) => (
-                    <Grid2 key={option}>
-                        <Badge badgeContent={null} anchorOrigin={{ vertical: 'top', horizontal: 'right', }} >
-                            <CategoryButton
-                                disabled={props.disabled?.includes(option)}
-                                variant='outlined'
-                                size='large'
-                                onClick={() => onClick(option)}
-                                selected={options?.includes(option)}
-                                sx={{ minWidth: 100, maxWidth: 200, minHeight: 50 }}
-                            >
-                                {option}
-                            </CategoryButton>
-                            {props.setting && <Box sx={{ position: "absolute", top: -3, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
-                                {getProperty(option, 'code')}
-                            </Box>}
-                            {props.setting && <Box sx={{ position: "absolute", top: 34, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
-                                {getProperty(option, 'price')}
-                            </Box>}
-                        </Badge>
-                    </Grid2>
-                ))}
+                {Object.entries(props.obj).map(([key, value]) => {
+                    const disabledStyle = props.setting && value?.disabled ? { color: 'text.disabled', borderColor: 'text.disabled' } : {};
+                    return (
+                        <Grid2 key={key}>
+                            <Badge badgeContent={null} anchorOrigin={{ vertical: 'top', horizontal: 'right', }} >
+                                <CategoryButton
+                                    disabled={props.disabled?.includes(key) || (!props.setting && value?.disabled)}
+                                    variant='outlined'
+                                    size='large'
+                                    onClick={() => onClick(key)}
+                                    selected={options?.includes(key)}
+                                    sx={{ ...disabledStyle, minWidth: 100, maxWidth: 200, minHeight: 50 }}
+                                >
+                                    {key}
+                                </CategoryButton>
+                                {props.setting && <Box sx={{ ...disabledStyle, position: "absolute", top: -3, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
+                                    {getProperty(key, 'code')}
+                                </Box>}
+                                {props.setting && <Box sx={{ ...disabledStyle, position: "absolute", top: 34, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
+                                    {getProperty(key, 'price')}
+                                </Box>}
+                            </Badge>
+                        </Grid2>
+                    )
+                })}
             </Grid2 >
             <Grid2 container spacing={0} sx={{ display: { xs: 'flex', sm: 'none', md: 'none', lg: 'none' }, mb: 0 }}>
-                {(props.allOptions || Object.keys(props.obj!)).map((option) => (
-                    <Grid2 key={option}>
+                {Object.entries(props.obj).map(([key, value]) => (
+                    <Grid2 key={key}>
                         <Chip
-                            label={option}
-                            onClick={() => onClick(option)}
-                            color={options?.includes(option) ? "primary" : "default"}
+                            label={key}
+                            onClick={() => onClick(key)}
+                            color={options?.includes(key) ? "primary" : "default"}
                         />
                     </Grid2>
                 ))}
@@ -112,24 +114,20 @@ const pCheckButton = (props: CheckButtonProps) => {
         </>
     );
 }
-export const CheckButton = React.memo(pCheckButton, checkButtonPropsEqual);
+// export const CheckButton = React.memo(pCheckButton, checkButtonPropsEqual);
 
 export const NumberInput = (props: {
     value: any,
     onChange: (num: number) => void,
-    nonBorder?: boolean
     placeholder?: string,
     label?: string,
-    pl?: number
+    inputProps?: {},
+    sx?: {},
+    slice?: number
 }) => {
-
-    const style = { fontSize: 16, fontWeight: 600 };
-    const plStyle = props.pl && props.pl < 0 ? style : { ...style, paddingLeft: props.pl };
-
     return (<TextField margin="none" size='small'
         type='number'
-        label={props.label}
-        inputProps={{ inputMode: 'numeric', style: plStyle, }}
+        inputProps={{ inputMode: 'numeric', style: props.inputProps, }}
         InputProps={{
             type: "number",
             sx: {
@@ -143,22 +141,22 @@ export const NumberInput = (props: {
         }}
         fullWidth={true}
         sx={{
-            p: 0, m: 0,
+            ...props.sx,
             input: {
                 color: 'primary',
                 "&::placeholder": {
                     opacity: 1,
                 },
             },
-            "& fieldset": { border: props.nonBorder ? 'none' : '' },
         }}
+        label={props.label}
         placeholder={props.placeholder}
         value={props.value}
         onChange={(e) => {
-            const num = Number(e.target.value.slice(-1));
+            const num = Number(e.target.value.slice(props.slice));
             props.onChange(num);
         }}
-    />)
+    />);
 }
 
 export const NumPad = (props: { clear: () => void, input: (key: string) => void, done: () => void }) => {

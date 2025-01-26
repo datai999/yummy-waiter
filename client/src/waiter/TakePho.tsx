@@ -154,7 +154,7 @@ const pTakePho = (props: TakePhoProps) => {
         <StyledPaper key={props.category} sx={{ mb: 1, p: 1, pl: 1, pr: 0 }}>
             <CheckButton
                 multi={false}
-                allOptions={Object.keys(combos)}
+                obj={combos}
                 options={[pho.combo as string]}
                 createLabel={(key) => key}
                 callback={onComboChange}
@@ -164,7 +164,7 @@ const pTakePho = (props: TakePhoProps) => {
                 <Divider textAlign="left" sx={{ m: 0.5 }}></Divider>
                 <CheckButton
                     multi={true}
-                    allOptions={Object.keys(meats)}
+                    obj={meats}
                     options={pho.meats}
                     createLabel={(key) => key}
                     callback={onMeatChange}
@@ -174,7 +174,7 @@ const pTakePho = (props: TakePhoProps) => {
             <Divider textAlign="left" sx={{ m: 0.5 }}></Divider>
             <CheckButton
                 multi={false}
-                allOptions={noodles}
+                obj={noodles.reduce((a, v) => ({ ...a, [v]: v }), {})}
                 disabled={calDisabledNoodles(pho)}
                 options={[pho.noodle]}
                 createLabel={(key) => key}
@@ -184,7 +184,7 @@ const pTakePho = (props: TakePhoProps) => {
             <Divider textAlign="left" sx={{ m: 0.5 }}></Divider>
             <CheckButton
                 multi={true}
-                allOptions={Object.keys(references)}
+                obj={references}
                 disabled={calDisabledPrefers(pho)}
                 options={pho.preferences || []}
                 createLabel={(key) => key}
@@ -193,7 +193,8 @@ const pTakePho = (props: TakePhoProps) => {
 
             <Grid2 container spacing={2} alignItems="center" sx={{ mt: 1, ml: 1, mr: 1 }}>
                 <Grid2 size={{ xs: 3, sm: 1, md: 1 }} sx={{ mb: 0 }}>
-                    <NumberInput value={pho.qty} onChange={num => { setPho({ ...pho, qty: num, actualQty: num }); }} label='Qty' />
+                    <NumberInput value={pho.qty} slice={-1} label='Qty' inputProps={{ fontSize: 16, fontWeight: 600 }}
+                        onChange={num => { setPho({ ...pho, qty: num, actualQty: num }); }} />
                 </Grid2>
                 <Grid2 size={{ xs: 9, sm: 6, md: 5 }}  >
                     <TextField
