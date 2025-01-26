@@ -116,14 +116,13 @@ export const CheckButton = (props: CheckButtonProps) => {
 }
 // export const CheckButton = React.memo(pCheckButton, checkButtonPropsEqual);
 
-export const NumberInput = (props: {
+const NumberInput = (props: {
     value: any,
     onChange: (num: number) => void,
     placeholder?: string,
     label?: string,
     inputProps?: {},
-    sx?: {},
-    slice?: number
+    sx?: {}
 }) => {
     return (<TextField margin="none" size='small'
         type='number'
@@ -153,10 +152,29 @@ export const NumberInput = (props: {
         placeholder={props.placeholder}
         value={props.value}
         onChange={(e) => {
-            const num = Number(e.target.value.slice(props.slice));
+            const num = Number(e.target.value);
             props.onChange(num);
         }}
     />);
+}
+
+const PriceInput = (props: {
+    value: number | undefined | string,
+    onChange: (num: number) => void,
+    placeholder?: string,
+    label?: string,
+    inputProps?: {},
+    sx?: {}
+}) => {
+    return <NumberInput
+        value={props.value}
+        onChange={num => {
+            const correctPrice = num.toString().length > (props.value || 0)?.toString().length
+                ? num * 10 : num / 10;
+            props.onChange(Number(correctPrice.toFixed(2)))
+        }}
+        sx={props.sx}
+    />
 }
 
 export const NumPad = (props: { clear: () => void, input: (key: string) => void, done: () => void }) => {
@@ -273,5 +291,8 @@ const WrapCategoryButton = ({ props }: {
 
 export const COMPONENT = {
     Header,
-    WrapCategoryButton
+    WrapCategoryButton,
+    NumberInput,
+    PriceInput,
+    CheckButton
 }

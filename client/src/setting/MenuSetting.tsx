@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { CheckButton, COMPONENT } from '../my/my-component';
+import { COMPONENT } from '../my/my-component';
 import { Box, Button, Divider, Grid2, TextField, Typography, useMediaQuery } from '@mui/material';
 import { MENU, PRINTER } from '../my/my-constants';
 import { MdOutlineBrowserUpdated } from 'react-icons/md';
@@ -90,7 +90,7 @@ export default function MenuSetting(props: { close: () => void }) {
                     {NON_PHOS.map((nonPho, index) => (
                         <Box key={index}>
                             {index > 0 && (<Divider sx={{ m: ['BEEF', 'CHICKEN'].includes(selectedCategory) ? 0.2 : 1 }} />)}
-                            <CheckButton
+                            <COMPONENT.CheckButton
                                 multi={false}
                                 obj={nonPho}
                                 options={[selectedItem.displayName]}
@@ -135,36 +135,9 @@ export default function MenuSetting(props: { close: () => void }) {
                         <Box sx={{ width: '110px', alignContent: 'center', fontWeight: 600 }}>
                             Price:
                         </Box>
-                        <TextField margin="none" size='small'
-                            type='number'
-                            inputProps={{ inputMode: 'numeric', style: {}, }}
-                            InputProps={{
-                                type: "number",
-                                sx: {
-                                    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                                        display: 'none'
-                                    },
-                                    '& input[type=number]': {
-                                        MozAppearance: 'textfield'
-                                    },
-                                }
-                            }}
-                            fullWidth={true}
-                            sx={{
-                                m: 1, ml: 0, maxWidth: '130px',
-                                input: {
-                                    color: 'primary',
-                                    "&::placeholder": {
-                                        opacity: 1,
-                                    },
-                                },
-                            }}
-                            // placeholder={props.placeholder}
-                            value={selectedItem.price || ''}
-                            onChange={(e) => {
-                                const num = Number(e.target.value);
-                                setItem({ ...selectedItem, price: num })
-                            }}
+                        <COMPONENT.PriceInput sx={{ m: 1, ml: 0, maxWidth: '130px' }}
+                            value={Number(selectedItem.price || 0).toFixed(2)}
+                            onChange={price => setItem({ ...selectedItem, price: price })}
                         />
                     </Box>
                     <Box sx={{ mt: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
