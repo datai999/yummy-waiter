@@ -13,9 +13,14 @@ interface NonPho extends NonPhoConfig {
     groupIndex: number;
 }
 
+const DEFAULT_NON_PHO: NonPho = {
+    groupIndex: -1,
+    displayName: '',
+}
+
 export default function MenuSetting(props: { close: () => void }) {
     const [selectedCategory, setCategory] = useState('BEEF');
-    const [selectedItem, setSelectedItem] = useState<NonPho>({} as NonPho);
+    const [selectedItem, setSelectedItem] = useState<NonPho>(DEFAULT_NON_PHO);
 
     const menuClone = useRef(_.cloneDeep(MENU));
     // const [printers, setPrinters] = useState<string[]>(MENU[selectedCategory as keyof typeof MENU].printers);
@@ -29,6 +34,10 @@ export default function MenuSetting(props: { close: () => void }) {
     // }, [selectedCategory]);
 
     const onClickNonPho = (groupIndex: number, displayName: string) => {
+        if (!displayName) {
+            setSelectedItem(DEFAULT_NON_PHO);
+            return;
+        }
         const nonPhoGroupObj = NON_PHOS[groupIndex];
         const nonPhoObj = nonPhoGroupObj[displayName as keyof typeof nonPhoGroupObj] as Object;
         setSelectedItem({ ...nonPhoObj, groupIndex, displayName } as NonPho);
@@ -48,7 +57,7 @@ export default function MenuSetting(props: { close: () => void }) {
         if (Object.keys(nonPhoGroupObj).length === 0) {
             NON_PHOS.splice(selectedItem.groupIndex, 1);
         }
-        setSelectedItem({} as NonPho)
+        setSelectedItem(DEFAULT_NON_PHO);
     }
 
     const addItem = () => {
@@ -59,12 +68,12 @@ export default function MenuSetting(props: { close: () => void }) {
     }
 
     const addGroup = () => {
-        const item = { ...selectedItem, groupIndex: NON_PHOS.length, displayName: `new item:${NON_PHOS.length}` }
+        const item = { ...selectedItem, groupIndex: NON_PHOS.length, displayName: `new item:${NON_PHOS.length}`, displayOrder: 50 }
         NON_PHOS.push({ [item.displayName]: item });
         setSelectedItem(item);
     }
 
-    const doneThenSync = () => {
+    const saveThenSync = () => {
         // TODO: check unique
     }
 
@@ -76,14 +85,14 @@ export default function MenuSetting(props: { close: () => void }) {
                     size: mdSize ? 'xlarge' : 'xlarge',
                 }} />
             ))}
-
             <Box sx={{ ml: 5 }}>
                 <COMPONENT.WrapCategoryButton props={{
-                    selectedCategory: 'Save & Sync', category: 'Save & Sync', setCategory: doneThenSync,
+                    selectedCategory: 'Save & Sync', category: 'Save & Sync', setCategory: saveThenSync,
                     size: mdSize ? 'xlarge' : 'xlarge', icon: <MdOutlineBrowserUpdated style={{ fontSize: 25, marginLeft: 2 }} />,
                 }} />
             </Box>
         </Box>} />
+
         <Grid2 columns={10} container spacing={1} sx={{ display: 'flex', mb: 1 }}>
             <Grid2 size={{ xs: 10, sm: 10, md: 7 }}>
                 <StyledPaper sx={{ mt: 1, mb: 0, p: 0, pl: 1, minHeight: '228px' }}>
@@ -105,6 +114,7 @@ export default function MenuSetting(props: { close: () => void }) {
                     <IoMdBarcode style={{ fontSize: 30, marginLeft: 8 }} />
                 </Button>
             </Grid2>
+
             <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }}>
                 <StyledPaper sx={{ mt: 1 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'row', ml: 2 }}>
@@ -114,6 +124,7 @@ export default function MenuSetting(props: { close: () => void }) {
                         <TextField
                             fullWidth
                             size='small'
+                            disabled={selectedItem.groupIndex < 0}
                             sx={{ m: 1, ml: 0, maxWidth: '130px' }}
                             value={selectedItem.displayName || ''}
                             onChange={(e) => setItem({ ...selectedItem, displayName: e.target.value })}
@@ -126,6 +137,7 @@ export default function MenuSetting(props: { close: () => void }) {
                         <TextField
                             fullWidth
                             size='small'
+                            disabled={selectedItem.groupIndex < 0}
                             sx={{ m: 1, ml: 0, maxWidth: '130px' }}
                             value={selectedItem.code || ''}
                             onChange={(e) => setItem({ ...selectedItem, code: e.target.value })}
@@ -137,9 +149,19 @@ export default function MenuSetting(props: { close: () => void }) {
                         </Box>
                         <COMPONENT.PriceInput sx={{ m: 1, ml: 0, maxWidth: '130px' }}
                             value={Number(selectedItem.price || 0).toFixed(2)}
-                            onChange={price => setItem({ ...selectedItem, price: price })}
+                            onChange={price => price > 100 ? null : setItem({ ...selectedItem, price: price })}
                         />
                     </Box>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', ml: 2 }}>
+                        <Box sx={{ width: '110px', alignContent: 'center', fontWeight: 600 }}>
+                            Display order:
+                        </Box>
+                        <COMPONENT.NumberInput sx={{ m: 1, ml: 0, maxWidth: '130px' }}
+                            value={selectedItem.displayOrder || selectedItem.displayOrder === 0 ? selectedItem.displayOrder : 50}
+                            onChange={num => setItem({ ...selectedItem, displayOrder: Number(num.toString().slice(-2)) })}
+                        />
+                    </Box>
+
                     <Box sx={{ mt: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
                         <CategoryButton sx={{ minHeight: 50 }} onClick={() => {
                             setItem({ ...selectedItem, disabled: !selectedItem.disabled });

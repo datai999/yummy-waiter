@@ -71,34 +71,45 @@ export const CheckButton = (props: CheckButtonProps) => {
         return null;
     }
 
+    const displayOrder = (a: [string, { displayOrder: number }], b: [string, { displayOrder: number }]) => {
+        const displayOrder1 = a[1]?.displayOrder;
+        const displayOrder2 = b[1]?.displayOrder;
+        const n1 = Number(displayOrder1 || displayOrder1 === 0 ? displayOrder1 : 50);
+        const n2 = Number(displayOrder2 || displayOrder2 === 0 ? displayOrder2 : 50);
+        const diff = n1 - n2;
+        return diff;
+    }
+
     return (
         <>
             <Grid2 container spacing={0} sx={{ display: { xs: 'none', sm: 'flex', md: 'flex', lg: 'flex' }, mb: 0, mt: 0 }}>
-                {Object.entries(props.obj).map(([key, value]) => {
-                    const disabledStyle = props.setting && value?.disabled ? { color: 'text.disabled', borderColor: 'text.disabled' } : {};
-                    return (
-                        <Grid2 key={key}>
-                            <Badge badgeContent={null} anchorOrigin={{ vertical: 'top', horizontal: 'right', }} >
-                                <CategoryButton
-                                    disabled={props.disabled?.includes(key) || (!props.setting && value?.disabled)}
-                                    variant='outlined'
-                                    size='large'
-                                    onClick={() => onClick(key)}
-                                    selected={options?.includes(key)}
-                                    sx={{ ...disabledStyle, minWidth: 100, maxWidth: 200, minHeight: 50 }}
-                                >
-                                    {key}
-                                </CategoryButton>
-                                {props.setting && <Box sx={{ ...disabledStyle, position: "absolute", top: -3, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
-                                    {getProperty(key, 'code')}
-                                </Box>}
-                                {props.setting && <Box sx={{ ...disabledStyle, position: "absolute", top: 34, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
-                                    {getProperty(key, 'price')}
-                                </Box>}
-                            </Badge>
-                        </Grid2>
-                    )
-                })}
+                {Object.entries(props.obj)
+                    .sort(displayOrder)
+                    .map(([key, value]) => {
+                        const disabledStyle = props.setting && value?.disabled ? { color: 'text.disabled', borderColor: 'text.disabled' } : {};
+                        return (
+                            <Grid2 key={key}>
+                                <Badge badgeContent={null} anchorOrigin={{ vertical: 'top', horizontal: 'right', }} >
+                                    <CategoryButton
+                                        disabled={props.disabled?.includes(key) || (!props.setting && value?.disabled)}
+                                        variant='outlined'
+                                        size='large'
+                                        onClick={() => onClick(key)}
+                                        selected={options?.includes(key)}
+                                        sx={{ ...disabledStyle, minWidth: 100, maxWidth: 200, minHeight: 50 }}
+                                    >
+                                        {key}
+                                    </CategoryButton>
+                                    {props.setting && <Box sx={{ ...disabledStyle, position: "absolute", top: -3, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
+                                        {getProperty(key, 'code')}
+                                    </Box>}
+                                    {props.setting && <Box sx={{ ...disabledStyle, position: "absolute", top: 34, right: 1, zIndex: 1, bgcolor: "background.paper", border: '1px solid', borderRadius: 0, fontSize: 12 }} >
+                                        {getProperty(key, 'price')}
+                                    </Box>}
+                                </Badge>
+                            </Grid2>
+                        )
+                    })}
             </Grid2 >
             <Grid2 container spacing={0} sx={{ display: { xs: 'flex', sm: 'none', md: 'none', lg: 'none' }, mb: 0 }}>
                 {Object.entries(props.obj).map(([key, value]) => (
@@ -118,7 +129,7 @@ export const CheckButton = (props: CheckButtonProps) => {
 
 const NumberInput = (props: {
     value: any,
-    onChange: (num: number) => void,
+    onChange: (num: number, text?: string) => void,
     placeholder?: string,
     label?: string,
     inputProps?: {},
@@ -152,8 +163,9 @@ const NumberInput = (props: {
         placeholder={props.placeholder}
         value={props.value}
         onChange={(e) => {
+            console.log(e.target.value);
             const num = Number(e.target.value);
-            props.onChange(num);
+            props.onChange(num, e.target.value);
         }}
     />);
 }
@@ -168,9 +180,9 @@ const PriceInput = (props: {
 }) => {
     return <NumberInput
         value={props.value}
-        onChange={num => {
-            const correctPrice = num.toString().length > (props.value || 0)?.toString().length
-                ? num * 10 : num / 10;
+        onChange={(num, text) => {
+            const noDecimalText = text?.replaceAll('.', '');
+            const correctPrice = Number(noDecimalText) / 100;
             props.onChange(Number(correctPrice.toFixed(2)))
         }}
         sx={props.sx}

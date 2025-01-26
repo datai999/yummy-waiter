@@ -15,11 +15,11 @@ export class ItemRef {
 }
 
 export class NonPhoConfig {
-    sort: number = 0;
     displayName: string;
     code?: string;
     price?: number;
     disabled?: boolean;
+    displayOrder?: number = 50;
 
     public constructor(displayName: string) {
         this.displayName = displayName;
