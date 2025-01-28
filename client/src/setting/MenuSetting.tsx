@@ -18,7 +18,7 @@ const DEFAULT_NON_PHO: NonPho = {
     displayName: '',
 }
 
-export default function MenuSetting(props: { close: () => void }) {
+export default function MenuSetting(props: { back: () => void }) {
     const [selectedCategory, setCategory] = useState('BEEF');
     const [selectedItem, setSelectedItem] = useState<NonPho>(DEFAULT_NON_PHO);
 
@@ -78,17 +78,17 @@ export default function MenuSetting(props: { close: () => void }) {
     }
 
     return (<>
-        <COMPONENT.Header back={props.close} actions={<Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <COMPONENT.Header back={props.back} actions={<Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
             {Object.keys(MENU).map((category) => (
                 <COMPONENT.WrapCategoryButton key={category} props={{
                     selectedCategory: selectedCategory, category: category, setCategory: setCategory,
-                    size: mdSize ? 'xlarge' : 'xlarge',
+                    size: 'xlarge',
                 }} />
             ))}
             <Box sx={{ ml: 5 }}>
                 <COMPONENT.WrapCategoryButton props={{
                     selectedCategory: 'Save & Sync', category: 'Save & Sync', setCategory: saveThenSync,
-                    size: mdSize ? 'xlarge' : 'xlarge', icon: <MdOutlineBrowserUpdated style={{ fontSize: 25, marginLeft: 2 }} />,
+                    size: 'xlarge', icon: <MdOutlineBrowserUpdated style={{ fontSize: 25, marginLeft: 2 }} />,
                 }} />
             </Box>
         </Box>} />

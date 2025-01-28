@@ -123,6 +123,7 @@ const doneOrder = (syncTables) => {
         writeJsonFile(syncTable, fileName, filePath);
         delete LOCKED_TABLES[tableId];
         delete ACTIVE_TABLES[tableId];
+        writeJsonFile(ACTIVE_TABLES, 'active_tables');
     });
 }
 

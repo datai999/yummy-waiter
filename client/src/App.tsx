@@ -8,12 +8,13 @@ import { changeTable, generateTables } from './my/my-service';
 import initWsClient, { SYNC_TYPE, syncServer } from './my/my-ws';
 import { Auth, CategoryItem, LockedTable, Order, Table } from './my/my-class';
 import Login from './user/Login';
-import { TableStatus } from './my/my-constants';
+import { SCREEN, TableStatus } from './my/my-constants';
 import { UTILS } from './my/my-util';
 import OrderHistory from './order/OrderHistory';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import MenuSetting from './setting/MenuSetting';
+import ServerManagement from './user/ServerManagement';
 
 interface IAuthContext {
   auth: any, logout: () => void
@@ -50,12 +51,11 @@ let closeInitWsClient: undefined | (() => void);
 
 export default function App() {
   const [auth, setAuth] = useState<null | Auth>(null);
-  const [table, orderTable] = useState<Table | null>(null);
+  const [table, orderOrder] = useState<Table | null>(null);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [refresh2, setRefresh2] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
-  const [historyOrder, setHistoryOrder] = useState(false);
-  const [setting, setSetting] = useState(false);
+  const [screen, routeScreen] = useState<SCREEN>(SCREEN.DEFAULT);
 
   const holdTable = useRef<Table | null>();
   const toasMsg = useRef<string>();
@@ -72,6 +72,11 @@ export default function App() {
   useEffect(() => {
     holdTable.current = table;
   }, [table])
+
+  const orderTable = (order: null | Order) => {
+    orderOrder(order);
+    routeScreen(SCREEN.DEFAULT);
+  }
 
   const onSyncTables = (senter: string, syncTables: Map<String, Table>) => {
     syncTables.forEach(syncTable => {
@@ -175,22 +180,19 @@ export default function App() {
       <ToastContext.Provider value={(msg: string) => { toasMsg.current = msg; setOpen(true) }}>
         <AuthContext.Provider value={{ auth, logout }}>
           <LockedTableContext.Provider value={(tableId: string) => LOCKED_TABLES.get(tableId)?.server}>
-            {table
+            {screen === SCREEN.DEFAULT && (table
               ? (<TableContext.Provider value={{ table, order: table, orderTable, setOrder: orderTable, prepareChangeTable }}>
                 <Waiter tables={tables} tempBags={tempBags.current} />
               </TableContext.Provider>
-              )
-              : historyOrder
-                ? <OrderHistory setHistoryOrder={setHistoryOrder} />
-                : setting ?
-                  <MenuSetting close={() => setSetting(false)} />
-                  : (<>
-                    <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
-                      <Header setSetting={setSetting} setHistoryOrder={setHistoryOrder} newTogo={newTogo} />
-                    </Box>
-                    <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
-                  </>)
-            }
+              ) : (<>
+                <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
+                  <Header routeScreen={routeScreen} newTogo={newTogo} />
+                </Box>
+                <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
+              </>))}
+            {screen === SCREEN.SERVER && <ServerManagement back={() => routeScreen(SCREEN.DEFAULT)} />}
+            {screen === SCREEN.MENU && <MenuSetting back={() => routeScreen(SCREEN.DEFAULT)} />}
+            {screen === SCREEN.HISTORY_ORDER && <OrderHistory back={() => routeScreen(SCREEN.DEFAULT)} />}
           </LockedTableContext.Provider>
           <Snackbar
             open={open}

@@ -4,6 +4,8 @@ export enum TableStatus {
     DONE = "DONE",
 }
 
+export enum SCREEN { DEFAULT, SERVER, MENU, HISTORY_ORDER }
+
 export const BEEF_MEAT = {
     "Tái": { sort: 1, code: 'T' },
     "Chín": { sort: 2, code: 'C' },
@@ -84,6 +86,7 @@ export const CHICKEN_SIDE = {
 }
 export const CHICKEN_SIDE_2 = {
     "Extra bamboo": { price: '3' },
+    "Extra soup": { price: '3' },
     "Extra BC": { price: '3' },
     "Extra BT": { price: '3' },
     "Extra Bún": { price: '3' },

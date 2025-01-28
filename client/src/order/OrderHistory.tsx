@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Header from "./Header";
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowParams } from "@mui/x-data-grid";
 import { SYNC_TYPE, syncServer } from "../my/my-ws";
 import { UTILS } from "../my/my-util";
@@ -8,6 +7,9 @@ import { Box, Button, Divider, Grid2, Modal, Stack, styled, Typography, useMedia
 import { StyledPaper } from "../my/my-styled";
 import { TableContext } from "../App";
 import OrderView from "./OrderView";
+import { COMPONENT } from "../my/my-component";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
 
 let viewOrder = (index: number) => console.log(`viewOrder: ${index}`);
 
@@ -64,7 +66,7 @@ export const updateHistoryOrder = (historyOrder: Receipt[]) => {
     }
 }
 
-export default function OrderHistory(props: { setHistoryOrder: (state: boolean) => void }) {
+export default function OrderHistory(props: { back: () => void }) {
     const [historyDate, setHistoryDate] = useState<Date>(new Date());
     const [order, setOrder] = useState<Receipt | null>(null);
 
@@ -78,13 +80,15 @@ export default function OrderHistory(props: { setHistoryOrder: (state: boolean) 
 
     const mdSize = useMediaQuery('(min-width:900px)');
 
-    const onChangeHistoryDate = (newDate: Date) => {
-        setHistoryDateOutSide = () => setHistoryDate(newDate);
-        syncServer(SYNC_TYPE.HISTORY_ORDER, UTILS.formatTime(newDate));
-    }
+    const handleDateChange = (date: Dayjs | null) => {
+        const dateNotNull = (date || dayjs()).toDate();
+        setHistoryDateOutSide = () => setHistoryDate(dateNotNull);
+        syncServer(SYNC_TYPE.HISTORY_ORDER, UTILS.formatTime(dateNotNull));
+    };
 
     return (<>
-        <Header setHistoryOrder={props.setHistoryOrder} historyDate={historyDate} setHistoryDate={onChangeHistoryDate} />
+        <COMPONENT.Header back={props.back} actions={<DatePicker label="History date" sx={{ mt: 2 }} slotProps={{ textField: { size: 'small' } }}
+            maxDate={dayjs()} value={dayjs(historyDate)} onChange={handleDateChange} />} />
         <StyledPaper sx={{ display: 'flex', margin: 1, pt: 0, pb: 0 }}>
             <DataGrid
                 rows={rowsData}
@@ -109,7 +113,7 @@ export default function OrderHistory(props: { setHistoryOrder: (state: boolean) 
                             {order.note && <Typography variant="h6" sx={{ mt: '10px' }}>: {order.note}</Typography>}
                         </Box>
                         <TableContext.Provider value={{ table: order, order: order, orderTable: () => { }, setOrder: () => { }, prepareChangeTable: () => { } }}>
-                            <OrderView bags={order.bags} phoId={''} discountPercent={order.discountPercent?.discount} discountSubtract={order.discountSubtract?.discount}/>
+                            <OrderView bags={order.bags} phoId={''} discountPercent={order.discountPercent?.discount} discountSubtract={order.discountSubtract?.discount} />
                         </TableContext.Provider>
                     </Box>
                 )}
