@@ -1,18 +1,17 @@
 {
     "0": {
-        "name": "Tai",
-        "permission": []
+        "name": "Tai"
     },
     "2": {
-        "name": "Duc",
-        "permission": []
+        "name": "Duc"
     },
     "3": {
-        "name": "Trung",
-        "permission": []
+        "name": "Trung"
     },
     "15": {
-        "name": "Thanh",
-        "permission": []
+        "name": "Thanh"
+    },
+    "2222": {
+        "name": "New sever 5"
     }
 }

@@ -63,6 +63,10 @@ const onConnection = (ws, req) => {
                 }));
             else sentDataOnConnect(ws);
         }
+        if (data.type === 'USERS') {
+            writeJsonFile(data.payload, 'users');
+            boardcastMessageExceptOwner(ws, messageConvert);
+        }
         if (data.type === 'ACTIVE_TABLES') {
             updateActiveTable(data.payload);
             boardcastMessageExceptOwner(ws, messageConvert);

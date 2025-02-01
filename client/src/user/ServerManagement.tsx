@@ -1,11 +1,13 @@
 import { Box, Button } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { MdOutlineBrowserUpdated } from 'react-icons/md';
 import { COMPONENT } from '../my/my-component';
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowId, } from '@mui/x-data-grid';
 import { StyledPaper } from '../my/my-styled';
 import { Auth } from '../my/my-class';
 import { FaPlus } from 'react-icons/fa';
+import { syncServer, SYNC_TYPE } from '../my/my-ws';
+import { CONTEXT } from '../App';
 
 class AuthRow extends Auth {
     id: number;
@@ -16,6 +18,7 @@ class AuthRow extends Auth {
 }
 
 export default function ServerManagement(props: { back: () => void }) {
+    const { logout } = useContext(CONTEXT.Auth);
 
     const USERS = JSON.parse(localStorage.getItem('users')!);
 
@@ -25,8 +28,14 @@ export default function ServerManagement(props: { back: () => void }) {
     const edit = (nextRowsData: AuthRow[]) => rowsData = nextRowsData;
 
     const saveThenSync = () => {
-        console.log(rowsData);
-        // TODO: check unique
+        if (new Set(rowsData.map(row => row.code)).size !== rowsData.length) {
+            logout();
+            alert('Code already used by another server');
+            return;
+        }
+        const users = rowsData.reduce((a, v) => ({ ...a, [v.code]: { 'name': v.name } }), {})
+        syncServer(SYNC_TYPE.USERS, users);
+        logout();
     }
 
     return (<>
@@ -60,6 +69,13 @@ const ServersTable = (props: { rowsData: AuthRow[], edit: (rowsData: AuthRow[]) 
 
     const onUpdate = (editRow: AuthRow) => {
         if (!editRow) return;
+        const usedCodeIndex = rows.findIndex((row) => {
+            return row.code.toString() === editRow.code.toString() && editRow.id.toString() !== row.id.toString();
+        });
+        if (usedCodeIndex !== -1) {
+            alert('Code already used by another server');
+            return;
+        }
         const nextRow = new AuthRow(editRow.id, editRow.name, editRow.code);
         const nextRows = rows.map((row) => row.id === nextRow.id ? nextRow : row);
         props.edit(nextRows);
