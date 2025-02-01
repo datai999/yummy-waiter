@@ -11,15 +11,11 @@ import {
     Box,
     Grid2,
 } from '@mui/material';
-
-import {
-    MENU,
-} from '../my/my-constants';
 import { ChildWaiterProps, WAITER_CONTEXT } from './Waiter';
 import { CategoryItem, Pho, TrackedItem, TrackedNonPho, TrackedPho } from '../my/my-class';
 import TakePho from './TakePho';
 import TakeNonPho from './TakeNonPho';
-import { CONTEXT } from '../App';
+import { APP_CONTEXT } from '../App';
 import { UTILS } from '../my/my-util';
 import OrderView from '../order/OrderView';
 
@@ -29,8 +25,7 @@ const OrderTake = ({ props, note, setNote, bags }: {
     setNote: (newNote: string) => void,
     bags: Map<number, Map<string, CategoryItem>>
 }) => {
-    const { auth } = useContext(CONTEXT.Auth);
-    const { table } = useContext(CONTEXT.Table);
+    const { MENU, auth } = useContext(APP_CONTEXT);
     const { locked, setLocked } = useContext(WAITER_CONTEXT.lockOrder);
 
     const [refresh, setRefresh] = useState(false)
@@ -38,7 +33,7 @@ const OrderTake = ({ props, note, setNote, bags }: {
     const [itemRef, setItemRef] = useState<{ bag: number, trackedIndex: number, server: string, time: Date | undefined }>
         ({ bag: -1, trackedIndex: -1, server: '', time: undefined });
 
-    const category = MENU[props.category as keyof typeof MENU];
+    const CATEGORY = MENU[props.category as keyof typeof MENU];
 
     useEffect(() => {
         bags.forEach(bag => bag.forEach(categoryItem => {
@@ -101,7 +96,7 @@ const OrderTake = ({ props, note, setNote, bags }: {
         <Grid2 columns={10} container spacing={1} sx={{ display: 'flex', mb: 1 }}>
             <Grid2 size={{ xs: 10, sm: 10, md: 7 }}>
                 {props.category === 'CHICKEN' && <Box sx={{ height: '116.8px' }} />}
-                {category?.pho && (
+                {CATEGORY?.pho && (
                     <TakePho
                         isDoneItem={Boolean(itemRef.time)}
                         category={props.category}
@@ -110,7 +105,7 @@ const OrderTake = ({ props, note, setNote, bags }: {
                         submitPho={submitPho}
                     />
                 )}
-                {category?.nonPho && (
+                {CATEGORY?.nonPho && (
                     <TakeNonPho
                         category={props.category}
                         bags={bags}

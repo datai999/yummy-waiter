@@ -30,10 +30,8 @@ import {
 } from '../my/my-styled';
 import { BagDndProps, Draggable } from './BagDnd';
 import { CategoryItem, ItemRef, NonPho, Pho, TrackedItem } from '../my/my-class';
-import { MENU } from '../my/my-constants';
-import { CONTEXT } from '../App';
+import { APP_CONTEXT } from '../App';
 import { ORDER_CONTEXT } from './OrderView';
-import { IoPrint } from 'react-icons/io5';
 
 interface Props extends BagDndProps {
     bag: number,
@@ -41,12 +39,14 @@ interface Props extends BagDndProps {
 };
 
 const OrderSummary = (props: Props) => {
+    const { MENU_CATEGORIES } = useContext(APP_CONTEXT);
+
     const mdSize = useMediaQuery('(min-width:900px)');
     const mdResponsive = props.showPho ? mdSize ? 12 : 4 : 'grow';
 
     return (
         <Grid2 container spacing={0.5} direction='row' sx={{ minHeight: props.bag === 0 ? 30 : 30 }}>
-            {Object.keys(MENU)
+            {MENU_CATEGORIES
                 .filter(category => {
                     const categoryItem = props.categoryItems.get(category)!;
                     return categoryItem.getPhoQty() + categoryItem.getNonPhoQty() > 0;
@@ -185,8 +185,7 @@ interface ItemListProps extends TrackedItemsListProps {
 const ItemList = ({ props }: { props: ItemListProps }) => {
     const theme = useTheme();
     const secondaryRef = React.useRef<HTMLInputElement>();
-    const { table } = useContext(CONTEXT.Table);
-    const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
+    const { isLockedOrder } = useContext(APP_CONTEXT);
     const { refreshOrderView } = useContext(ORDER_CONTEXT);
 
     const [refresh, setRefresh] = useState<Boolean>(false);
@@ -211,7 +210,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
     }, [props.item.note]);
 
     const minus = () => {
-        if (lockedTable || item.actualQty < 1) return;
+        if (isLockedOrder || item.actualQty < 1) return;
         if (props.trackedItem.time) {
             const lastTrackedIndex = (props.draggablePrefix === 'pho' ? categoryItem.pho : categoryItem.nonPho).length - 1;
             if (item.voided) {
@@ -250,7 +249,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
     }
 
     const plus = () => {
-        if (lockedTable) return;
+        if (isLockedOrder) return;
         if (props.trackedItem.time) {
             props.copyItem(props.trackedIndex, item, 1);
             refreshOrderView();
@@ -284,7 +283,7 @@ const ItemList = ({ props }: { props: ItemListProps }) => {
             <Draggable id={`${props.draggablePrefix}_${bag}_${category}_${props.trackedIndex}_${item.id}`} enable={props.bags.size > 1 && Boolean(showPho) && !props.trackedItem.time && !item.void}>
                 <ListItemButton
                     onClick={() => {
-                        if (lockedTable || item.void) return;
+                        if (isLockedOrder || item.void) return;
                         if (showPho) {
                             showPho(props.draggablePrefix === 'pho', bag, category, props.trackedIndex, phoId === item.id ? "" : item.id);
                             if (props.draggablePrefix !== 'pho') {

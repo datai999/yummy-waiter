@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { COMPONENT } from '../my/my-component';
 import { Box, Button, Divider, Grid2, TextField, Typography, useMediaQuery } from '@mui/material';
-import { MENU, PRINTER } from '../my/my-constants';
 import { MdOutlineBrowserUpdated } from 'react-icons/md';
 import { CategoryButton, StyledPaper } from '../my/my-styled';
 import _ from 'lodash';
 import { FaEye, FaPlus, FaTrash } from "react-icons/fa";
 import { IoMdBarcode } from "react-icons/io";
 import { NonPhoConfig } from '../my/my-class';
+import { APP_CONTEXT } from '../App';
 
 interface NonPho extends NonPhoConfig {
     groupIndex: number;
@@ -19,6 +19,8 @@ const DEFAULT_NON_PHO: NonPho = {
 }
 
 export default function MenuSetting(props: { back: () => void }) {
+    const {MENU} = useContext(APP_CONTEXT);
+
     const [selectedCategory, setCategory] = useState('BEEF');
     const [selectedItem, setSelectedItem] = useState<NonPho>(DEFAULT_NON_PHO);
 

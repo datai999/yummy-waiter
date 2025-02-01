@@ -27,6 +27,33 @@ interface ITableContext {
   prepareChangeTable: (bags: Map<number, Map<string, CategoryItem>>) => void
 }
 
+interface IPho {
+  combo: Object,
+  meat: null | Object;
+  noodle: string[],
+  reference: Object
+}
+
+interface ICategory {
+  pho: null | IPho,
+  nonPho: Object[]
+}
+
+interface IMENU {
+  BEEF: ICategory,
+  CHICKEN: ICategory,
+  DRINK: ICategory
+}
+
+interface IAppContex extends IAuthContext {
+  MENU_CATEGORIES: string[], MENU: IMENU,
+  order: Order,
+  setOrder: (order: null | Table) => void,
+  isLockedOrder: boolean,
+  lockedOrderActor?: string,
+  prepareChangeTable: (bags: Map<number, Map<string, CategoryItem>>) => void
+}
+
 const LOCKED_TABLES = new Map<string, LockedTable>();
 
 export const AuthContext = createContext<IAuthContext>({ auth: {}, logout: () => { } });
@@ -42,6 +69,15 @@ export const CONTEXT = {
   Order: TableContext,
   Toast: ToastContext
 }
+
+export const APP_CONTEXT = createContext<IAppContex>({
+  MENU_CATEGORIES: [], MENU: {} as IMENU,
+  auth: {}, logout: () => { },
+  order: {} as Order,
+  setOrder: (order: null | Table) => { },
+  isLockedOrder: false,
+  prepareChangeTable: (bags: Map<number, Map<string, CategoryItem>>) => { }
+})
 
 const tables = generateTables();
 
@@ -173,48 +209,59 @@ export default function App() {
     orderTable(newTogo);
   }
 
-  if (!auth) return (<Login setAuth={onSetAuth} />)
+  if (!auth) return (<Login setAuth={onSetAuth} />);
+
+  const MENU = JSON.parse(localStorage.getItem('menu')!);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <ToastContext.Provider value={(msg: string) => { toasMsg.current = msg; setOpen(true) }}>
-        <AuthContext.Provider value={{ auth, logout }}>
-          <LockedTableContext.Provider value={(tableId: string) => LOCKED_TABLES.get(tableId)?.server}>
-            {screen === SCREEN.DEFAULT && (table
-              ? (<TableContext.Provider value={{ table, order: table, orderTable, setOrder: orderTable, prepareChangeTable }}>
-                <Waiter tables={tables} tempBags={tempBags.current} />
-              </TableContext.Provider>
-              ) : (<>
-                <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
-                  <Header routeScreen={routeScreen} newTogo={newTogo} />
-                </Box>
-                <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
-              </>))}
-            {screen === SCREEN.SERVER && <ServerManagement back={() => routeScreen(SCREEN.DEFAULT)} />}
-            {screen === SCREEN.MENU && <MenuSetting back={() => routeScreen(SCREEN.DEFAULT)} />}
-            {screen === SCREEN.HISTORY_ORDER && <OrderHistory back={() => routeScreen(SCREEN.DEFAULT)} />}
-          </LockedTableContext.Provider>
-          <Snackbar
-            open={open}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            onClose={() => setOpen(false)}
-            autoHideDuration={5000}
-            TransitionComponent={(props: SlideProps) => <Slide {...props} direction="down" />}
-          // message={`${toasMsg.current}`}
-          // action={action}
-          >
-            <Alert
+      <APP_CONTEXT.Provider value={{
+        MENU_CATEGORIES: Object.keys(MENU), MENU,
+        auth, logout,
+        order: table || {} as Table, setOrder: orderTable,
+        isLockedOrder: Boolean(table?.id && LOCKED_TABLES.get(table.id)?.server && LOCKED_TABLES.get(table.id)?.server !== auth.name),
+        lockedOrderActor: LOCKED_TABLES.get(table?.id || '')?.server,
+        prepareChangeTable
+      }}>
+        <ToastContext.Provider value={(msg: string) => { toasMsg.current = msg; setOpen(true) }}>
+          <AuthContext.Provider value={{ auth, logout }}>
+            <LockedTableContext.Provider value={(tableId: string) => LOCKED_TABLES.get(tableId)?.server}>
+              {screen === SCREEN.DEFAULT && (table
+                ? (<TableContext.Provider value={{ table, order: table, orderTable, setOrder: orderTable, prepareChangeTable }}>
+                  <Waiter tables={tables} tempBags={tempBags.current} />
+                </TableContext.Provider>
+                ) : (<>
+                  <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
+                    <Header routeScreen={routeScreen} newTogo={newTogo} />
+                  </Box>
+                  <TableManagerment tables={tables} orderTable={orderOrChangeTable} />
+                </>))}
+              {screen === SCREEN.SERVER && <ServerManagement back={() => routeScreen(SCREEN.DEFAULT)} />}
+              {screen === SCREEN.MENU && <MenuSetting back={() => routeScreen(SCREEN.DEFAULT)} />}
+              {screen === SCREEN.HISTORY_ORDER && <OrderHistory back={() => routeScreen(SCREEN.DEFAULT)} />}
+            </LockedTableContext.Provider>
+            <Snackbar
+              open={open}
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
               onClose={() => setOpen(false)}
-              severity="info"
-              color='error'
-              variant="filled"
-              sx={{ width: '100%' }}
+              autoHideDuration={5000}
+              TransitionComponent={(props: SlideProps) => <Slide {...props} direction="down" />}
+            // message={`${toasMsg.current}`}
+            // action={action}
             >
-              {`${toasMsg.current}`}
-            </Alert>
-          </Snackbar>
-        </AuthContext.Provider>
-      </ToastContext.Provider>
+              <Alert
+                onClose={() => setOpen(false)}
+                severity="info"
+                color='error'
+                variant="filled"
+                sx={{ width: '100%' }}
+              >
+                {`${toasMsg.current}`}
+              </Alert>
+            </Snackbar>
+          </AuthContext.Provider>
+        </ToastContext.Provider>
+      </APP_CONTEXT.Provider>
     </LocalizationProvider>
     /**
      * waiter: 
@@ -245,7 +292,7 @@ export default function App() {
      *  + discount
      *  - UI for customer fill phone
      *  - edit menu
-     *  - edit user
+     *  + edit user
      *  - devices
      *  - config
      * kitchen: select part of bill, print bill & system change status to waiter

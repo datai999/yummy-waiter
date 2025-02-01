@@ -5,10 +5,9 @@ import React, {
 } from 'react';
 import { CategoryItem, NonPho, Pho } from '../my/my-class';
 import { CheckButton } from '../my/my-component';
-import { MENU } from '../my/my-constants';
 import { StyledPaper } from '../my/my-styled';
 import { Box, Divider } from '@mui/material';
-import { CONTEXT } from '../App';
+import { APP_CONTEXT } from '../App';
 import { UTILS } from '../my/my-util';
 
 interface TakeNonPhoProps {
@@ -18,15 +17,13 @@ interface TakeNonPhoProps {
 }
 
 const TakeNonPho = (props: TakeNonPhoProps) => {
-    const { auth } = useContext(CONTEXT.Auth);
-    const { table } = useContext(CONTEXT.Table);
-    const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table?.id));
+    const { MENU, auth, isLockedOrder } = useContext(APP_CONTEXT);
 
-    const NON_PHOS = MENU[props.category as keyof typeof MENU]!.nonPho;
+    const NON_PHOS: Object[] = MENU[props.category as keyof typeof MENU]!.nonPho;
     const nonPho = props.bags.get(0)!.get(props.category)?.lastNonPhos()!;
 
     const addItem = (index: number, nonPhoCode: string) => {
-        if (lockedTable) return;
+        if (isLockedOrder) return;
 
         let targetNonPho = Array.from(nonPho.values())
             .find(value => value.code === nonPhoCode && (!value.note || value.note.trim().length === 0));
@@ -36,10 +33,10 @@ const TakeNonPho = (props: TakeNonPhoProps) => {
             targetNonPho.actualQty++;
         } else {
             const nonPhoGroupObj = NON_PHOS[index];
-            const nonPhoObj = nonPhoGroupObj[nonPhoCode as keyof typeof nonPhoGroupObj];
+            const nonPhoObj: Object = nonPhoGroupObj[nonPhoCode as keyof typeof nonPhoGroupObj];
             let price: number = 0;
             if (nonPhoObj) {
-                price = nonPhoObj['price'];
+                price = Number(nonPhoObj['price' as keyof typeof nonPhoObj]);
             }
             targetNonPho = new NonPho(nonPhoCode, price || 0);
         }

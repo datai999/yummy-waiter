@@ -13,12 +13,12 @@ import {
 } from '@mui/material';
 
 import YummyLogo from '../assets/yummy.png';
-import { MENU, TableStatus } from '../my/my-constants';
+import { TableStatus } from '../my/my-constants';
 import { CategoryButton } from '../my/my-styled';
 import { ChildWaiterProps } from './Waiter';
 import { changeTable } from '../my/my-service';
 import { LockedTable, Table } from '../my/my-class';
-import { CONTEXT } from '../App';
+import { APP_CONTEXT } from '../App';
 import { GiChicken } from 'react-icons/gi';
 import { PiCow } from 'react-icons/pi';
 import { RiDrinks2Line } from 'react-icons/ri';
@@ -49,18 +49,16 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
 }));
 
+const MENU = JSON.parse(localStorage.getItem('menu')!);
 
 const Header = ({ props }: { props: ChildWaiterProps }) => {
-    const { auth, logout } = useContext(CONTEXT.Auth);
-    const { table, orderTable } = useContext(CONTEXT.Table);
-
-    const lockedServer = useContext(CONTEXT.LockedTable)(table.id);
+    const { auth, order, setOrder, lockedOrderActor } = useContext(APP_CONTEXT);
     const mdSize = useMediaQuery('(min-width:900px)');
 
     const routeTableManagement = () => {
-        orderTable(null);
-        if (!lockedServer || auth.name === lockedServer) {
-            syncServer(SYNC_TYPE.LOCKED_TABLES, { [table.id]: new LockedTable(false, auth.name) });
+        setOrder(null);
+        if (!lockedOrderActor || auth.name === lockedOrderActor) {
+            syncServer(SYNC_TYPE.LOCKED_TABLES, { [order.id]: new LockedTable(false, auth.name) });
         }
     }
 
@@ -93,35 +91,32 @@ const Header = ({ props }: { props: ChildWaiterProps }) => {
 }
 
 const TableSelections = ({ props, size }: { props: ChildWaiterProps, size: string }) => {
-    const { auth } = useContext(CONTEXT.Auth);
-    const { table, orderTable } = useContext(CONTEXT.Table);
-
-    const lockedServer = useContext(CONTEXT.LockedTable)(table.id);
+    const { auth, order, setOrder, isLockedOrder, lockedOrderActor } = useContext(APP_CONTEXT);
 
     let tableIdAvailable = Array.from(props.tables.values())
         .filter((table: Table) => table.status === TableStatus.AVAILABLE && table.id.startsWith("Table"))
         .map(table => table.id);
 
-    if (!tableIdAvailable.includes(table.id))
-        tableIdAvailable = [table.id, ...tableIdAvailable];
+    if (!tableIdAvailable.includes(order.id))
+        tableIdAvailable = [order.id, ...tableIdAvailable];
 
-    if (table.id.startsWith("Togo"))
-        tableIdAvailable = [table.getName()];
+    if (order.id.startsWith("Togo"))
+        tableIdAvailable = [order.getName()];
 
     return (<Select
         fullWidth
-        value={table.id.startsWith("Togo") ? table.getName() : table.id}
-        disabled={Boolean(lockedServer)}
+        value={order.id.startsWith("Togo") ? order.getName() : order.id}
+        disabled={isLockedOrder}
         onChange={(e) => {
-            const toTable = changeTable(auth, props.tables, table, e.target.value) as Table;
-            orderTable(toTable);
+            const toTable = changeTable(auth, props.tables, order, e.target.value) as Table;
+            setOrder(toTable);
         }}
         displayEmpty
         size={size === "small" ? "small" : "medium"}
     >
         {tableIdAvailable.map((tableId) => (
             <MenuItem key={tableId} value={tableId}>
-                {tableId}{lockedServer ? <> :{`${lockedServer} `}<FaPen style={{ fontSize: 12 }} /></> : ''}
+                {tableId}{isLockedOrder ? <> :{`${lockedOrderActor} `}<FaPen style={{ fontSize: 12 }} /></> : ''}
             </MenuItem>
         ))}
     </Select>);

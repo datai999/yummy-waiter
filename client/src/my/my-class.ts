@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Exclude, plainToClass, Transform, Type } from 'class-transformer';
-import { MENU, TableStatus } from './my-constants';
+import { TableStatus } from './my-constants';
 import { generateId } from './my-service';
 import { UTILS } from "./my-util";
 
@@ -173,6 +173,7 @@ export class Table {
     }
 
     public newBag(): Map<string, CategoryItem> {
+        const MENU = JSON.parse(localStorage.getItem('menu')!);
         return new Map(Object.keys(MENU).map(category => [category, new CategoryItem()]));
     }
 

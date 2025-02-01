@@ -7,12 +7,11 @@ import React, {
 import { StyledPaper } from '../my/my-styled';
 import { Divider, Grid2, TextField, Button } from '@mui/material';
 import { CheckButton, COMPONENT } from '../my/my-component';
-import { MENU } from '../my/my-constants';
 import { Pho } from '../my/my-class';
 import * as SERVICE from '../my/my-service';
 import { GiPaperBagFolded } from 'react-icons/gi';
 import { MdTableRestaurant } from 'react-icons/md';
-import { CONTEXT } from '../App';
+import { APP_CONTEXT } from '../App';
 
 interface TakePhoProps {
     isDoneItem: boolean,
@@ -29,12 +28,10 @@ const arePropsEqual = (prev: TakePhoProps, next: TakePhoProps) => {
 }
 
 const pTakePho = (props: TakePhoProps) => {
-    const { table } = useContext(CONTEXT.Table);
+    const { MENU, order, isLockedOrder } = useContext(APP_CONTEXT);
     const [refresh, setRefresh] = useState(false);
     const [pho, setPho] = useState<Pho>({ ...props.pho });
     const [note, setNote] = useState<String>(props.pho.note || '');
-
-    const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
 
     const category = MENU[props.category as keyof typeof MENU]!;
     const combos = category.pho!.combo;
@@ -63,7 +60,7 @@ const pTakePho = (props: TakePhoProps) => {
     const calDisabledNoodles = (pho: Pho): string[] => {
         const disabledNoodles = [
             ...(pho.combo?.startsWith('#8b') || pho.combo?.startsWith('#8c') ? ['BC', 'BT', 'BS', 'BTS'] : []),
-            ...(props.bagSize < 2 && !table.id.startsWith('Togo') ? ['BS', 'BTS'] : [])
+            ...(props.bagSize < 2 && !order.id.startsWith('Togo') ? ['BS', 'BTS'] : [])
         ];
         return disabledNoodles;
     }
@@ -94,7 +91,7 @@ const pTakePho = (props: TakePhoProps) => {
         ) {
             pho.noodle = 'BC'
         }
-        const comboMeats = combos[combo as keyof typeof combos];
+        const comboMeats: string[] = Array.of(combos[combo as keyof typeof combos]).map(String);
         setPho({
             ...pho,
             combo: combo,
@@ -216,11 +213,11 @@ const pTakePho = (props: TakePhoProps) => {
                         color="primary"
                         size='large'
                         fullWidth
-                        disabled={props.isDoneItem || !pho.isPho || lockedTable}
+                        disabled={props.isDoneItem || !pho.isPho || isLockedOrder}
                         onClick={() => addItem(pho.id.length > 0 ? -1 : 0)}
                     >
-                        {`${pho.id.length > 0 ? 'Edit item' : table.id.startsWith('Togo') ? 'Togo 1' : 'Dine-in'}`}
-                        {table.id.startsWith('Togo')
+                        {`${pho.id.length > 0 ? 'Edit item' : order.id.startsWith('Togo') ? 'Togo 1' : 'Dine-in'}`}
+                        {order.id.startsWith('Togo')
                             ? <GiPaperBagFolded style={{ fontSize: 30, marginLeft: 8 }} />
                             : <MdTableRestaurant style={{ fontSize: 30, marginLeft: 8 }} />}
                     </Button>
@@ -229,13 +226,13 @@ const pTakePho = (props: TakePhoProps) => {
                     {props.bagSize > 1 && pho.id.length === 0 && (<Button
                         variant="contained"
                         color="primary"
-                        disabled={lockedTable}
+                        disabled={isLockedOrder}
                         onClick={() => addItem(999)}
                         fullWidth
                         size='large'
                     >
-                        {table.id.startsWith('Togo') || props.bagSize > 2
-                            ? `Togo ${table.id.startsWith('Togo') ? props.bagSize : props.bagSize - 1}`
+                        {order.id.startsWith('Togo') || props.bagSize > 2
+                            ? `Togo ${order.id.startsWith('Togo') ? props.bagSize : props.bagSize - 1}`
                             : 'Togo'}
                         <GiPaperBagFolded style={{ fontSize: 30, marginLeft: 8 }} />
                     </Button>)}
