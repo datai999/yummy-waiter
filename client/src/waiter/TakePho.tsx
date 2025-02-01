@@ -34,7 +34,7 @@ const pTakePho = (props: TakePhoProps) => {
     const [note, setNote] = useState<String>(props.pho.note || '');
 
     const category = MENU[props.category as keyof typeof MENU]!;
-    const combos = category.pho!.combo;
+    const COMBOS = category.pho!.combo;
     const meats = category.pho!.meat;
     const noodles = category.pho!.noodle;
     const references = category.pho!.reference;
@@ -91,7 +91,7 @@ const pTakePho = (props: TakePhoProps) => {
         ) {
             pho.noodle = 'BC'
         }
-        const comboMeats: string[] = Array.of(combos[combo as keyof typeof combos]).map(String);
+        const comboMeats: string[] = COMBOS[combo as keyof typeof COMBOS].toString().split(',');
         setPho({
             ...pho,
             combo: combo,
@@ -105,7 +105,7 @@ const pTakePho = (props: TakePhoProps) => {
         //     pho.meats = pho.meats.filter(meat => meat !== "BPN");
         nextMeats.sort(SERVICE.sortBeefMeat);
         const meatCodes = nextMeats.join(',');
-        const combo = Object.entries(combos)
+        const combo = Object.entries(COMBOS)
             .find(([key, value]) => {
                 if (value.length !== nextMeats.length) return false;
                 return value.sort(SERVICE.sortBeefMeat).join(',') === meatCodes;
@@ -151,7 +151,7 @@ const pTakePho = (props: TakePhoProps) => {
         <StyledPaper key={props.category} sx={{ mb: 1, p: 1, pl: 1, pr: 0 }}>
             <CheckButton
                 multi={false}
-                obj={combos}
+                obj={COMBOS}
                 options={[pho.combo as string]}
                 createLabel={(key) => key}
                 callback={onComboChange}

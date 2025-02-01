@@ -8,6 +8,7 @@ import { FaEye, FaPlus, FaTrash } from "react-icons/fa";
 import { IoMdBarcode } from "react-icons/io";
 import { NonPhoConfig } from '../my/my-class';
 import { APP_CONTEXT } from '../App';
+import { SYNC_TYPE, syncServer } from '../my/my-ws';
 
 interface NonPho extends NonPhoConfig {
     groupIndex: number;
@@ -19,7 +20,7 @@ const DEFAULT_NON_PHO: NonPho = {
 }
 
 export default function MenuSetting(props: { back: () => void }) {
-    const {MENU} = useContext(APP_CONTEXT);
+    const { MENU } = useContext(APP_CONTEXT);
 
     const [selectedCategory, setCategory] = useState('BEEF');
     const [selectedItem, setSelectedItem] = useState<NonPho>(DEFAULT_NON_PHO);
@@ -76,7 +77,9 @@ export default function MenuSetting(props: { back: () => void }) {
     }
 
     const saveThenSync = () => {
-        // TODO: check unique
+        localStorage.setItem('menu', JSON.stringify(menuClone.current));
+        syncServer(SYNC_TYPE.MENU, menuClone.current);
+        props.back();
     }
 
     return (<>

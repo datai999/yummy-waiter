@@ -67,6 +67,10 @@ const onConnection = (ws, req) => {
             writeJsonFile(data.payload, 'users');
             boardcastMessageExceptOwner(ws, messageConvert);
         }
+        if (data.type === 'MENU') {
+            writeJsonFile(data.payload, 'menu');
+            boardcastMessageExceptOwner(ws, messageConvert);
+        }
         if (data.type === 'ACTIVE_TABLES') {
             updateActiveTable(data.payload);
             boardcastMessageExceptOwner(ws, messageConvert);

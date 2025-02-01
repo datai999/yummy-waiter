@@ -66,7 +66,7 @@ export const CheckButton = (props: CheckButtonProps) => {
             if (name === 'code') {
                 return property !== 'undefined' ? property : '';
             }
-            return property;
+            return Number(property).toFixed(2);
         }
         return null;
     }
@@ -163,7 +163,6 @@ const NumberInput = (props: {
         placeholder={props.placeholder}
         value={props.value}
         onChange={(e) => {
-            console.log(e.target.value);
             const num = Number(e.target.value);
             props.onChange(num, e.target.value);
         }}
