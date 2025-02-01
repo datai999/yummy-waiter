@@ -284,9 +284,11 @@ export class LockedTable {
 }
 
 export class Auth {
+    code: number;
     name: string;
 
-    public constructor(name: string) {
+    public constructor(name: string, code: number) {
+        this.code = code;
         this.name = name;
     }
 }

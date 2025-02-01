@@ -23,6 +23,7 @@ const columns: GridColDef[] = [
     { field: 'note', headerName: 'Note', sortable: false, width: 230 },
     {
         field: 'actions',
+        headerName: 'Action',
         type: 'actions',
         width: 135,
         getActions: (params: GridRowParams) => [

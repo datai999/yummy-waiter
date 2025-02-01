@@ -45,7 +45,7 @@ export const CONTEXT = {
 
 const tables = generateTables();
 
-const trung = { name: "Trung", code: 3, permission: [] };
+const trung = new Auth('Trung', 3);
 
 let closeInitWsClient: undefined | (() => void);
 

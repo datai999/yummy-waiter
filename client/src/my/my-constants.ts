@@ -140,7 +140,7 @@ const CHE = {
 export const DESSERT = {
     'FLan': { price: '3' },
     'Coconut jelly': { price: '3' },
-    'Mixed jelly': {},
+    'Mixed jelly': { price: '6.5' },
 }
 
 export const PRINTER = {
