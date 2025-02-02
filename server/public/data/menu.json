@@ -132,13 +132,22 @@
                 },
                 "Bread": {
                     "price": "1.25"
-                },
-                "Ch.Soup": {},
-                "Large.Soup": {},
+                }
+            },
+            {
                 "Egg rolls": {
                     "price": "5.95"
                 },
-                "1 Egg roll": {}
+                "1 Egg roll": {},
+                "Ch.Soup": {
+                    "price": "3"
+                },
+                "Small.Soup": {
+                    "price": "4"
+                },
+                "Large.Soup": {
+                    "price": "6"
+                }
             },
             {
                 "Dĩa Tái": {
@@ -150,23 +159,27 @@
                     "price": "5.00"
                 },
                 "Chén Chín": {
-                    "code": "Ch.C"
+                    "code": "Ch.C",
+                    "price": "5.00"
                 },
                 "Chén Gầu": {
-                    "code": "Ch.G`"
+                    "code": "Ch.G`",
+                    "price": "5.00"
                 },
                 "Chén Gân": {
-                    "code": "Ch.g"
+                    "code": "Ch.g",
+                    "price": "5.00"
                 },
                 "Chén Sách": {
-                    "code": "Ch.S"
+                    "code": "Ch.S",
+                    "price": "5.00"
                 },
                 "Chén BV": {
                     "code": "Ch.BV",
                     "price": 5,
                     "groupIndex": 2,
                     "displayName": "Chén BV",
-                    "disabled": true
+                    "disabled": false
                 }
             }
         ]
@@ -240,7 +253,9 @@
                 "Extra soup": {
                     "price": "3"
                 },
-                "Large soup": {}
+                "Large soup": {
+                    "price": "6"
+                }
             },
             {
                 "Dĩa ức": {
@@ -350,6 +365,17 @@
                 },
                 "Mixed jelly": {
                     "price": "6.5"
+                }
+            },
+            {
+                "Rice cake": {
+                    "price": "9"
+                },
+                "Roll cake": {
+                    "price": "11"
+                },
+                "Light cheese cake": {
+                    "price": "11"
                 }
             }
         ]

@@ -291,7 +291,7 @@ export default function App() {
      *  - print
      *  + discount
      *  - UI for customer fill phone
-     *  - edit menu
+     *  + edit menu
      *  + edit user
      *  - devices
      *  - config

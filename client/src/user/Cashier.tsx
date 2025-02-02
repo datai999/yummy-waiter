@@ -4,7 +4,7 @@ import { CONTEXT } from "../App";
 import { CategoryItem, LockedTable, Order, Receipt, Table } from "../my/my-class";
 import { NumPad } from "../my/my-component";
 import { SERVICE } from "../my/my-service";
-import { MdOutlineCallSplit } from "react-icons/md";
+import { MdOutlineCallMerge, MdOutlineCallSplit } from "react-icons/md";
 import { TableStatus } from "../my/my-constants";
 import { syncServer, SYNC_TYPE } from "../my/my-ws";
 import { IoPrint } from "react-icons/io5";
@@ -101,13 +101,17 @@ export default function Cashier(props: {
                     </Box>
 
                     <Stack direction="row" spacing={4} sx={{
-                        mt: 2,
+                        mt: 1,
                         justifyContent: "center",
                         alignItems: "stretch",
                     }}>
                         <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={props.close} >
                             Close
                             <IoMdClose style={iconStyle} />
+                        </Button>
+                        <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={() => alert('TODO')} >
+                            Merge bill
+                            <MdOutlineCallMerge style={iconStyle} />
                         </Button>
                         <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={() => alert('TODO')} >
                             Split bill
