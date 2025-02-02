@@ -27,6 +27,9 @@ export default function Login(props: {
         code = '';
     }
 
+    // code = '000';
+    // login();
+
     return (<Box
         display="flex"
         justifyContent="center"

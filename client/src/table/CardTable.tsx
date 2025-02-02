@@ -46,28 +46,12 @@ const StyledCard = styled(Card)(({ status }: { status: TableStatus }) => ({
   }
 }));
 
-const ModalContent = styled(Box)({
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "90%",
-  maxWidth: "500px",
-  backgroundColor: "#fff",
-  borderRadius: "8px",
-  padding: "20px",
-  maxHeight: "80vh",
-  overflowY: "auto"
-});
-
-const CardTable = ({ table, orderTable, doneTable }: {
+const CardTable = ({ table, orderTable }: {
   table: Table,
   orderTable: (table: Table) => void,
-  doneTable: (tableId: string) => void
 }) => {
   const lockedServer = useContext(CONTEXT.LockedTable)(table.id);
   const [timer, setTimer] = useState(0);
-  const [openOrderModal, setOpenOrderModal] = useState(false);
 
   const tableServers = table.getServers();
 
@@ -83,21 +67,7 @@ const CardTable = ({ table, orderTable, doneTable }: {
 
   const cardOnClick = () => {
     orderTable(table);
-    // if (table.status === TableStatus.AVAILABLE) {
-    //   orderTable(table);
-    // } else setOpenOrderModal(true);
   }
-
-  const renderTableStatus = (status: string) => {
-    switch (status) {
-      case "ACTIVE":
-        return <FiCheckCircle color="#4caf50" size={24} />;
-      case "attention":
-        return <FiAlertCircle color="#f44336" size={24} />;
-      default:
-        return null;
-    }
-  };
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
@@ -154,68 +124,6 @@ const CardTable = ({ table, orderTable, doneTable }: {
         </Grid2>
       </CardContent>
     </StyledCard >
-
-    <Modal
-      open={Boolean(openOrderModal)}
-      onClose={() => setOpenOrderModal(false)}
-    >
-      <ModalContent key={table.id}>
-        {openOrderModal && (
-          <Box id={"Table.ModalContent.Box." + table.id} >
-            <Grid2 container sx={{ pb: 1 }}>
-              <Grid2 size={{ xs: 0, sm: 4, md: 4 }} />
-              <Grid2 size='grow' >
-                <Typography variant="h5">{table.id}</Typography>
-              </Grid2>
-              {/* {renderTableStatus(table.status)} */}
-              <Grid2>
-                {table.status !== TableStatus.AVAILABLE && (
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <FiClock />
-                    <Typography>
-                      {formatTime(timer)}
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      onClick={() => {
-                        orderTable(table);
-                      }}
-                    >
-                      Modify
-                    </Button>
-                  </Stack>
-                )}
-              </Grid2>
-            </Grid2>
-            {Array.from(table.bags.entries()).map(([key, item], index) => (
-              <Box key={index}>
-                <Typography variant="h6" style={{ fontWeight: 'bold' }} >
-                  {key === 0 ? 'Dine-in' : `Togo ${key}`}
-                </Typography>
-                <OrderSummary
-                  key={index}
-                  bags={table.bags}
-                  bag={key}
-                  categoryItems={item}
-                  phoId={"null"} />
-                {index < table.bags.size - 1 && (<Divider sx={{ pt: 1, pb: 1 }} />)}
-              </Box>))
-            }
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={() => {
-                setOpenOrderModal(false);
-                doneTable(table.id);
-              }}
-              sx={{ mt: 3 }}
-            >
-              Clear table
-            </Button>
-          </Box>
-        )}
-      </ModalContent>
-    </Modal>
   </>);
 }
 

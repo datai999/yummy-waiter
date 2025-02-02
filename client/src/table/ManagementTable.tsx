@@ -48,20 +48,12 @@ const TableManagerment = (props: {
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
   const [orderHistory, setOrderHistory] = useState<Table[]>([]);
 
-  const handleMoveToHistory = (tableId: string) => {
-    const table = props.tables.get(tableId)!;
-    const movedTable = { ...table };
-    table.status = TableStatus.AVAILABLE;
-    table.orderTime = null;
-    setOrderHistory(prev => [movedTable, ...prev] as Table[]);
-  };
-
   return (
     <Box sx={{ padding: "10px" }}>
       <Grid2 container spacing={2} columns={12}>
         {Array.from(props.tables.values()).map(table => (
           <Grid2 key={table.id} size={{ xs: 6, sm: 4, md: 3, lg: 3 }}>
-            <CardTable table={table} orderTable={props.orderTable} doneTable={handleMoveToHistory} />
+            <CardTable table={table} orderTable={props.orderTable} />
           </Grid2>
         ))}
       </Grid2>

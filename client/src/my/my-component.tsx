@@ -21,7 +21,7 @@ import {
 import {
     CategoryButton,
 } from './my-styled';
-import { AuthContext } from '../App';
+import { APP_CONTEXT } from '../App';
 import YummyLogo from '../assets/yummy.png';
 import { GiChicken } from 'react-icons/gi';
 import { PiCow } from 'react-icons/pi';
@@ -254,7 +254,7 @@ const Header = (props: {
     back: () => void,
     actions: ReactNode,
 }) => {
-    const { auth } = useContext(AuthContext);
+    const { auth } = useContext(APP_CONTEXT);
 
     return (
         <StyledHeaderPaper sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between', alignItems: 'center' }}>

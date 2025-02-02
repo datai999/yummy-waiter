@@ -15,6 +15,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import MenuSetting from './setting/MenuSetting';
 import ServerManagement from './user/ServerManagement';
+import CustomerView from './user/CustomerView';
 
 interface IAuthContext {
   auth: any, logout: () => void
@@ -47,6 +48,7 @@ interface IMENU {
 
 interface IAppContex extends IAuthContext {
   MENU_CATEGORIES: string[], MENU: IMENU,
+  ORDERS: Map<string, Order>,
   order: Order,
   setOrder: (order: null | Table) => void,
   isLockedOrder: boolean,
@@ -70,18 +72,19 @@ export const CONTEXT = {
   Toast: ToastContext
 }
 
+const tables = generateTables();
+
 export const APP_CONTEXT = createContext<IAppContex>({
   MENU_CATEGORIES: [], MENU: {} as IMENU,
   auth: {}, logout: () => { },
+  ORDERS: tables,
   order: {} as Order,
   setOrder: (order: null | Table) => { },
   isLockedOrder: false,
   prepareChangeTable: (bags: Map<number, Map<string, CategoryItem>>) => { }
 })
 
-const tables = generateTables();
-
-const trung = new Auth('Trung', 3);
+const trung = new Auth('Trung', '3');
 
 let closeInitWsClient: undefined | (() => void);
 
@@ -101,7 +104,7 @@ export default function App() {
   useEffect(() => {
     closeInitWsClient = initWsClient(auth ? auth.name : "Client_" + Math.floor(Math.random() * 10),
       onSyncTables, onLockedTables, onDoneOrders);
-    onSetAuth(trung);
+    // onSetAuth(trung);
     // orderTable(tables.get('Table 21')!);
   }, []);
 
@@ -213,16 +216,24 @@ export default function App() {
 
   const MENU = JSON.parse(localStorage.getItem('menu')!);
 
+  const appContext = {
+    MENU_CATEGORIES: Object.keys(MENU), MENU,
+    auth, logout,
+    ORDERS: tables,
+    order: table || {} as Table, setOrder: orderTable,
+    isLockedOrder: Boolean(table?.id && LOCKED_TABLES.get(table.id)?.server && LOCKED_TABLES.get(table.id)?.server !== auth.name),
+    lockedOrderActor: LOCKED_TABLES.get(table?.id || '')?.server,
+    prepareChangeTable
+  };
+
+  if (auth.code === '000') return (
+    <APP_CONTEXT.Provider value={appContext}>
+      <CustomerView back={logout} />
+    </APP_CONTEXT.Provider>)
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <APP_CONTEXT.Provider value={{
-        MENU_CATEGORIES: Object.keys(MENU), MENU,
-        auth, logout,
-        order: table || {} as Table, setOrder: orderTable,
-        isLockedOrder: Boolean(table?.id && LOCKED_TABLES.get(table.id)?.server && LOCKED_TABLES.get(table.id)?.server !== auth.name),
-        lockedOrderActor: LOCKED_TABLES.get(table?.id || '')?.server,
-        prepareChangeTable
-      }}>
+      <APP_CONTEXT.Provider value={appContext}>
         <ToastContext.Provider value={(msg: string) => { toasMsg.current = msg; setOpen(true) }}>
           <AuthContext.Provider value={{ auth, logout }}>
             <LockedTableContext.Provider value={(tableId: string) => LOCKED_TABLES.get(tableId)?.server}>

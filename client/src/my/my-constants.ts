@@ -4,7 +4,7 @@ export enum TableStatus {
     DONE = "DONE",
 }
 
-export enum SCREEN { DEFAULT, SERVER, MENU, HISTORY_ORDER }
+export enum SCREEN { DEFAULT, SERVER, MENU, HISTORY_ORDER, CUSTOMER }
 
 export const BEEF_MEAT = {
     "Tái": { "sort": 1, "code": "T" },

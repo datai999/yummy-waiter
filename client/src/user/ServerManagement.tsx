@@ -11,7 +11,7 @@ import { CONTEXT } from '../App';
 
 class AuthRow extends Auth {
     id: number;
-    constructor(id: number, name: string, code: number) {
+    constructor(id: number, name: string, code: string) {
         super(name, code);
         this.id = id;
     }
@@ -23,7 +23,7 @@ export default function ServerManagement(props: { back: () => void }) {
     const USERS = JSON.parse(localStorage.getItem('users')!);
 
     let rowsData = Object.entries(USERS)
-        .map(([code, json], index) => new AuthRow(index, (json as Object)['name' as keyof typeof json], Number(code)));
+        .map(([code, json], index) => new AuthRow(index, (json as Object)['name' as keyof typeof json], code));
 
     const edit = (nextRowsData: AuthRow[]) => rowsData = nextRowsData;
 
@@ -55,7 +55,7 @@ const ServersTable = (props: { rowsData: AuthRow[], edit: (rowsData: AuthRow[]) 
     const [rows, setRows] = useState<AuthRow[]>(props.rowsData);
 
     const onNewServer = () => {
-        const newServer = new AuthRow(rows.length, `New sever ${rows.length}`, 2222);
+        const newServer = new AuthRow(rows.length, `New sever ${rows.length}`, '2222');
         const nextRows = [...rows, newServer];
         props.edit(nextRows);
         setRows(nextRows);

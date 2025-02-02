@@ -285,10 +285,10 @@ export class LockedTable {
 }
 
 export class Auth {
-    code: number;
+    code: string;
     name: string;
 
-    public constructor(name: string, code: number) {
+    public constructor(name: string, code: string) {
         this.code = code;
         this.name = name;
     }

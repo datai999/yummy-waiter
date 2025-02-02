@@ -40,9 +40,12 @@ interface Props extends BagDndProps {
 
 const OrderSummary = (props: Props) => {
     const { MENU_CATEGORIES } = useContext(APP_CONTEXT);
+    const { viewOnly } = useContext(ORDER_CONTEXT);
 
     const mdSize = useMediaQuery('(min-width:900px)');
-    const mdResponsive = props.showPho ? mdSize ? 12 : 4 : 'grow';
+    const mdResponsive = props.showPho
+        ? (mdSize ? 12 : 4)
+        : viewOnly ? 12 : 'grow';
 
     return (
         <Grid2 container spacing={0.5} direction='row' sx={{ minHeight: props.bag === 0 ? 30 : 30 }}>

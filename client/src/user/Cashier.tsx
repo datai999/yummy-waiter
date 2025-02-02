@@ -1,6 +1,6 @@
 import { Modal, Box, Typography, styled, Button, Stack, Badge } from "@mui/material";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { CONTEXT } from "../App";
+import { APP_CONTEXT } from "../App";
 import { CategoryItem, LockedTable, Order, Receipt, Table } from "../my/my-class";
 import { NumPad } from "../my/my-component";
 import { SERVICE } from "../my/my-service";
@@ -20,8 +20,7 @@ export default function Cashier(props: {
     bags: Map<number, Map<string, CategoryItem>>
     receipt: Receipt
 }) {
-    const { auth } = useContext(CONTEXT.Auth);
-    const { order, setOrder } = useContext(CONTEXT.Order);
+    const { auth, order, setOrder } = useContext(APP_CONTEXT);
     const [tendered, setTendered] = useState('');
     const [refresh, setRefresh] = useState(false);
 

@@ -10,9 +10,10 @@ interface OrderContext {
     refreshOrderView: () => void;
     expand: boolean;
     discount: boolean;
+    viewOnly?: boolean;
 }
 
-export const ORDER_CONTEXT = createContext<OrderContext>({ refreshOrderView: () => { }, expand: true, discount: false })
+export const ORDER_CONTEXT = createContext<OrderContext>({ refreshOrderView: () => { }, expand: true, discount: false, viewOnly: true })
 
 export default function OrderView(props: {
     note?: string,
@@ -30,7 +31,7 @@ export default function OrderView(props: {
     const [expand, setExpand] = useState<boolean>(true);
 
     const mdSize = useMediaQuery('(min-width:900px)');
-    const contextValue = { refreshOrderView: () => setRefresh(!refresh), expand, discount: false };
+    const contextValue = { refreshOrderView: () => setRefresh(!refresh), expand, discount: false, viewOnly: true };
 
     return (<Box>
         {props.showPho && <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '95%' }}>
