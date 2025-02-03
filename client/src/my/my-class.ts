@@ -190,6 +190,8 @@ export class Table {
         const time = this.id.split(' ')[1].split(':');
         return this.id.startsWith('Table') ? this.id : 'Togo' + ':' + time[0] + ':' + time[1];
     }
+
+    public isTogo(): boolean { return this.id.startsWith('Togo') }
 }
 
 export class Order extends Table {

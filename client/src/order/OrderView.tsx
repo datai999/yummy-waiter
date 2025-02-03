@@ -15,23 +15,24 @@ interface OrderContext {
 
 export const ORDER_CONTEXT = createContext<OrderContext>({ refreshOrderView: () => { }, expand: true, discount: false, viewOnly: true })
 
-export default function OrderView(props: {
+export default function OrderView({ viewOnly = true, ...props }: {
     note?: string,
     setNote?: (newNote: string) => void,
     bags: Map<number, Map<string, CategoryItem>>,
     phoId: String;
     showPho?: (isPho: boolean, bag: number, category: string, trackIndex: number, itemId: string) => void,
-    discountPercent?: number, discountSubtract?: number
+    discountPercent?: number, discountSubtract?: number,
+    viewOnly?: boolean
 }) {
     const theme = useTheme();
     const { table, order } = useContext(CONTEXT.Order);
     const lockedTable = Boolean(useContext(CONTEXT.LockedTable)(table.id));
 
     const [refresh, setRefresh] = useState<Boolean>(false);
-    const [expand, setExpand] = useState<boolean>(true);
+    const [expand, setExpand] = useState<boolean>(!viewOnly);
 
     const mdSize = useMediaQuery('(min-width:900px)');
-    const contextValue = { refreshOrderView: () => setRefresh(!refresh), expand, discount: false, viewOnly: true };
+    const contextValue = { refreshOrderView: () => setRefresh(!refresh), expand, discount: false, viewOnly: viewOnly };
 
     return (<Box>
         {props.showPho && <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '95%' }}>

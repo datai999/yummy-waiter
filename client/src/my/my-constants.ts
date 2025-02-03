@@ -94,7 +94,7 @@ export const MENU = {
                 "Không hành": { "sort": 5, "code": "0onion" },
                 "Không da": { "sort": 3, "code": "0skin" },
                 "Không xương": { "sort": 2, "code": "0bone" },
-                "Măng": { "sort": 4, "code": "bambo" },
+                "Măng": { "sort": 4, "code": "bamboo" },
                 "Khô": { "sort": 1, "code": "dry" }
             }
         },

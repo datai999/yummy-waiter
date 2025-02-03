@@ -113,7 +113,7 @@ const OrderTake = ({ props, note, setNote, bags }: {
                     />)}
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10, md: 'grow' }}>
-                <OrderView note={note} setNote={setNote} bags={bags} phoId={pho.id} showPho={showPho} />
+                <OrderView note={note} setNote={setNote} bags={bags} phoId={pho.id} showPho={showPho} viewOnly={false} />
             </Grid2>
         </Grid2 >
     );

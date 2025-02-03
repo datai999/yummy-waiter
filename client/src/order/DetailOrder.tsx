@@ -76,7 +76,7 @@ const renderPho = (item: Pho) => {
         : ['BT', 'BS', 'BTS'].includes(item.noodle)
             ? 'Phở ' + item.noodle
             : item.noodle;
-    return `${voidItem}${qty} ${noodle} (${item.code}) ${item.referCode}`;
+    return `${voidItem}${qty} ${item.code} (${item.noodle}) ${item.referCode}`;
 }
 
 interface PhoListProps extends Props {

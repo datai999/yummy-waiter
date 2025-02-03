@@ -105,7 +105,7 @@ const BagDnd = ({ bags, phoId, showPho }: BagDndProps) => {
                         <Droppable id={`${key}`} key={index}>
                             <StyledPaper sx={{ m: 0, mb: 1, p: 0, border: 'solid 0.1px' }} onClick={() => { }}>
                                 <Typography variant="h6" style={{ fontWeight: 'bold' }} sx={{ ml: 0.5 }} >
-                                    {table.id.startsWith('Togo')
+                                    {table.isTogo()
                                         ? `Togo ${key + 1}`
                                         : key === 0 ? 'Dine-in' : bags.size > 2 ? `Togo ${key}` : 'Togo'}
                                 </Typography>
