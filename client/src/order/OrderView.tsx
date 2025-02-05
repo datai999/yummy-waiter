@@ -59,13 +59,17 @@ export default function OrderView({ viewOnly = true, ...props }: {
     </Box >)
 }
 
-export const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>>, discountPercent?: number, discountSubtract?: number }) => {
+const sx = { display: 'flex', direction: 'row', justifyContent: 'space-between' }
+
+export const TotalBill = ({ bigSize = false, ...props }: { bigSize?: boolean, bags: Map<number, Map<string, CategoryItem>>, discountPercent?: number, discountSubtract?: number }) => {
     const { order } = useContext(CONTEXT.Order);
     const receipt: Receipt = new Receipt('', order).calculateTotal(props.bags, props.discountPercent, props.discountSubtract);
 
-    return (<StyledPaper sx={{ p: 1, pb: 0, pt: 0, m: 0, ml: 1, mr: 1, minWidth: '160px', maxWidth: '200px', maxHeight: '150px' }}>
+    const SX = bigSize ? { ...sx, fontSize: '20px', fontWeight: "bold" } : sx;
+
+    return (<StyledPaper sx={{ p: 1, pb: 0, pt: 0, m: 0, ml: 1, mr: 1, minWidth: '200px', maxWidth: '200px', maxHeight: '150px' }}>
         {receipt.hasDiscount() && <>
-            <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
+            <Box sx={SX}>
                 <Box>
                     {`Sub total:`}
                 </Box>
@@ -73,7 +77,7 @@ export const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>>,
                     {receipt.subTotal.toFixed(2)}
                 </Box>
             </Box>
-            {receipt.discountPercent && <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
+            {receipt.discountPercent && <Box sx={SX}>
                 <Box>
                     {`Discount:${receipt.discountPercent.discount}%`}
                 </Box>
@@ -81,7 +85,7 @@ export const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>>,
                     -{receipt.discountPercent.amount!.toFixed(2)}
                 </Box>
             </Box>}
-            {receipt.discountSubtract && <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
+            {receipt.discountSubtract && <Box sx={SX}>
                 <Box>
                     {`Discount:`}
                 </Box>
@@ -91,7 +95,7 @@ export const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>>,
             </Box>}
             <Divider />
         </>}
-        <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
+        <Box sx={SX}>
             <Box>
                 {`Total:`}
             </Box>
@@ -99,7 +103,7 @@ export const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>>,
                 {receipt.total.toFixed(2)}
             </Box>
         </Box>
-        <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
+        <Box sx={SX}>
             <Box>
                 {`Tax:`}
             </Box>
@@ -107,7 +111,7 @@ export const TotalBill = (props: { bags: Map<number, Map<string, CategoryItem>>,
                 {receipt.tax.toFixed(2)}
             </Box>
         </Box>
-        <Box sx={{ display: 'flex', direction: 'row', justifyContent: 'space-between' }}>
+        <Box sx={SX}>
             <Box>
                 {`Final total:`}
             </Box>

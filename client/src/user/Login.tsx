@@ -28,7 +28,7 @@ export default function Login(props: {
     }
 
     code = '000';
-    login();
+    // login();
 
     return (<Box
         display="flex"
