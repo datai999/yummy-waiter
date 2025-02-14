@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { NonPho, Pho, Receipt } from '../my/my-class';
-import { Box, Divider, Typography } from '@mui/material';
+import { Box, Button, Divider, Typography } from '@mui/material';
 import { APP_CONTEXT } from '../App';
 import { TotalBill } from './OrderView';
 import { StyledPaper } from '../my/my-styled';
@@ -22,7 +22,7 @@ const getBagIndex = (receipt: Receipt, bagName: string): number => {
     return parseInt(bagName.slice(-1));
 }
 
-export default function ReceiptView({ receipt, ...props }: { receipt: Receipt }) {
+export default function ReceiptView({ receipt, ...props }: { receipt: Receipt, close: () => void }) {
     const { MENU_CATEGORIES } = useContext(APP_CONTEXT);
 
     const [bag, setBag] = useState(0);
@@ -31,7 +31,7 @@ export default function ReceiptView({ receipt, ...props }: { receipt: Receipt })
 
     return (<Box sx={{ width: '400px' }}>
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-            <Typography variant="h4" sx={{ mb: 2 }}>{receipt.getName()}</Typography>
+            <Typography variant="h4" sx={{ mb: 2 }} style={{ fontWeight: 'bold' }}>{receipt.getName()}</Typography>
             {receipt.note && <Typography variant="h6" sx={{ mt: '10px' }}>: {receipt.note}</Typography>}
         </Box>
 
@@ -107,10 +107,9 @@ export default function ReceiptView({ receipt, ...props }: { receipt: Receipt })
             </Box>
         </StyledPaper>
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Box>
-                {/* server,
-                cashier */}
-            </Box>
+            <Button variant="contained" color="primary" sx={{ minHeight: 30, mt: '30px' }} onClick={props.close} >
+                Another order
+            </Button>
             <TotalBill bigSize={true} bags={receipt.bags} discountPercent={receipt.discountPercent?.discount} discountSubtract={receipt.discountSubtract?.discount} />
         </Box>
     </Box >)

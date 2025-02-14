@@ -188,11 +188,14 @@ const PriceInput = (props: {
     />
 }
 
-export const NumPad = (props: { clear: () => void, input: (key: string) => void, done: () => void }) => {
+export const NumPad = (props: {
+    clear: () => void, input: (key: string) => void, done?: () => void,
+    doneRender?: ReactNode,
+}) => {
 
     const inputKey = (key: string) => {
         if (key === 'x') props.clear();
-        else if (key === '->') props.done();
+        else if (key === '->' && props.done) props.done();
         else props.input(key);
     }
 
@@ -211,7 +214,7 @@ export const NumPad = (props: { clear: () => void, input: (key: string) => void,
                     </Typography>
                 </Button>
             </Grid2>)}
-        <Grid2 size={4}>
+        {props.done && <Grid2 size={4}>
             <Button
                 variant="outlined"
                 color="primary"
@@ -219,11 +222,12 @@ export const NumPad = (props: { clear: () => void, input: (key: string) => void,
                 fullWidth
                 sx={{ minHeight: 70, maxHeight: 5, borderRadius: '32px' }}
             >
-                <Typography variant="h5">
-                    {'->'}
-                </Typography>
+                {props.doneRender ? props.doneRender :
+                    <Typography variant="h5">
+                        {'->'}
+                    </Typography>}
             </Button>
-        </Grid2>
+        </Grid2>}
     </Grid2>)
 }
 

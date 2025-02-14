@@ -1,6 +1,6 @@
-import { Box, Button, Card, Divider, Grid2, Modal, Stack, styled, Typography } from '@mui/material';
+import { Box, Button, Card, Divider, Grid2, Modal, Stack, styled, Typography, useTheme } from '@mui/material';
 import React, { useContext, useState } from 'react';
-import { COMPONENT } from '../my/my-component';
+import { COMPONENT, NumPad } from '../my/my-component';
 import { AiOutlinePhone } from 'react-icons/ai';
 import { APP_CONTEXT } from '../App';
 import { TableStatus } from '../my/my-constants';
@@ -8,11 +8,24 @@ import { Order, Receipt } from '../my/my-class';
 import { IoMdClose } from 'react-icons/io';
 import ReceiptView from '../order/ReceiptView';
 import ScanYelp from '../assets/scan_free_tofu.png';
+import YummyLogo from '../assets/yummy.png';
 import { StyledPaper } from '../my/my-styled';
 
 export default function CustomerView(props: { back: () => void }) {
+    const theme = useTheme();
+
     const { ORDERS } = useContext(APP_CONTEXT);
     const [receipt, setReceipt] = useState<null | Receipt>(null);
+    const [phone, setPhone] = useState('');
+
+    const point = Math.floor(receipt?.finalTotal || 0);
+
+    const inputPhone = (input: string) => {
+        if (phone.length > 10) return;
+        setPhone(phone + input);
+    }
+
+    const phoneX = phone.padEnd(10, 'x');
 
     return (<>
         <COMPONENT.Header back={props.back} actions={<Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -41,22 +54,48 @@ export default function CustomerView(props: { back: () => void }) {
             <ModalContent>
                 {receipt && (
                     <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                        <StyledPaper sx={{ m: 0, p: 0, mr: 5 }}>
+                        {/* <StyledPaper sx={{ m: 0, p: 0, mr: 5 }}>
                             <ScanImage src={ScanYelp} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} onClick={() => props.back()} />
-                        </StyledPaper>
+                        </StyledPaper> */}
 
-                        <Box>
-                            <ReceiptView receipt={receipt} />
-                            <Stack direction="row" spacing={4} sx={{
-                                mt: 1,
-                                justifyContent: "center",
+                        <Box sx={{ mt: '20px' }}>
+                            <ReceiptView receipt={receipt} close={() => setReceipt(null)} />
+                            {/* <Stack direction="row" spacing={4} sx={{
+                                m: 1,
+                                justifyContent: "left",
                                 alignItems: "stretch",
                             }}>
                                 <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={() => setReceipt(null)} >
                                     Close
                                     <IoMdClose style={iconStyle} />
                                 </Button>
-                            </Stack>
+                            </Stack> */}
+                        </Box>
+
+                        <Box sx={{ ml: 4, mt: '5px' }}>
+                            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                                <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} onClick={() => props.back()} />
+                                <Box sx={{ display: 'flex', flexDirection: 'column-reverse', mb: '5px' }}>
+                                    <Typography variant='h5' color="white" align="center" sx={{ p: '7px', m: '15px', mt: 0 }} letterSpacing={3}
+                                        style={{ fontSize: '16px', backgroundColor: theme.palette.primary.main, borderRadius: 50 }} >
+                                        VIETNAMESE NOODLE SOUP
+                                    </Typography>
+                                    <Typography style={{ fontWeight: 'bold', fontSize: '50px' }}>
+                                        YUMMY PHỞ 2
+                                    </Typography>
+                                </Box>
+                            </Box>
+                            <Typography variant='h5' align="center" style={{ fontWeight: 'bold' }} sx={{ mt: 3 }}>
+                                Enter phone number to earn {point} points today!
+                            </Typography>
+                            {/* </StyledPaper> */}
+                            <Typography variant='h4' align="center" style={{ fontWeight: 'bold' }} sx={{ m: 1 }}>
+                                ({phoneX.substring(0, 3)}) {phoneX.substring(3, 6)} {phoneX.substring(6, 10)}
+                            </Typography>
+                            <NumPad clear={() => setPhone('')} input={inputPhone} done={() => { }} doneRender={
+                                <Typography variant="h6">
+                                    Earn point
+                                </Typography>} />
                         </Box>
                     </Box>
                 )}
@@ -121,6 +160,7 @@ const ModalContent = styled(Box)({
     backgroundColor: "#fff",
     borderRadius: "8px",
     padding: "20px",
+    paddingTop: 0,
     overflowY: "auto"
 });
 
@@ -131,5 +171,11 @@ const iconStyle = {
 const ScanImage = styled("img")({
     width: "435px",
     height: "630px",
+    objectFit: "contain"
+});
+
+const LogoImage = styled("img")({
+    width: "150px",
+    height: "150px",
     objectFit: "contain"
 });
