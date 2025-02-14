@@ -111,7 +111,7 @@ export default function ReceiptView({ receipt, ...props }: { receipt: Receipt })
                 {/* server,
                 cashier */}
             </Box>
-            <TotalBill bigSize={true} bags={receipt.bags} discountPercent={receipt.discountPercent?.discount || 5} discountSubtract={receipt.discountSubtract?.discount} />
+            <TotalBill bigSize={true} bags={receipt.bags} discountPercent={receipt.discountPercent?.discount} discountSubtract={receipt.discountSubtract?.discount} />
         </Box>
     </Box >)
 

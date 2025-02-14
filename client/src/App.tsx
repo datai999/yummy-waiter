@@ -226,7 +226,7 @@ export default function App() {
     prepareChangeTable
   };
 
-  if (auth.code === '000') return (
+  if (auth.code === '') return (
     <APP_CONTEXT.Provider value={appContext}>
       <CustomerView back={logout} />
     </APP_CONTEXT.Provider>)

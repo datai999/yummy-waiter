@@ -1,4 +1,4 @@
-import { Box, Button, Card, Grid2, Modal, Stack, styled, Typography } from '@mui/material';
+import { Box, Button, Card, Divider, Grid2, Modal, Stack, styled, Typography } from '@mui/material';
 import React, { useContext, useState } from 'react';
 import { COMPONENT } from '../my/my-component';
 import { AiOutlinePhone } from 'react-icons/ai';
@@ -7,6 +7,8 @@ import { TableStatus } from '../my/my-constants';
 import { Order, Receipt } from '../my/my-class';
 import { IoMdClose } from 'react-icons/io';
 import ReceiptView from '../order/ReceiptView';
+import ScanYelp from '../assets/scan_free_tofu.png';
+import { StyledPaper } from '../my/my-styled';
 
 export default function CustomerView(props: { back: () => void }) {
     const { ORDERS } = useContext(APP_CONTEXT);
@@ -38,37 +40,24 @@ export default function CustomerView(props: { back: () => void }) {
         >
             <ModalContent>
                 {receipt && (
-                    <Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                        <StyledPaper sx={{ m: 0, p: 0, mr: 5 }}>
+                            <ScanImage src={ScanYelp} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} onClick={() => props.back()} />
+                        </StyledPaper>
+
+                        <Box>
                             <ReceiptView receipt={receipt} />
-
-                            <Box sx={{ witdh: '300px', maxWidth: '300px' }}>
-                                <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', mb: 0 }}>
-                                    {/* <Badge badgeContent={<Box sx={{ ml: 8, bgcolor: '#fff', fontSize: 14 }}>Tendered</Box>} anchorOrigin={{ vertical: 'top', horizontal: 'left', }} >
-                                        <Typography variant="h4" sx={{ display: 'flex', flexDirection: 'row-reverse', mb: 2, p: 1, border: 'solid 1px', borderRadius: 2, minHeight: '45px', minWidth: '130px' }}>
-                                            {(Number(tendered) / 100).toFixed(2)}
-                                        </Typography>
-                                    </Badge>
-                                    <Badge badgeContent={<Box sx={{ ml: 8, bgcolor: '#fff', fontSize: 14 }}>Change</Box>} anchorOrigin={{ vertical: 'top', horizontal: 'left', }} >
-                                        <Typography variant="h4" sx={{ display: 'flex', flexDirection: 'row-reverse', mb: 2, p: 1, border: 'solid 1px', borderRadius: 2, minHeight: '45px', minWidth: '130px' }}>
-                                            {change.toFixed(2)}
-                                        </Typography>
-                                    </Badge> */}
-                                </Box>
-                                customer name/gender,age-range,phone/city
-                            </Box>
+                            <Stack direction="row" spacing={4} sx={{
+                                mt: 1,
+                                justifyContent: "center",
+                                alignItems: "stretch",
+                            }}>
+                                <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={() => setReceipt(null)} >
+                                    Close
+                                    <IoMdClose style={iconStyle} />
+                                </Button>
+                            </Stack>
                         </Box>
-
-                        <Stack direction="row" spacing={4} sx={{
-                            mt: 1,
-                            justifyContent: "center",
-                            alignItems: "stretch",
-                        }}>
-                            <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={() => setReceipt(null)} >
-                                Close
-                                <IoMdClose style={iconStyle} />
-                            </Button>
-                        </Stack>
                     </Box>
                 )}
             </ModalContent>
@@ -138,3 +127,9 @@ const ModalContent = styled(Box)({
 const iconStyle = {
     fontSize: 30, marginLeft: 8
 }
+
+const ScanImage = styled("img")({
+    width: "435px",
+    height: "630px",
+    objectFit: "contain"
+});

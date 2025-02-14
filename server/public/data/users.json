@@ -1,7 +1,4 @@
 {
-    "000": {
-        "name": "9741 Bolsa Ave, Westminster, CA 92683"
-    },
     "0": {
         "name": "Tai"
     },
@@ -13,5 +10,8 @@
     },
     "15": {
         "name": "Thanh"
+    },
+    "": {
+        "name": "9741 Bolsa Ave, Westminster, CA 92683"
     }
 }
