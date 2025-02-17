@@ -190,6 +190,7 @@ const PriceInput = (props: {
 
 export const NumPad = (props: {
     clear: () => void, input: (key: string) => void, done?: () => void,
+    disableDone?: boolean,
     doneRender?: ReactNode,
 }) => {
 
@@ -218,6 +219,7 @@ export const NumPad = (props: {
             <Button
                 variant="outlined"
                 color="primary"
+                disabled={props.disableDone}
                 onClick={() => inputKey('->')}
                 fullWidth
                 sx={{ minHeight: 70, maxHeight: 5, borderRadius: '32px' }}

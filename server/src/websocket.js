@@ -25,6 +25,8 @@ let ACTIVE_TABLES = {
     }
 };
 
+const VIEWING_ORDER = {}
+
 const initWsServer = () => {
     console.log('Init ws server');
     ACTIVE_TABLES = readJsonFile('active_tables.json');
@@ -79,6 +81,14 @@ const onConnection = (ws, req) => {
             updateLockedTable(data.payload);
             boardcastMessageExceptOwner(ws, messageConvert);
         }
+        if (data.type === 'VIEW_ORDER') {
+            handleViewOrder(data.payload);
+            // boardcastMessageExceptOwner(ws, messageConvert);
+        }
+        if (data.type === 'CUSTOMER') {
+            const customer = getCustomer(data.payload);
+            boardcastMessageExceptOwner(ws, customer);
+        }
         if (data.type === 'DONE_ORDER') {
             doneOrder(data.payload);
             boardcastMessageExceptOwner(ws, messageConvert);
@@ -117,6 +127,16 @@ const updateLockedTable = (syncTables) => {
             delete LOCKED_TABLES[tableId];
         }
     });
+}
+
+const handleViewOrder = (viewOrderBody) => {
+    if (viewOrderBody.view) VIEWING_ORDER[viewOrderBody.orderId] = true;
+    else delete VIEWING_ORDER[viewOrderBody.orderId];
+}
+
+const getCustomer = (customer) => {
+    const currentCustomer = readJsonFile(`customers/${customer.phone}.json`);
+    return currentCustomer;
 }
 
 const doneOrder = (syncTables) => {

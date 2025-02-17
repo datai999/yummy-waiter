@@ -14,6 +14,8 @@ export enum SYNC_TYPE {
     LOCKED_TABLES,
     DONE_ORDER,
     HISTORY_ORDER,
+    CUSTOMER,
+    VIEW_ORDER,
 }
 
 export const syncServer = (type: SYNC_TYPE, data: any) => {

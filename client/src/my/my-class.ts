@@ -138,9 +138,23 @@ export class CategoryItem {
     }
 }
 
+export class Customer {
+    phone: string;
+    name?: string;
+    totalPoint: number;
+    point: number;
+
+    public constructor(phone: string) {
+        this.phone = phone;
+        this.totalPoint = 0;
+        this.point = 0;
+    }
+}
+
 export class Table {
     id: string;
     note?: string;
+    customer?: Customer;
     status: TableStatus = TableStatus.AVAILABLE;
 
     @Type(() => String)

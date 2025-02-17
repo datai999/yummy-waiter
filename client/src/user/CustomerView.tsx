@@ -1,6 +1,6 @@
 import { Box, Card, Divider, Grid2, Modal, styled, Typography, useTheme } from '@mui/material';
 import React, { useContext, useState } from 'react';
-import { COMPONENT, NumPad } from '../my/my-component';
+import { COMPONENT } from '../my/my-component';
 import { AiOutlinePhone } from 'react-icons/ai';
 import { APP_CONTEXT } from '../App';
 import { TableStatus } from '../my/my-constants';
@@ -10,23 +10,24 @@ import ReceiptView from '../order/ReceiptView';
 import ScanYelp from '../assets/scan_free_tofu.png';
 import YummyLogo from '../assets/yummy.png';
 import { StyledPaper } from '../my/my-styled';
-import { FaGift } from 'react-icons/fa';
+import EarnPoint from './EarnPoint';
+import { SYNC_TYPE, syncServer } from '../my/my-ws';
 
 export default function CustomerView(props: { back: () => void }) {
     const theme = useTheme();
 
     const { ORDERS } = useContext(APP_CONTEXT);
     const [receipt, setReceipt] = useState<null | Receipt>(null);
-    const [phone, setPhone] = useState('');
 
-    const point = Math.floor(receipt?.finalTotal || 0);
-
-    const inputPhone = (input: string) => {
-        if (phone.length > 10) return;
-        setPhone(phone + input);
+    const viewOrder = (order: Order) => {
+        syncServer(SYNC_TYPE.VIEW_ORDER, { orderId: order.id, view: true });
+        setReceipt(new Receipt('?', order, order.note).calculateTotal(order.bags));
     }
 
-    const phoneX = phone.padEnd(10, 'x');
+    const closeOrder = (order: Order) => {
+        syncServer(SYNC_TYPE.VIEW_ORDER, { orderId: order.id, view: false });
+        setReceipt(null);
+    }
 
     return (<>
         <COMPONENT.Header back={props.back} actions={<Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -43,14 +44,14 @@ export default function CustomerView(props: { back: () => void }) {
                     .filter(order => order.status === TableStatus.ACTIVE)
                     .map(order => (
                         <Grid2 key={order.id} size={{ xs: 6, sm: 4, md: 4, lg: 4 }}>
-                            <CardOrder order={order} onClick={(order) => setReceipt(new Receipt('?', order, order.note).calculateTotal(order.bags))} />
+                            <CardOrder order={order} onClick={viewOrder} />
                         </Grid2>
                     ))}
             </Grid2>
         </Box>
         <Modal
             open={Boolean(receipt)}
-            onClose={() => setReceipt(null)}
+            onClose={() => closeOrder(receipt!)}
         >
             <ModalContent>
                 {receipt && (
@@ -60,7 +61,7 @@ export default function CustomerView(props: { back: () => void }) {
                         </StyledPaper> */}
 
                         <Box sx={{ mt: '20px' }}>
-                            <ReceiptView receipt={receipt} close={() => setReceipt(null)} />
+                            <ReceiptView receipt={receipt} close={() => closeOrder(receipt)} />
                             {/* <Stack direction="row" spacing={4} sx={{
                                 m: 1,
                                 justifyContent: "left",
@@ -86,74 +87,13 @@ export default function CustomerView(props: { back: () => void }) {
                                     </Typography>
                                 </Box>
                             </Box>
-                            <Box>
-                                <Typography variant='h5' align="center" style={{ fontWeight: 'bold' }} sx={{ mt: 3, mr: 6 }}>
-                                    Enter phone number to earn {point} points today!
-                                </Typography>
-                                {/* </StyledPaper> */}
-
-                                <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                                    <Box>
-                                        <Typography variant='h4' align="center" style={{ fontWeight: 'bold' }} sx={{ m: 1 }}>
-                                            ({phoneX.substring(0, 3)}) {phoneX.substring(3, 6)} {phoneX.substring(6, 10)}
-                                        </Typography>
-                                        <NumPad clear={() => setPhone('')} input={inputPhone} done={() => { }} doneRender={
-                                            <Typography variant="h6">
-                                                Earn point
-                                            </Typography>} />
-                                        <Box />
-                                    </Box>
-
-                                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                        <Box />
-                                        <Box sx={{ m: 2, mr: '10px', mb: 0, mt: 0, }}>
-                                            <GiftIcon active={point > 100} />
-                                            <Box sx={{ height: '300px', display: 'flex', flexDirection: 'row', }}>
-                                                <Box sx={{
-                                                    width: '35px', border: '1px solid',
-                                                    display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
-                                                }}>
-                                                    <Box />
-                                                    <Box sx={{ height: `${3 * point}px`, display: 'flex', backgroundColor: '#ffebee', justifyContent: 'center' }}>
-                                                        {point}
-                                                    </Box>
-                                                </Box>
-                                                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                                    <Box>100</Box>
-                                                    <Box sx={{ ml: '2px' }}>50</Box>
-                                                    <Box sx={{ ml: '2px' }}>0</Box>
-                                                </Box>
-                                            </Box>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            </Box>
+                            <EarnPoint receipt={receipt} />
                         </Box>
                     </Box>
                 )}
             </ModalContent>
         </Modal >
     </>);
-}
-
-
-const GiftIcon = ({ active }: { active: boolean }) => {
-    return (
-        <Box
-            sx={{
-                "@keyframes ani": {
-                    "0%": {
-                        transform: "translateY(10px)",
-                    },
-                    "100%": {
-                        transform: "translateY(-15px) scale(1.5)",
-                    },
-                },
-            }}>
-            <FaGift style={{ fontSize: 35, animation: `${active ? 'ani' : ''} 1.5s ease-out forwards infinite`, }} />
-        </Box>
-
-    );
 }
 
 const CardOrder = ({ order, ...props }: {
