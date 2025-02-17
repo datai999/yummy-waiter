@@ -44,7 +44,9 @@ export const completePho = (category: any, pho: Pho) => {
     else if (pho.combo) {
         pho.price = category.pho.combo[pho.combo as keyof typeof Object][0].price;
     }
-    if (pho.code === 'BPN') pho.price = 7;
+    if (pho.code === 'BPN') {
+        pho.price = pho.noodle === 'Cơm' ? 5 : 7;
+    }
 }
 
 export const changeTable = (auth: any, tables: Map<String, Table>, fromTable: Table, toTableId: string): Table | null => {
