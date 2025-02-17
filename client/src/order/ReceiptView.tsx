@@ -108,7 +108,7 @@ export default function ReceiptView({ receipt, ...props }: { receipt: Receipt, c
         </StyledPaper>
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
             <Button variant="contained" color="primary" sx={{ minHeight: 30, mt: '30px' }} onClick={props.close} >
-                Another order
+                Not your order
             </Button>
             <TotalBill bigSize={true} bags={receipt.bags} discountPercent={receipt.discountPercent?.discount} discountSubtract={receipt.discountSubtract?.discount} />
         </Box>

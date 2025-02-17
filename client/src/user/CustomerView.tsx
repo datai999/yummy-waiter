@@ -1,4 +1,4 @@
-import { Box, Button, Card, Divider, Grid2, Modal, Stack, styled, Typography, useTheme } from '@mui/material';
+import { Box, Card, Divider, Grid2, Modal, styled, Typography, useTheme } from '@mui/material';
 import React, { useContext, useState } from 'react';
 import { COMPONENT, NumPad } from '../my/my-component';
 import { AiOutlinePhone } from 'react-icons/ai';
@@ -10,6 +10,7 @@ import ReceiptView from '../order/ReceiptView';
 import ScanYelp from '../assets/scan_free_tofu.png';
 import YummyLogo from '../assets/yummy.png';
 import { StyledPaper } from '../my/my-styled';
+import { FaGift } from 'react-icons/fa';
 
 export default function CustomerView(props: { back: () => void }) {
     const theme = useTheme();
@@ -72,7 +73,7 @@ export default function CustomerView(props: { back: () => void }) {
                             </Stack> */}
                         </Box>
 
-                        <Box sx={{ ml: 4, mt: '5px' }}>
+                        <Box sx={{ ml: '10px', mt: '15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                                 <LogoImage src={YummyLogo} alt="Yummy Logo" sx={{ display: { xs: 'none', sm: 'block' } }} onClick={() => props.back()} />
                                 <Box sx={{ display: 'flex', flexDirection: 'column-reverse', mb: '5px' }}>
@@ -85,23 +86,74 @@ export default function CustomerView(props: { back: () => void }) {
                                     </Typography>
                                 </Box>
                             </Box>
-                            <Typography variant='h5' align="center" style={{ fontWeight: 'bold' }} sx={{ mt: 3 }}>
-                                Enter phone number to earn {point} points today!
-                            </Typography>
-                            {/* </StyledPaper> */}
-                            <Typography variant='h4' align="center" style={{ fontWeight: 'bold' }} sx={{ m: 1 }}>
-                                ({phoneX.substring(0, 3)}) {phoneX.substring(3, 6)} {phoneX.substring(6, 10)}
-                            </Typography>
-                            <NumPad clear={() => setPhone('')} input={inputPhone} done={() => { }} doneRender={
-                                <Typography variant="h6">
-                                    Earn point
-                                </Typography>} />
+                            <Box>
+                                <Typography variant='h5' align="center" style={{ fontWeight: 'bold' }} sx={{ mt: 3, mr: 6 }}>
+                                    Enter phone number to earn {point} points today!
+                                </Typography>
+                                {/* </StyledPaper> */}
+
+                                <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                                    <Box>
+                                        <Typography variant='h4' align="center" style={{ fontWeight: 'bold' }} sx={{ m: 1 }}>
+                                            ({phoneX.substring(0, 3)}) {phoneX.substring(3, 6)} {phoneX.substring(6, 10)}
+                                        </Typography>
+                                        <NumPad clear={() => setPhone('')} input={inputPhone} done={() => { }} doneRender={
+                                            <Typography variant="h6">
+                                                Earn point
+                                            </Typography>} />
+                                        <Box />
+                                    </Box>
+
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                        <Box />
+                                        <Box sx={{ m: 2, mr: '10px', mb: 0, mt: 0, }}>
+                                            <GiftIcon active={point > 100} />
+                                            <Box sx={{ height: '300px', display: 'flex', flexDirection: 'row', }}>
+                                                <Box sx={{
+                                                    width: '35px', border: '1px solid',
+                                                    display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
+                                                }}>
+                                                    <Box />
+                                                    <Box sx={{ height: `${3 * point}px`, display: 'flex', backgroundColor: '#ffebee', justifyContent: 'center' }}>
+                                                        {point}
+                                                    </Box>
+                                                </Box>
+                                                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                                    <Box>100</Box>
+                                                    <Box sx={{ ml: '2px' }}>50</Box>
+                                                    <Box sx={{ ml: '2px' }}>0</Box>
+                                                </Box>
+                                            </Box>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </Box>
                         </Box>
                     </Box>
                 )}
             </ModalContent>
         </Modal >
     </>);
+}
+
+
+const GiftIcon = ({ active }: { active: boolean }) => {
+    return (
+        <Box
+            sx={{
+                "@keyframes ani": {
+                    "0%": {
+                        transform: "translateY(10px)",
+                    },
+                    "100%": {
+                        transform: "translateY(-15px) scale(1.5)",
+                    },
+                },
+            }}>
+            <FaGift style={{ fontSize: 35, animation: `${active ? 'ani' : ''} 1.5s ease-out forwards infinite`, }} />
+        </Box>
+
+    );
 }
 
 const CardOrder = ({ order, ...props }: {
@@ -156,10 +208,11 @@ const ModalContent = styled(Box)({
     transform: "translate(-50%, -50%)",
     minHeight: '450px',
     maxHeight: "600",
-    width: "1000px",
+    width: "1020px",
     backgroundColor: "#fff",
     borderRadius: "8px",
     padding: "20px",
+    paddingRight: "5px",
     paddingTop: 0,
     overflowY: "auto"
 });
