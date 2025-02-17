@@ -70,8 +70,8 @@ const pTakePho = (props: TakePhoProps) => {
             ...(pho.meats.includes('Xi') || pho.combo?.startsWith('#8') ? ['Tái riêng', 'Tái băm', 'Tái cook'] : []),
             pho.combo?.startsWith('#8b') ? 'Ít bánh' : '',
             pho.combo?.startsWith('C') ? 'Không xương' : '',
-            ['BC', 'BT', 'BS', 'BTS'].includes(pho.noodle) ? 'Măng' : '',
-            ['BS', 'BTS', 'Bún'].includes(pho.noodle) ? 'Khô' : ''
+            ['BC', 'BT', 'BS', 'BTS', 'Cơm'].includes(pho.noodle) ? 'Măng' : '',
+            ['BS', 'BTS', 'Bún', 'Cơm'].includes(pho.noodle) ? 'Khô' : ''
         ];
         pho.preferences = pho.preferences?.filter(prefer => !disabledPrefers.includes(prefer));
         return disabledPrefers;
