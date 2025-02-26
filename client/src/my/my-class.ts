@@ -232,6 +232,8 @@ export class Receipt extends Order {
     discountPercent?: Discount;
     discountSubtract?: Discount;
 
+    customer?: Customer;
+
     public constructor(cashier: string, order: Order, note?: string) {
         if (!order) order = new Order('?');
         super(order.id);

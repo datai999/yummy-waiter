@@ -20,12 +20,12 @@ export default function CustomerView(props: { back: () => void }) {
     const [receipt, setReceipt] = useState<null | Receipt>(null);
 
     const viewOrder = (order: Order) => {
-        syncServer(SYNC_TYPE.VIEW_ORDER, { orderId: order.id, view: true });
+        syncServer(SYNC_TYPE.CUSTOMER_VIEW_ORDER, { orderId: order.id, view: true });
         setReceipt(new Receipt('?', order, order.note).calculateTotal(order.bags));
     }
 
     const closeOrder = (order: Order) => {
-        syncServer(SYNC_TYPE.VIEW_ORDER, { orderId: order.id, view: false });
+        syncServer(SYNC_TYPE.CUSTOMER_VIEW_ORDER, { orderId: order.id, view: false });
         setReceipt(null);
     }
 

@@ -226,10 +226,12 @@ export default function App() {
     prepareChangeTable
   };
 
-  if (auth.code === '') return (
-    <APP_CONTEXT.Provider value={appContext}>
-      <CustomerView back={logout} />
-    </APP_CONTEXT.Provider>)
+  if (auth.code === '') {
+    return (
+      <APP_CONTEXT.Provider value={appContext}>
+        <CustomerView back={logout} />
+      </APP_CONTEXT.Provider>)
+  }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -301,9 +303,13 @@ export default function App() {
      *  + cashier
      *  - print
      *  + discount
-     *  - UI for customer fill phone
+     *  + UI for customer fill phone
      *  + edit menu
      *  + edit user
+     *  - waring cashier customer is viewing before cash
+     *  - customer submit & gain reward: re-write receipt
+     *  - cashier add phone to history order and take point for customer
+     *  - cashier edit point
      *  - devices
      *  - config
      * kitchen: select part of bill, print bill & system change status to waiter

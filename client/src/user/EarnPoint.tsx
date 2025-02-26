@@ -5,20 +5,27 @@ import { Customer, Receipt } from '../my/my-class';
 import { FaGift } from 'react-icons/fa';
 import { SYNC_TYPE, syncServer } from '../my/my-ws';
 
-let CUSTOMER: Customer = {} as Customer;
-
 export const receiveCustomer = (customer: Customer) => {
-    CUSTOMER = customer;
+    onReceiveCustomer(customer);
 }
+
+let onReceiveCustomer: (customer: Customer) => void = () => console.log('error');
 
 export default function ({ receipt }: { receipt: Receipt }) {
 
+    const [customer, setCustomer] = useState<Customer>({} as Customer);
     const [phone, setPhone] = useState('');
 
     const phoneX = phone.padEnd(10, 'x');
     const disableDone = phone.length < 10 && false;
     const newPoint = Math.floor(receipt?.finalTotal || 0);
-    const point = (CUSTOMER.point || 0) + newPoint;
+    const point = (customer.point || 0) + newPoint;
+
+    onReceiveCustomer = (customer: Customer) => {
+        receipt.customer = customer;
+        syncServer(SYNC_TYPE.ACTIVE_TABLES, { [receipt.id]: receipt });
+        setCustomer(customer);
+    }
 
     const inputPhone = (input: string) => {
         if (phone.length > 10) return;
@@ -27,7 +34,7 @@ export default function ({ receipt }: { receipt: Receipt }) {
 
     const submitPhone = () => {
         receipt.customer = new Customer(phone);
-        syncServer(SYNC_TYPE.CUSTOMER, { phone, receiptId: receipt.id });
+        syncServer(SYNC_TYPE.GET_CUSTOMER, { phone, receiptId: receipt.id });
     }
 
     return (<Box>
@@ -40,6 +47,7 @@ export default function ({ receipt }: { receipt: Receipt }) {
                 <Typography variant='h4' align="center" style={{ fontWeight: 'bold' }} sx={{ m: 1 }}>
                     ({phoneX.substring(0, 3)}) {phoneX.substring(3, 6)} {phoneX.substring(6, 10)}
                 </Typography>
+                {/* TODO: Thank you */}
                 <NumPad clear={() => setPhone('')} input={inputPhone} done={submitPhone} disableDone={disableDone} doneRender={
                     <Typography variant="h6">
                         Gain reward
@@ -59,9 +67,9 @@ export default function ({ receipt }: { receipt: Receipt }) {
                             <Box />
                             <Box sx={{ height: `${3 * point}px`, display: 'flex', backgroundColor: '#ffebee', flexDirection: 'column', alignItems: 'center' }}>
                                 {newPoint}
-                                {CUSTOMER.point && <Box sx={{ justifyItems: 'center' }}>
+                                {customer.point && <Box sx={{ justifyItems: 'center' }}>
                                     <Box>+</Box>
-                                    <Box>{CUSTOMER.point}</Box>
+                                    <Box>{customer.point}</Box>
                                 </Box>}
                             </Box>
                         </Box>

@@ -29,7 +29,7 @@ export const WAITER_CONTEXT = {
 }
 
 export default function Waiter(props: WaiterProps) {
-    const {MENU_CATEGORIES, auth, order, setOrder, prepareChangeTable } = useContext(APP_CONTEXT);
+    const { MENU_CATEGORIES, auth, order, setOrder, prepareChangeTable } = useContext(APP_CONTEXT);
     const [refresh, setRefresh] = useState(false);
     const [category, setCategory] = useState(MENU_CATEGORIES[0]);
     const [openModal, setOpenModal] = useState(false);
@@ -90,6 +90,7 @@ export default function Waiter(props: WaiterProps) {
 
     const openCashier = () => {
         syncServer(SYNC_TYPE.LOCKED_TABLES, { [order.id]: new LockedTable(true, auth.name) });
+        syncServer(SYNC_TYPE.ON_CASHIER, { cashier: auth.name });
         setViewCashier(true);
     }
 

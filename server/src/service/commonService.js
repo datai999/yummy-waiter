@@ -42,11 +42,12 @@ const writeJsonFile = (data, fileName, path = '') => {
 
 const formatTime = (time) => {
     const date = time || new Date();
-    return date.toLocaleString('en-CA', { hour12: false }) + ':' + date.getMilliseconds();
+    return date.toLocaleString('en-CA', { hour12: false }) + ':' + date.getMilliseconds().toString().padEnd(3, '0');
 }
 
 module.exports = {
     readJsonFile,
     readJsonDirectory,
-    writeJsonFile
+    writeJsonFile,
+    formatTime
 }

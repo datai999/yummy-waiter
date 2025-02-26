@@ -1,7 +1,8 @@
 import { instanceToPlain, plainToInstance } from "class-transformer";
-import { LockedTable, Receipt, Table } from "./my-class";
+import { Customer, LockedTable, Receipt, Table } from "./my-class";
 import { JSON_replacer, JSON_reviver } from "./my-util";
 import { updateHistoryOrder } from "../order/OrderHistory";
+import { receiveCustomer } from "../user/EarnPoint";
 
 let websocket: WebSocket;
 let clienId: string;
@@ -14,8 +15,10 @@ export enum SYNC_TYPE {
     LOCKED_TABLES,
     DONE_ORDER,
     HISTORY_ORDER,
-    CUSTOMER,
-    VIEW_ORDER,
+    ON_CUSTOMER,
+    ON_CASHIER,
+    CUSTOMER_VIEW_ORDER,
+    GET_CUSTOMER
 }
 
 export const syncServer = (type: SYNC_TYPE, data: any) => {
@@ -65,6 +68,9 @@ const initWsClient = (username: string,
             const lockedTables = new Map<string, LockedTable>(Object.entries(data.payload)
                 .map(([tableId, lockedTable]) => [tableId, plainToInstance(LockedTable, lockedTable)]));
             onLockTables(data.senter, lockedTables);
+        }
+        if (data.type === SYNC_TYPE[SYNC_TYPE.GET_CUSTOMER]) {
+            receiveCustomer(data.payload);
         }
         if (data.type === SYNC_TYPE[SYNC_TYPE.DONE_ORDER]) {
             const tables = new Map(Object.entries(data.payload)

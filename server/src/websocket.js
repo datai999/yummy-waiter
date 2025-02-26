@@ -1,8 +1,9 @@
 const WebSocket = require('ws');
+var fs = require('fs');
 
 const { loadUsers } = require("./service/userService");
 const { loadMenu } = require('./service/menuService');
-const { readJsonFile, writeJsonFile } = require('./service/commonService.js');
+const { readJsonFile, writeJsonFile, formatTime } = require('./service/commonService.js');
 const { getHistoryOrder } = require('./service/orderService.js');
 
 let wss;
@@ -25,8 +26,6 @@ let ACTIVE_TABLES = {
     }
 };
 
-const VIEWING_ORDER = {}
-
 const initWsServer = () => {
     console.log('Init ws server');
     ACTIVE_TABLES = readJsonFile('active_tables.json');
@@ -41,6 +40,9 @@ module.exports = {
 
 const USERS = {};
 const LOCKED_TABLES = {};
+let VIEWING = { 'cashier': '', 'orderId': '', 'phone': '' };
+let CASHIER_USER = null;
+let CUSTOMER_USER = null;
 
 const onConnection = (ws, req) => {
     ws.on('error', console.error);
@@ -65,7 +67,7 @@ const onConnection = (ws, req) => {
                 }));
             else sentDataOnConnect(ws);
         }
-        if (data.type === 'USERS') {
+        else if (data.type === 'USERS') {
             writeJsonFile(data.payload, 'users');
             boardcastMessageExceptOwner(ws, messageConvert);
         }
@@ -81,15 +83,42 @@ const onConnection = (ws, req) => {
             updateLockedTable(data.payload);
             boardcastMessageExceptOwner(ws, messageConvert);
         }
-        if (data.type === 'VIEW_ORDER') {
-            handleViewOrder(data.payload);
-            // boardcastMessageExceptOwner(ws, messageConvert);
+        if (data.type === 'ON_CUSTOMER') {
+            CUSTOMER_USER = ws;
+            sendMessageTo(ws, JSON.stringify({
+                senter: "SERVER",
+                type: data.type,
+                payload: VIEWING
+            }));
         }
-        if (data.type === 'CUSTOMER') {
+        if (data.type === 'ON_CASHIER') {
+            CASHIER_USER = ws;
+            VIEWING.cashier = data.payload.cashier;
+            sendMessageTo(ws, JSON.stringify({
+                senter: "SERVER",
+                type: data.type,
+                payload: VIEWING
+            }));
+        }
+        if (data.type === 'CUSTOMER_VIEW_ORDER') {
+            if (data.payload.view) VIEWING.orderId = data.payload.orderId;
+            else VIEWING = { 'orderId': '', 'phone': '' };
+            sendMessageTo(ws, JSON.stringify({
+                senter: "SERVER",
+                type: data.type,
+                payload: VIEWING
+            }));
+        }
+        if (data.type === 'GET_CUSTOMER') {
             const customer = getCustomer(data.payload);
-            boardcastMessageExceptOwner(ws, customer);
+            sendMessageTo(ws, JSON.stringify({
+                senter: "SERVER",
+                type: data.type,
+                payload: customer
+            }));
         }
         if (data.type === 'DONE_ORDER') {
+            CASHIER_USER = null;
             doneOrder(data.payload);
             boardcastMessageExceptOwner(ws, messageConvert);
         }
@@ -129,14 +158,19 @@ const updateLockedTable = (syncTables) => {
     });
 }
 
-const handleViewOrder = (viewOrderBody) => {
-    if (viewOrderBody.view) VIEWING_ORDER[viewOrderBody.orderId] = true;
-    else delete VIEWING_ORDER[viewOrderBody.orderId];
-}
-
 const getCustomer = (customer) => {
-    const currentCustomer = readJsonFile(`customers/${customer.phone}.json`);
-    return currentCustomer;
+    VIEWING.phone = customer.phone;
+    const path = `customers/${customer.phone}.json`;
+    if (fs.existsSync(path)) return readJsonFile(path);
+
+    const newCustomer = {
+        'phone': customer.phone,
+        'createdAt': formatTime(),
+        'totalPoint': 0,
+        'point': 30
+    };
+    writeJsonFile(newCustomer, customer.phone, '/customers');
+    return newCustomer;
 }
 
 const doneOrder = (syncTables) => {

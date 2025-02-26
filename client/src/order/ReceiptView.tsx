@@ -127,7 +127,7 @@ const renderPho = (category: string, item: Pho) => {
     if (category === 'BEEF') {
         if (item.combo?.startsWith('#8'))
             return `${qty} ${code.slice(4)}`;
-        return `${qty} Phở (${code}) (${item.noodle})`;
+        return `${qty} Phở bò (${code}) (${item.noodle})`;
     }
 
     const bamboo = item.referCode?.indexOf('bamboo') !== -1 ? ' măng ' : '';
@@ -136,7 +136,6 @@ const renderPho = (category: string, item: Pho) => {
         ? `Phở gà${dry} (${item.noodle})`
         : item.noodle + bamboo + ' gà' + dry;
 
-    console.log(item);
     return `${qty} ${noodle} (${code})`;
 }
 
