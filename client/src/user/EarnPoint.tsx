@@ -37,21 +37,58 @@ export default function ({ receipt }: { receipt: Receipt }) {
         syncServer(SYNC_TYPE.GET_CUSTOMER, { phone, receiptId: receipt.id });
     }
 
-    return (<Box>
-        <Typography variant='h5' align="center" style={{ fontWeight: 'bold' }} sx={{ mt: 3, mr: 6 }}>
-            Enter phone number to earn {newPoint} points today!
-        </Typography>
+    return (<Box width='585px'>
+        {customer.phone
+            ? (<Typography variant='h4' align="center" style={{ fontWeight: 'bold' }} sx={{ mt: 2, mr: 6 }}>
+                Thank you !!!
+            </Typography>)
+            : (<Typography variant='h5' align="center" style={{ fontWeight: 'bold' }} sx={{ mt: 3, mr: 6 }}>
+                Enter phone number to earn ${newPoint} points today!
+            </Typography>)}
 
-        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Box width='585px' sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
             <Box>
                 <Typography variant='h4' align="center" style={{ fontWeight: 'bold' }} sx={{ m: 1 }}>
                     ({phoneX.substring(0, 3)}) {phoneX.substring(3, 6)} {phoneX.substring(6, 10)}
                 </Typography>
-                {/* TODO: Thank you */}
-                <NumPad clear={() => setPhone('')} input={inputPhone} done={submitPhone} disableDone={disableDone} doneRender={
-                    <Typography variant="h6">
-                        Gain reward
-                    </Typography>} />
+                {!customer.phone
+                    ? (<NumPad clear={() => setPhone('')} input={inputPhone} done={submitPhone} disableDone={disableDone} doneRender={
+                        <Typography variant="h6">
+                            Gain reward
+                        </Typography>} />)
+                    : (<Box height="180px" width="496px" sx={{ diplay: 'flex', justifyItems: 'center' }}>
+                        <Box width='180px' sx={{ mt: 4 }}>
+                            <Box sx={SX}>
+                                <Box>
+                                    {`Current points:`}
+                                </Box>
+                                <Box>
+                                    {customer.point}
+                                </Box>
+                            </Box>
+                            <Box sx={SX}>
+                                <Box>
+                                    {`New points:`}
+                                </Box>
+                                <Box>
+                                    {newPoint}
+                                </Box>
+                            </Box>
+                            <Box sx={SX}>
+                                <Box>
+                                    {`Total points:`}
+                                </Box>
+                                <Box>
+                                    {point}
+                                </Box>
+                            </Box>
+                        </Box>
+                        <Typography variant='h5' align="center" style={{ fontWeight: 'bold' }} sx={{ mt: 3 }}>
+                            {point > 100
+                                ? 'Congratulation! You can have a reward!'
+                                : `You need ${(100 - point).toFixed(0)} points to gain a reward.`}
+                        </Typography>
+                    </Box>)}
                 <Box />
             </Box>
 
@@ -84,6 +121,8 @@ export default function ({ receipt }: { receipt: Receipt }) {
         </Box>
     </Box>);
 }
+
+const SX = { display: 'flex', direction: 'row', justifyContent: 'space-between', fontSize: '20px', fontWeight: "bold" }
 
 const GiftIcon = ({ active }: { active: boolean }) => {
     return (
