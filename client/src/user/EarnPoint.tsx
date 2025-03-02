@@ -13,17 +13,17 @@ let onReceiveCustomer: (customer: Customer) => void = () => console.log('error')
 
 export default function ({ receipt }: { receipt: Receipt }) {
 
-    const [customer, setCustomer] = useState<Customer>({} as Customer);
-    const [phone, setPhone] = useState('');
+    const [customer, setCustomer] = useState<Customer>(receipt.customer || {} as Customer);
+    const [phone, setPhone] = useState(receipt.customer?.phone || '');
 
     const phoneX = phone.padEnd(10, 'x');
     const disableDone = phone.length < 10 && false;
     const newPoint = Math.floor(receipt?.finalTotal || 0);
-    const point = (customer.point || 0) + newPoint;
+    const point = (customer.prePoint || 0) + newPoint;
 
     onReceiveCustomer = (customer: Customer) => {
         receipt.customer = customer;
-        syncServer(SYNC_TYPE.ACTIVE_TABLES, { [receipt.id]: receipt });
+        // syncServer(SYNC_TYPE.ACTIVE_TABLES, { [receipt.id]: receipt });
         setCustomer(customer);
     }
 
@@ -34,7 +34,7 @@ export default function ({ receipt }: { receipt: Receipt }) {
 
     const submitPhone = () => {
         receipt.customer = new Customer(phone);
-        syncServer(SYNC_TYPE.GET_CUSTOMER, { phone, receiptId: receipt.id });
+        syncServer(SYNC_TYPE.GET_CUSTOMER, { phone, newPoint, receipt: receipt });
     }
 
     return (<Box width='585px'>
@@ -43,7 +43,7 @@ export default function ({ receipt }: { receipt: Receipt }) {
                 Thank you !!!
             </Typography>)
             : (<Typography variant='h5' align="center" style={{ fontWeight: 'bold' }} sx={{ mt: 3, mr: 6 }}>
-                Enter phone number to earn ${newPoint} points today!
+                Enter phone number to earn {newPoint} points today!
             </Typography>)}
 
         <Box width='585px' sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -60,10 +60,10 @@ export default function ({ receipt }: { receipt: Receipt }) {
                         <Box width='180px' sx={{ mt: 4 }}>
                             <Box sx={SX}>
                                 <Box>
-                                    {`Current points:`}
+                                    {`Previous points:`}
                                 </Box>
                                 <Box>
-                                    {customer.point}
+                                    {customer.prePoint}
                                 </Box>
                             </Box>
                             <Box sx={SX}>
@@ -84,7 +84,7 @@ export default function ({ receipt }: { receipt: Receipt }) {
                             </Box>
                         </Box>
                         <Typography variant='h5' align="center" style={{ fontWeight: 'bold' }} sx={{ mt: 3 }}>
-                            {point > 100
+                            {point >= 100
                                 ? 'Congratulation! You can have a reward!'
                                 : `You need ${(100 - point).toFixed(0)} points to gain a reward.`}
                         </Typography>
@@ -95,7 +95,7 @@ export default function ({ receipt }: { receipt: Receipt }) {
             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <Box />
                 <Box sx={{ m: 2, mr: '10px', mb: 0, mt: 0, }}>
-                    <GiftIcon active={point > 100} />
+                    <GiftIcon active={point >= 100} />
                     <Box sx={{ height: '300px', display: 'flex', flexDirection: 'row', }}>
                         <Box sx={{
                             width: '35px', border: '1px solid',
@@ -106,7 +106,7 @@ export default function ({ receipt }: { receipt: Receipt }) {
                                 {newPoint}
                                 {customer.point && <Box sx={{ justifyItems: 'center' }}>
                                     <Box>+</Box>
-                                    <Box>{customer.point}</Box>
+                                    <Box>{customer.prePoint}</Box>
                                 </Box>}
                             </Box>
                         </Box>

@@ -14,6 +14,11 @@ export default function AddDiscount(props: {
     const [percent, setPercent] = useState<number>(0);
     const [subtract, setSubtract] = useState<number>(0);
 
+    const customer = props.receipt.customer;
+    const newPoint = Math.floor(props.receipt.finalTotal || 0);
+    const nextPoint = (customer?.prePoint || 0) + newPoint;
+    const phoneX = (customer?.phone || '').padEnd(10, '0');
+
     useEffect(() => {
         setPercent(0);
         setSubtract(0);
@@ -32,9 +37,22 @@ export default function AddDiscount(props: {
     }
 
     return (<Box sx={{ width: '500px' }}>
-        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-            <Typography variant="h4" sx={{ mb: 2 }}>{props.receipt.getName()}</Typography>
-            {props.receipt.note && <Typography variant="h6" sx={{ mt: '10px' }}>: {props.receipt.note}</Typography>}
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                <Typography variant="h4" sx={{ mb: 2 }}>{props.receipt.getName()}</Typography>
+                {props.receipt.note && <Typography variant="h6" sx={{ mt: '10px' }}>: {props.receipt.note}</Typography>}
+            </Box>
+            {customer && <Box>
+                <Typography variant="subtitle1">
+                    ({phoneX.substring(0, 3)}) {phoneX.substring(3, 6)} {phoneX.substring(6, 10)}
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Typography variant="subtitle1">
+                        Point: {customer.prePoint} {'-->'} {nextPoint}
+                    </Typography>
+                </Box>
+            </Box>}
+
         </Box>
         <CONTEXT.Table.Provider value={{ table: props.receipt, order: props.receipt, orderTable: () => { }, setOrder: () => { }, prepareChangeTable: () => { } }}>
             <ORDER_CONTEXT.Provider value={{ refreshOrderView: () => { }, expand: false, discount: true }}>

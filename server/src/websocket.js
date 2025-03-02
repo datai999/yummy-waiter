@@ -1,9 +1,8 @@
 const WebSocket = require('ws');
-var fs = require('fs');
 
 const { loadUsers } = require("./service/userService");
 const { loadMenu } = require('./service/menuService');
-const { readJsonFile, writeJsonFile, formatTime } = require('./service/commonService.js');
+const { readJsonFile, writeJsonFile, formatTime, existsSync } = require('./service/commonService.js');
 const { getHistoryOrder } = require('./service/orderService.js');
 
 let wss;
@@ -110,7 +109,7 @@ const onConnection = (ws, req) => {
             }));
         }
         if (data.type === 'GET_CUSTOMER') {
-            const customer = getCustomer(data.payload);
+            const customer = linkCustomer(ws, data.payload);
             sendMessageTo(ws, JSON.stringify({
                 senter: "SERVER",
                 type: data.type,
@@ -158,31 +157,79 @@ const updateLockedTable = (syncTables) => {
     });
 }
 
-const getCustomer = (customer) => {
-    VIEWING.phone = customer.phone;
-    const path = `customers/${customer.phone}.json`;
-    if (fs.existsSync(path)) return readJsonFile(path);
+const linkCustomer = (ws, body) => {
+    VIEWING.phone = body.phone;
+    VIEWING.orderId = body.receipt.id;
 
-    const newCustomer = {
-        'phone': customer.phone,
-        'createdAt': formatTime(),
-        'totalPoint': 0,
-        'point': 30
+    const path = `customers/${VIEWING.phone}.json`;
+    let customer;
+    if (existsSync(path))
+        customer = readJsonFile(path);
+    else {
+        customer = {
+            'phone': body.phone,
+            'createdAt': formatTime(),
+            'totalPoint': 0,
+            'point': 0,
+            'prePoint': 0,
+            'rewardsTime': []
+        };
     };
-    writeJsonFile(newCustomer, customer.phone, '/customers');
-    return newCustomer;
+
+    // customer -> cashier
+    if (ACTIVE_TABLES[VIEWING.orderId]) {
+        ACTIVE_TABLES[VIEWING.orderId].customer = customer;
+        customer.prePoint = customer.point;
+        sendMessageTo(ws, JSON.stringify({
+            senter: "SERVER",
+            type: 'ACTIVE_TABLES',
+            payload: { [VIEWING.orderId]: ACTIVE_TABLES[VIEWING.orderId] }
+        }))
+        return customer;
+    }
+
+    // cashier -> customer
+    const orderPath = getOrderPathAndName(body.receipt);
+    const receipt = readJsonFile(orderPath[1] + '/' + readJsonFile[0] + '.json');
+    receipt.customer = customer;
+    writeJsonFile({ ...receipt, point: customer.point + body.newPoint }, orderPath.fullPath);
+
+    customerChangePoint(customer, body.newPoint);
+
+    return customer;
+}
+
+const customerChangePoint = (customer, newPoint) => {
+    customer.totalPoint += newPoint;
+    customer.prePoint = customer.point;
+    customer.point += newPoint;
+    if (customer.point >= 100) {
+        customer.point -= 100;
+        customer.rewardsTime = [...customer.rewardsTime, formatTime()]
+    }
+    writeJsonFile(customer, customer.phone, '/customers');
+}
+
+const getOrderPathAndName = (order) => {
+    const orderTime = order.orderTime.replaceAll(':', '-');
+    const fileName = orderTime + ', ' + (order.id.startsWith('Togo') ? 'Togo' : order.id);
+
+    const orderTimes = orderTime.split(', ')[0];
+    const paths = orderTimes.split('-');
+    const path = `/orders/${paths[0]}/${paths[1]}/${paths[2]}`;
+    return { fileName, path, fullPath: path + '/' + fileName };
 }
 
 const doneOrder = (syncTables) => {
     Object.entries(syncTables).forEach(([tableId, syncTable]) => {
         const orderTime = syncTable.orderTime.replaceAll(':', '-');
         const fileName = orderTime + ', ' + (tableId.startsWith('Togo') ? 'Togo' : tableId);
-
-        const orderTimes = orderTime.split(', ')[0];
-        const paths = orderTimes.split('-');
-        const filePath = `/orders/${paths[0]}/${paths[1]}/${paths[2]}`;
-
         writeJsonFile(syncTable, fileName, filePath);
+
+        if (syncTable.customer?.phone) {
+            customerChangePoint(syncTable.customer, Math.floor(syncTable.finalTotal));
+        }
+
         delete LOCKED_TABLES[tableId];
         delete ACTIVE_TABLES[tableId];
         writeJsonFile(ACTIVE_TABLES, 'active_tables');

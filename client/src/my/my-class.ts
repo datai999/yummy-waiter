@@ -143,11 +143,13 @@ export class Customer {
     name?: string;
     totalPoint: number;
     point: number;
+    prePoint: number;
 
     public constructor(phone: string) {
         this.phone = phone;
         this.totalPoint = 0;
         this.point = 0;
+        this.prePoint = 0;
     }
 }
 
@@ -232,8 +234,6 @@ export class Receipt extends Order {
     discountPercent?: Discount;
     discountSubtract?: Discount;
 
-    customer?: Customer;
-
     public constructor(cashier: string, order: Order, note?: string) {
         if (!order) order = new Order('?');
         super(order.id);
@@ -243,6 +243,7 @@ export class Receipt extends Order {
         this.orderTime = order.orderTime;
         this.cleanTime = order.cleanTime;
         this.timer = order.timer;
+        this.customer = order.customer;
 
         if (order.status === TableStatus.AVAILABLE)
             this.orderTime = new Date();

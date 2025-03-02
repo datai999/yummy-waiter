@@ -11,6 +11,7 @@ import { IoPrint } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
 import { BsCashCoin } from "react-icons/bs";
 import AddDiscount from "./AddDiscount";
+import { FaGift } from "react-icons/fa";
 
 export default function Cashier(props: {
     view: boolean,
@@ -27,6 +28,10 @@ export default function Cashier(props: {
     let receipt: Receipt = props.receipt;
     const numTendered = Number(tendered) / 100;
     const change = Math.ceil((numTendered - receipt.finalTotal) * 100) / 100;
+
+    const customer = props.receipt.customer;
+    const newPoint = Math.floor(props.receipt.finalTotal || 0);
+    const nextPoint = (customer?.prePoint || 0) + newPoint;
 
     useEffect(() => {
         setTendered('');
@@ -82,7 +87,7 @@ export default function Cashier(props: {
                         </Box>
 
                         <Box sx={{ mt: 0.5 }}>
-                            {['100', '50', '30', '20', receipt.finalTotal.toFixed(2)].map((suggestTendered, index) =>
+                            {['100', '50', '40', '20', receipt.finalTotal.toFixed(2)].map((suggestTendered, index) =>
                                 <Button
                                     key={suggestTendered}
                                     variant="outlined"
@@ -124,15 +129,29 @@ export default function Cashier(props: {
                             Receipt
                             <IoPrint style={iconStyle} />
                         </Button>
-                        <Button variant="contained" color="primary" onClick={checkTendered} >
-                            Cash
-                            <BsCashCoin style={iconStyle} />
-                        </Button>
+                        {nextPoint < 100 || !customer || !customer.phone
+                            ? (<Button variant="contained" color="primary" onClick={checkTendered} >
+                                Cash
+                                <BsCashCoin style={iconStyle} />
+                            </Button>)
+                            : (<Button variant="contained" color="primary" onClick={checkTendered} >
+                                Cash
+                                <BsCashCoin style={iconStyle} />
+                                <Box sx={{ ml: 1, }}>
+                                    +
+                                </Box>
+                                <Box sx={{ ml: 0.8, fontSize: 20 }}>
+                                    {(nextPoint / 100).toFixed(0)}
+                                </Box>
+                                <FaGift style={{ fontSize: 25, marginLeft: 2, marginBottom: 8 }} />
+                            </Button>)
+                        }
                     </Stack>
-                </Box>
-            )}
-        </ModalContent>
-    </Modal>)
+                </Box >
+            )
+            }
+        </ModalContent >
+    </Modal >)
 }
 
 const ModalContent = styled(Box)({
