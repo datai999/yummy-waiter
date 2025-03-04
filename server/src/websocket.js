@@ -39,7 +39,7 @@ module.exports = {
 
 const USERS = {};
 const LOCKED_TABLES = {};
-let VIEWING = { 'cashier': '', 'orderId': '', 'phone': '' };
+let VIEWING = { 'cashier': '', 'orderId': '', 'phone': '', receipt: null };
 let CASHIER_USER = null;
 let CUSTOMER_USER = null;
 
@@ -93,8 +93,9 @@ const onConnection = (ws, req) => {
         if (data.type === 'ON_CASHIER') {
             CASHIER_USER = ws;
             VIEWING.cashier = data.payload.cashier;
-            sendMessageTo(ws, JSON.stringify({
-                senter: "SERVER",
+            VIEWING.receipt = data.payload.receipt;
+            sendMessageTo(CUSTOMER_USER, JSON.stringify({
+                senter: "CASHIER",
                 type: data.type,
                 payload: VIEWING
             }));
@@ -176,6 +177,8 @@ const linkCustomer = (ws, body) => {
         };
     };
 
+    VIEWING.customer = customer;
+
     // customer -> cashier
     if (ACTIVE_TABLES[VIEWING.orderId]) {
         ACTIVE_TABLES[VIEWING.orderId].customer = customer;
@@ -188,7 +191,7 @@ const linkCustomer = (ws, body) => {
             senter: "CUSTOMER",
             type: 'ACTIVE_TABLES',
             payload: newOrder
-        }))
+        }));
 
         return customer;
     }
@@ -226,10 +229,9 @@ const getOrderPathAndName = (order) => {
 }
 
 const doneOrder = (syncTables) => {
-    Object.entries(syncTables).forEach(([tableId, syncTable]) => {
-        const orderTime = syncTable.orderTime.replaceAll(':', '-');
-        const fileName = orderTime + ', ' + (tableId.startsWith('Togo') ? 'Togo' : tableId);
-        writeJsonFile(syncTable, fileName, filePath);
+    Object.entries(syncTables).forEach(([tableId, syncTable]) => {  
+        const orderPath = getOrderPathAndName(syncTable);
+        writeJsonFile(syncTable, orderPath[0], orderPath[1]);
 
         if (syncTable.customer?.phone) {
             customerChangePoint(syncTable.customer, Math.floor(syncTable.finalTotal));

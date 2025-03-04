@@ -3,6 +3,7 @@ import { Customer, LockedTable, Receipt, Table } from "./my-class";
 import { JSON_replacer, JSON_reviver } from "./my-util";
 import { updateHistoryOrder } from "../order/OrderHistory";
 import { receiveCustomer } from "../user/EarnPoint";
+import { onCashier } from "../user/CustomerView";
 
 let websocket: WebSocket;
 let clienId: string;
@@ -37,17 +38,15 @@ const initWsClient = (username: string,
     removeLockedTablesBy?: (username: string) => void
 ) => {
     clienId = username;
-    websocket = new WebSocket('ws://192.168.12.182:8080' + '/' + clienId);
+    websocket = new WebSocket('ws://10.0.78.104:8080' + '/' + clienId);
 
     websocket.onopen = () => {
         console.log(`WebSocket is connected:${clienId}`);
-        websocket.send(JSON.stringify({
-            senter: clienId,
-            type: SYNC_TYPE[SYNC_TYPE.REQUEST],
-            payload: "INITIAL",
-        }));
+        syncServer(SYNC_TYPE.REQUEST, "INITIAL");
         if (!clienId.startsWith('CLient') && removeLockedTablesBy)
             removeLockedTablesBy(username);
+        if (clienId.length > 30)
+            syncServer(SYNC_TYPE.ON_CUSTOMER, {});
     };
 
     websocket.onmessage = (evt) => {
@@ -71,6 +70,9 @@ const initWsClient = (username: string,
         }
         if (data.type === SYNC_TYPE[SYNC_TYPE.GET_CUSTOMER]) {
             receiveCustomer(data.payload);
+        }
+        if (data.type === SYNC_TYPE[SYNC_TYPE.ON_CASHIER]) {
+            onCashier(plainToInstance(Receipt, data.payload.receipt as Object));
         }
         if (data.type === SYNC_TYPE[SYNC_TYPE.DONE_ORDER]) {
             const tables = new Map(Object.entries(data.payload)

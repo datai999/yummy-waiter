@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NumPad } from '../my/my-component';
 import { Customer, Receipt } from '../my/my-class';
 import { FaGift } from 'react-icons/fa';
@@ -21,6 +21,8 @@ export default function ({ receipt }: { receipt: Receipt }) {
     const newPoint = Math.floor(receipt?.finalTotal || 0);
     const point = (customer.prePoint || 0) + newPoint;
 
+    const phoneValid = true || phone.length == 10;
+
     onReceiveCustomer = (customer: Customer) => {
         receipt.customer = customer;
         // syncServer(SYNC_TYPE.ACTIVE_TABLES, { [receipt.id]: receipt });
@@ -33,6 +35,7 @@ export default function ({ receipt }: { receipt: Receipt }) {
     }
 
     const submitPhone = () => {
+        if (!phoneValid) return;
         receipt.customer = new Customer(phone);
         syncServer(SYNC_TYPE.GET_CUSTOMER, { phone, newPoint, receipt: receipt });
     }

@@ -13,11 +13,23 @@ import { StyledPaper } from '../my/my-styled';
 import EarnPoint from './EarnPoint';
 import { SYNC_TYPE, syncServer } from '../my/my-ws';
 
+export const onCashier = (receipt: Receipt) => {
+    onReceiveReceipt(receipt);
+}
+
+let onReceiveReceipt: (receipt: Receipt) => void = () => console.log('error');
+
 export default function CustomerView(props: { back: () => void }) {
     const theme = useTheme();
 
     const { ORDERS } = useContext(APP_CONTEXT);
     const [receipt, setReceipt] = useState<null | Receipt>(null);
+
+    onReceiveReceipt = (receipt: Receipt) => {
+        ORDERS.set(receipt.id, receipt);
+        setReceipt(receipt);
+        syncServer(SYNC_TYPE.CUSTOMER_VIEW_ORDER, { orderId: receipt.id, view: true });
+    }
 
     const viewOrder = (order: Order) => {
         syncServer(SYNC_TYPE.CUSTOMER_VIEW_ORDER, { orderId: order.id, view: true });
