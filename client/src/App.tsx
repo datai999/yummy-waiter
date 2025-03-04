@@ -95,8 +95,10 @@ export default function App() {
   const [refresh2, setRefresh2] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const [screen, routeScreen] = useState<SCREEN>(SCREEN.DEFAULT);
+  const [viewCashier, setViewCashier] = useState(false);
 
   const holdTable = useRef<Table | null>();
+  const holdViewCashier = useRef<boolean>(false);
   const toasMsg = useRef<string>();
   const tempTable = useRef<Table | null>();
   const tempBags = useRef<null | Map<number, Map<string, CategoryItem>>>(null);
@@ -110,7 +112,11 @@ export default function App() {
 
   useEffect(() => {
     holdTable.current = table;
-  }, [table])
+  }, [table]);
+
+  useEffect(() => {
+    holdViewCashier.current = viewCashier;
+  }, [viewCashier])
 
   const orderTable = (order: null | Order) => {
     orderOrder(order);
@@ -126,7 +132,10 @@ export default function App() {
     } else if (syncTables.has(holdTable.current.id)) {
       toasMsg.current = `${senter} just changed order ${holdTable.current.id}`;
       setOpen(true);
-      orderTable(null);
+      if (!holdViewCashier.current) {
+        orderTable(null);
+      }
+      else orderOrder(syncTables.get(holdTable.current.id)!);
     }
   }
 
@@ -241,7 +250,7 @@ export default function App() {
             <LockedTableContext.Provider value={(tableId: string) => LOCKED_TABLES.get(tableId)?.server}>
               {screen === SCREEN.DEFAULT && (table
                 ? (<TableContext.Provider value={{ table, order: table, orderTable, setOrder: orderTable, prepareChangeTable }}>
-                  <Waiter tables={tables} tempBags={tempBags.current} />
+                  <Waiter tables={tables} tempBags={tempBags.current} viewCashier={viewCashier} setViewCashier={setViewCashier} />
                 </TableContext.Provider>
                 ) : (<>
                   <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>

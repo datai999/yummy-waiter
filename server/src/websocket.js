@@ -180,11 +180,16 @@ const linkCustomer = (ws, body) => {
     if (ACTIVE_TABLES[VIEWING.orderId]) {
         ACTIVE_TABLES[VIEWING.orderId].customer = customer;
         customer.prePoint = customer.point;
-        sendMessageTo(ws, JSON.stringify({
-            senter: "SERVER",
+
+        const newOrder = { [VIEWING.orderId]: ACTIVE_TABLES[VIEWING.orderId] };
+
+        updateActiveTable(newOrder);
+        boardcastMessage(ws, JSON.stringify({
+            senter: "CUSTOMER",
             type: 'ACTIVE_TABLES',
-            payload: { [VIEWING.orderId]: ACTIVE_TABLES[VIEWING.orderId] }
+            payload: newOrder
         }))
+
         return customer;
     }
 
@@ -259,6 +264,14 @@ const sentDataOnConnect = (ws) => {
 const boardcastMessageExceptOwner = (ws, message) => {
     wss.clients.forEach(client => {
         if (client !== ws && client.readyState === WebSocket.OPEN) {
+            client.send(message);
+        }
+    });
+}
+
+const boardcastMessage = (ws, message) => {
+    wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
             client.send(message);
         }
     });

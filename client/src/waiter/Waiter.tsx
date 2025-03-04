@@ -16,7 +16,9 @@ import { SERVICE } from '../my/my-service';
 
 interface WaiterProps {
     tables: Map<String, Table>,
-    tempBags: null | Map<number, Map<string, CategoryItem>>
+    tempBags: null | Map<number, Map<string, CategoryItem>>,
+    viewCashier: boolean,
+    setViewCashier: (next: boolean) => void
 }
 
 export interface ChildWaiterProps extends WaiterProps {
@@ -34,7 +36,6 @@ export default function Waiter(props: WaiterProps) {
     const [category, setCategory] = useState(MENU_CATEGORIES[0]);
     const [openModal, setOpenModal] = useState(false);
     const [note, setNote] = useState<string>(_.cloneDeep(order.note || ''));
-    const [viewCashier, setViewCashier] = useState(false);
 
     const locked = useRef(Boolean(useContext(CONTEXT.LockedTable)(order.id)) === auth.name);
 
@@ -91,7 +92,7 @@ export default function Waiter(props: WaiterProps) {
     const openCashier = () => {
         syncServer(SYNC_TYPE.LOCKED_TABLES, { [order.id]: new LockedTable(true, auth.name) });
         syncServer(SYNC_TYPE.ON_CASHIER, { cashier: auth.name });
-        setViewCashier(true);
+        props.setViewCashier(true);
     }
 
     const doneOrder = () => {
@@ -118,7 +119,7 @@ export default function Waiter(props: WaiterProps) {
                 </Box>
             </Box>
             <TakeCustomerInfo openModal={openModal} closeModel={doneTakeCustomerInfo} />
-            <Cashier view={viewCashier} close={() => setViewCashier(false)} orders={props.tables} note={note} bags={bags}
+            <Cashier view={props.viewCashier} close={() => props.setViewCashier(false)} orders={props.tables} note={note} bags={bags}
                 receipt={new Receipt(auth.name, order, note).calculateTotal(bags)} />
         </WAITER_CONTEXT.lockOrder.Provider >
     );
