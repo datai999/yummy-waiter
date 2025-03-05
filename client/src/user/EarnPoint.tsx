@@ -11,7 +11,7 @@ export const receiveCustomer = (customer: Customer) => {
 
 let onReceiveCustomer: (customer: Customer) => void = () => console.log('error');
 
-export default function ({ receipt }: { receipt: Receipt }) {
+export default function ({ receipt, resetTimer }: { receipt: Receipt, resetTimer: () => void }) {
 
     const [customer, setCustomer] = useState<Customer>(receipt.customer || {} as Customer);
     const [phone, setPhone] = useState(receipt.customer?.phone || '');
@@ -37,6 +37,7 @@ export default function ({ receipt }: { receipt: Receipt }) {
     const inputPhone = (input: string) => {
         if (phone.length > 10) return;
         setPhone(phone + input);
+        resetTimer();
     }
 
     const submitPhone = () => {

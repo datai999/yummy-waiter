@@ -24,6 +24,7 @@ export default function CustomerView(props: { back: () => void }) {
 
     const { ORDERS } = useContext(APP_CONTEXT);
     const [receipt, setReceipt] = useState<null | Receipt>(null);
+    const [timer, setTimer] = useState<number>(180);
 
     onReceiveReceipt = (receipt: Receipt) => {
         ORDERS.set(receipt.id, receipt);
@@ -32,13 +33,19 @@ export default function CustomerView(props: { back: () => void }) {
     }
 
     const viewOrder = (order: Order) => {
+        resetTimer()
         syncServer(SYNC_TYPE.CUSTOMER_VIEW_ORDER, { orderId: order.id, view: true });
         setReceipt(new Receipt('?', order, order.note).calculateTotal(order.bags));
     }
 
     const closeOrder = (order: Order) => {
+        resetTimer();
         syncServer(SYNC_TYPE.CUSTOMER_VIEW_ORDER, { orderId: order.id, view: false });
         setReceipt(null);
+    }
+
+    const resetTimer = () => {
+        setTimer(180);
     }
 
     return (<>
@@ -73,7 +80,15 @@ export default function CustomerView(props: { back: () => void }) {
                         </StyledPaper> */}
 
                         <Box sx={{ mt: '20px' }}>
-                            <ReceiptView receipt={receipt} close={() => closeOrder(receipt)} />
+                            <ReceiptView receipt={receipt} close={() => closeOrder(receipt)} timer={timer} countDown={(callback) => {
+                                setTimer((time: number) => {
+                                    if (time === 0) {
+                                        callback();
+                                        closeOrder(receipt);
+                                        return 0;
+                                    } else return time - 1;
+                                });
+                            }} />
                             {/* <Stack direction="row" spacing={4} sx={{
                                 m: 1,
                                 justifyContent: "left",
@@ -99,7 +114,7 @@ export default function CustomerView(props: { back: () => void }) {
                                     </Typography>
                                 </Box>
                             </Box>
-                            <EarnPoint receipt={receipt} />
+                            <EarnPoint receipt={receipt} resetTimer={resetTimer} />
                         </Box>
                     </Box>
                 )}

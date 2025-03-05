@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NonPho, Pho, Receipt } from '../my/my-class';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { APP_CONTEXT } from '../App';
@@ -22,12 +22,21 @@ const getBagIndex = (receipt: Receipt, bagName: string): number => {
     return parseInt(bagName.slice(-1));
 }
 
-export default function ReceiptView({ receipt, ...props }: { receipt: Receipt, close: () => void }) {
+export default function ReceiptView({ receipt, ...props }: {
+    receipt: Receipt, close: () => void,
+    timer: number, countDown: (callback: () => void) => void
+}) {
     const { MENU_CATEGORIES } = useContext(APP_CONTEXT);
 
     const [bag, setBag] = useState(0);
 
     const categoryItems = receipt.bags.get(bag)!;
+
+    useEffect(() => {
+        let timerC = setInterval(() => {
+            props.countDown(() => clearInterval(timerC));
+        }, 1000);
+    }, []);
 
     return (<Box sx={{ width: '400px' }}>
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
@@ -108,7 +117,7 @@ export default function ReceiptView({ receipt, ...props }: { receipt: Receipt, c
         </StyledPaper>
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
             <Button variant="contained" color="primary" sx={{ minHeight: 30, mt: '30px' }} onClick={props.close} >
-                Not your order
+                Not your order Auto close in {props.timer.toFixed(0)}
             </Button>
             <TotalBill bigSize={true} bags={receipt.bags} discountPercent={receipt.discountPercent?.discount} discountSubtract={receipt.discountSubtract?.discount} />
         </Box>
