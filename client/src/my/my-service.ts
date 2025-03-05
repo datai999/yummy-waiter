@@ -86,13 +86,13 @@ const cleanBags = (bags: Map<number, Map<string, CategoryItem>>) => {
         let hasItem = false;
         categoryItems.forEach(categoryItem => {
             const lastPho = categoryItem.pho.pop()!;
-            if (lastPho.items.size > 0) {
+            if (lastPho && lastPho.items.size > 0) {
                 bagChange = true;
                 lastPho.time = new Date();
                 categoryItem.pho.push(lastPho);
             }
             const lastNonPho = categoryItem.nonPho.pop()!;
-            if (lastNonPho.items.size > 0) {
+            if (lastNonPho && lastNonPho.items.size > 0) {
                 bagChange = true;
                 lastNonPho.time = new Date();
                 categoryItem.nonPho.push(lastNonPho);

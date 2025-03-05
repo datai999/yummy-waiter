@@ -110,12 +110,9 @@ const onConnection = (ws, req) => {
             }));
         }
         if (data.type === 'GET_CUSTOMER') {
-            const customer = linkCustomer(ws, data.payload);
-            sendMessageTo(ws, JSON.stringify({
-                senter: "SERVER",
-                type: data.type,
-                payload: customer
-            }));
+            if (data.payload.phone.length > 0)
+                linkCustomer(ws, data.payload);
+            else unlinkCustomer(ws, data.payload);
         }
         if (data.type === 'DONE_ORDER') {
             CASHIER_USER = null;
@@ -193,18 +190,65 @@ const linkCustomer = (ws, body) => {
             payload: newOrder
         }));
 
-        return customer;
+        sendMessageTo(ws, JSON.stringify({
+            senter: "SERVER",
+            type: "GET_CUSTOMER",
+            payload: customer
+        }));
+
+        return;
     }
 
     // cashier -> customer
     const orderPath = getOrderPathAndName(body.receipt);
-    const receipt = readJsonFile(orderPath[1] + '/' + readJsonFile[0] + '.json');
+    const receipt = readJsonFile(orderPath.fullPath + '.json');
     receipt.customer = customer;
-    writeJsonFile({ ...receipt, point: customer.point + body.newPoint }, orderPath.fullPath);
+    writeJsonFile(receipt, orderPath.fullPath);
 
     customerChangePoint(customer, body.newPoint);
 
-    return customer;
+    sendMessageTo(ws, JSON.stringify({
+        senter: "SERVER",
+        type: "GET_CUSTOMER",
+        payload: customer
+    }));
+
+    return;
+}
+
+const unlinkCustomer = (ws, body) => {
+    VIEWING.orderId = body.receipt.id;
+    if (ACTIVE_TABLES[VIEWING.orderId]) {
+        ACTIVE_TABLES[VIEWING.orderId].customer = undefined;
+
+        const newOrder = { [VIEWING.orderId]: ACTIVE_TABLES[VIEWING.orderId] };
+
+        boardcastMessage(ws, JSON.stringify({
+            senter: "CASHIER",
+            type: "GET_CUSTOMER",
+            payload: {}
+        }));
+
+        boardcastMessage(ws, JSON.stringify({
+            senter: "CASHIER",
+            type: "ACTIVE_TABLES",
+            payload: newOrder
+        }));
+
+        return;
+    }
+
+    const orderPath = getOrderPathAndName(body.receipt);
+    const receipt = readJsonFile(orderPath.fullPath + '.json');
+
+    const path = `customers/${receipt.customer.phone}.json`;
+    if (existsSync(path)) {
+        const customer = readJsonFile(path);
+        customerChangePoint(customer, body.newPoint);
+    }
+
+    receipt.customer = undefined;
+    writeJsonFile(receipt, orderPath.fullPath);
 }
 
 const customerChangePoint = (customer, newPoint) => {
@@ -229,9 +273,9 @@ const getOrderPathAndName = (order) => {
 }
 
 const doneOrder = (syncTables) => {
-    Object.entries(syncTables).forEach(([tableId, syncTable]) => {  
+    Object.entries(syncTables).forEach(([tableId, syncTable]) => {
         const orderPath = getOrderPathAndName(syncTable);
-        writeJsonFile(syncTable, orderPath[0], orderPath[1]);
+        writeJsonFile(syncTable, orderPath.fileName, orderPath.path);
 
         if (syncTable.customer?.phone) {
             customerChangePoint(syncTable.customer, Math.floor(syncTable.finalTotal));

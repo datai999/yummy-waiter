@@ -23,10 +23,15 @@ export default function ({ receipt }: { receipt: Receipt }) {
 
     const phoneValid = true || phone.length == 10;
 
-    onReceiveCustomer = (customer: Customer) => {
-        receipt.customer = customer;
+    useEffect(() => {
+        setCustomer(receipt.customer || {} as Customer);
+    }, [receipt.id]);
+
+    onReceiveCustomer = (newCustomer: Customer) => {
+        receipt.customer = newCustomer;
         // syncServer(SYNC_TYPE.ACTIVE_TABLES, { [receipt.id]: receipt });
-        setCustomer(customer);
+        setCustomer(newCustomer);
+        setPhone(newCustomer?.phone || '');
     }
 
     const inputPhone = (input: string) => {

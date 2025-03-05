@@ -4,7 +4,7 @@ import { APP_CONTEXT } from "../App";
 import { CategoryItem, LockedTable, Order, Receipt, Table } from "../my/my-class";
 import { NumPad } from "../my/my-component";
 import { SERVICE } from "../my/my-service";
-import { MdOutlineCallMerge, MdOutlineCallSplit } from "react-icons/md";
+import { MdOutlineCallMerge, MdOutlineCallSplit, MdOutlinePersonOff } from "react-icons/md";
 import { TableStatus } from "../my/my-constants";
 import { syncServer, SYNC_TYPE } from "../my/my-ws";
 import { IoPrint } from "react-icons/io5";
@@ -60,6 +60,11 @@ export default function Cashier(props: {
         setOrder(null);
     }
 
+    const resetCustomer = () => {
+        receipt.customer = undefined;
+        syncServer(SYNC_TYPE.GET_CUSTOMER, { 'phone': '', receipt });
+    }
+
     return (<Modal
         open={props.view}
         onClose={props.close}
@@ -104,7 +109,7 @@ export default function Cashier(props: {
                         </Box>
                     </Box>
 
-                    <Stack direction="row" spacing={4} sx={{
+                    <Stack direction="row" spacing={2} sx={{
                         mt: 1,
                         justifyContent: "center",
                         alignItems: "stretch",
@@ -121,6 +126,10 @@ export default function Cashier(props: {
                             Split bill
                             <MdOutlineCallSplit style={iconStyle} />
                         </Button>
+                        <Button disabled={!receipt.customer} variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={resetCustomer} >
+                            Reset guest
+                            <MdOutlinePersonOff style={iconStyle} />
+                        </Button>
                         {/* <Button variant="contained" color="primary" sx={{ minHeight: 50 }} onClick={() => alert('TODO')} >
                             Discount
                             <TbBasketDiscount style={iconStyle} />
@@ -130,11 +139,11 @@ export default function Cashier(props: {
                             <IoPrint style={iconStyle} />
                         </Button>
                         {nextPoint < 100 || !customer || !customer.phone
-                            ? (<Button variant="contained" color="primary" onClick={checkTendered} >
+                            ? (<Button disabled={change < 0} variant="contained" color="primary" onClick={checkTendered} >
                                 Cash
                                 <BsCashCoin style={iconStyle} />
                             </Button>)
-                            : (<Button variant="contained" color="primary" onClick={checkTendered} >
+                            : (<Button disabled={change < 0} variant="contained" color="primary" onClick={checkTendered} >
                                 Cash
                                 <BsCashCoin style={iconStyle} />
                                 <Box sx={{ ml: 1, }}>

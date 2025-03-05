@@ -90,6 +90,7 @@ export default function Waiter(props: WaiterProps) {
     }
 
     const openCashier = () => {
+        submitOrder();
         syncServer(SYNC_TYPE.LOCKED_TABLES, { [order.id]: new LockedTable(true, auth.name) });
         syncServer(SYNC_TYPE.ON_CASHIER, { cashier: auth.name, receipt: new Receipt(auth.name, order, note).calculateTotal(bags)});
         props.setViewCashier(true);
