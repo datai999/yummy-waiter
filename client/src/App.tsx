@@ -120,6 +120,7 @@ export default function App() {
 
   const orderTable = (order: null | Order) => {
     orderOrder(order);
+    setViewCashier(false);
     routeScreen(SCREEN.DEFAULT);
   }
 
@@ -315,8 +316,9 @@ export default function App() {
      *  + UI for customer fill phone
      *  + edit menu
      *  + edit user
+     *  - order history
      *  - waring cashier customer is viewing before cash
-     *  - customer submit & gain reward: re-write receipt
+     *  + customer submit & gain reward: re-write receipt
      *  - cashier add phone to history order and take point for customer
      *  - cashier edit point
      *  - devices

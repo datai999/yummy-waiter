@@ -36,6 +36,7 @@ export default function ReceiptView({ receipt, ...props }: {
         let timerC = setInterval(() => {
             props.countDown(() => clearInterval(timerC));
         }, 1000);
+        return () => clearInterval(timerC);
     }, []);
 
     return (<Box sx={{ width: '400px' }}>

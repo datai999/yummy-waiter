@@ -77,6 +77,7 @@ export default function Waiter(props: WaiterProps) {
             props.tables.set(order.id, order);
             syncServer(SYNC_TYPE.ACTIVE_TABLES, { [order.id]: order });
         }
+        return bagChange;
     };
 
     const takeCustomerInfo = () => {
@@ -90,9 +91,10 @@ export default function Waiter(props: WaiterProps) {
     }
 
     const openCashier = () => {
-        submitOrder();
+        const bagChange = submitOrder();
+        if (!bagChange) return;
         syncServer(SYNC_TYPE.LOCKED_TABLES, { [order.id]: new LockedTable(true, auth.name) });
-        syncServer(SYNC_TYPE.ON_CASHIER, { cashier: auth.name, receipt: new Receipt(auth.name, order, note).calculateTotal(bags)});
+        syncServer(SYNC_TYPE.ON_CASHIER, { cashier: auth.name, receipt: new Receipt(auth.name, order, note).calculateTotal(bags) });
         props.setViewCashier(true);
     }
 

@@ -25,7 +25,7 @@ const OrderTake = ({ props, note, setNote, bags }: {
     setNote: (newNote: string) => void,
     bags: Map<number, Map<string, CategoryItem>>
 }) => {
-    const { MENU, auth } = useContext(APP_CONTEXT);
+    const { MENU, auth, order } = useContext(APP_CONTEXT);
     const { locked, setLocked } = useContext(WAITER_CONTEXT.lockOrder);
 
     const [refresh, setRefresh] = useState(false)
@@ -35,7 +35,7 @@ const OrderTake = ({ props, note, setNote, bags }: {
 
     const CATEGORY = MENU[props.category as keyof typeof MENU];
 
-    useEffect(() => {
+    const initTracked = () => {
         bags.forEach(bag => bag.forEach(categoryItem => {
             const phoLen = categoryItem.pho.length;
             if (phoLen === 0 || (phoLen > 0 && categoryItem.pho[phoLen - 1].time))
@@ -44,11 +44,21 @@ const OrderTake = ({ props, note, setNote, bags }: {
             if (nonPhoLen === 0 || (nonPhoLen > 0 && categoryItem.nonPho[nonPhoLen - 1].time))
                 categoryItem.nonPho.push(new TrackedNonPho(auth));
         }));
+    }
+
+    useEffect(() => {
+        initTracked();
     }, []);
 
     const submitPho = (bag: number, newPho: Pho) => {
         if (bag > bags.size) bag = bags.size - 1;
         const isEdit = bag < 0;
+
+        if (bags.size < 1) {
+            bags.set(bags.size, order.newBag());
+            initTracked();
+        }
+
         const targetBag = bags.get(isEdit ? itemRef.bag : bag)!;
         const categoryItems = targetBag.get(props.category)!;
 

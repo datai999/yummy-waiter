@@ -18,13 +18,14 @@ export default function ({ receipt, resetTimer }: { receipt: Receipt, resetTimer
 
     const phoneX = phone.padEnd(10, 'x');
     const disableDone = phone.length < 10 && false;
-    const newPoint = Math.floor(receipt?.finalTotal || 0);
+    const newPoint = receipt.point;
     const point = (customer.prePoint || 0) + newPoint;
 
     const phoneValid = true || phone.length == 10;
 
     useEffect(() => {
         setCustomer(receipt.customer || {} as Customer);
+        setPhone(receipt.customer?.phone || '');
     }, [receipt.id]);
 
     onReceiveCustomer = (newCustomer: Customer) => {

@@ -71,7 +71,7 @@ export const TotalBill = ({ bigSize = false, ...props }: { bigSize?: boolean, ba
         {receipt.hasDiscount() && <>
             <Box sx={SX}>
                 <Box>
-                    {`Sub total:`}
+                    {`Subtotal:`}
                 </Box>
                 <Box>
                     {receipt.subTotal.toFixed(2)}

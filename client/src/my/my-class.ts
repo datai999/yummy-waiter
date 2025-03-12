@@ -230,6 +230,7 @@ export class Receipt extends Order {
     finalTotal: number = 0;
     tendered?: number;
     change?: number;
+    point: number = 0;
 
     discountPercent?: Discount;
     discountSubtract?: Discount;
@@ -266,6 +267,10 @@ export class Receipt extends Order {
         }, 0);
         this.subTotal = Math.ceil(subTotal * 100) / 100;
         this.total = this.subTotal;
+
+        const tax = Math.ceil(0.0925 * subTotal * 100) / 100;
+        const finalTotal = Math.ceil((subTotal + tax) * 100) / 100;
+        this.point = Math.floor(finalTotal);
 
         if (!discountPercents)
             this.discountPercent = undefined;

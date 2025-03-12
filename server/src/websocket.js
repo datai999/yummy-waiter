@@ -94,6 +94,7 @@ const onConnection = (ws, req) => {
             CASHIER_USER = ws;
             VIEWING.cashier = data.payload.cashier;
             VIEWING.receipt = data.payload.receipt;
+            ACTIVE_TABLES[VIEWING.receipt.id] = VIEWING.receipt;
             sendMessageTo(CUSTOMER_USER, JSON.stringify({
                 senter: "CASHIER",
                 type: data.type,

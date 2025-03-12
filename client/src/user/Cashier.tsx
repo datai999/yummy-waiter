@@ -30,8 +30,7 @@ export default function Cashier(props: {
     const change = Math.ceil((numTendered - receipt.finalTotal) * 100) / 100;
 
     const customer = props.receipt.customer;
-    const newPoint = Math.floor(props.receipt.finalTotal || 0);
-    const nextPoint = (customer?.prePoint || 0) + newPoint;
+    const nextPoint = (customer?.prePoint || 0) + receipt.point;
 
     useEffect(() => {
         setTendered('');
@@ -73,7 +72,10 @@ export default function Cashier(props: {
             {props.view && (
                 <Box>
                     <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                        <AddDiscount view={props.view} receipt={receipt} addDiscount={() => setRefresh(!refresh)} />
+                        <AddDiscount view={props.view} receipt={receipt} addDiscount={() => {
+                            syncServer(SYNC_TYPE.ON_CASHIER, { cashier: auth.name, receipt });
+                            setRefresh(!refresh);
+                        }} />
 
                         <Box sx={{ witdh: '300px', maxWidth: '300px' }}>
                             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', mb: 0 }}>
