@@ -109,12 +109,12 @@ export default function Waiter(props: WaiterProps) {
 
     return (
         <WAITER_CONTEXT.lockOrder.Provider value={{ locked: locked.current, setLocked: onSetLocked }} >
-            <Box sx={{ display: 'flex', flexDirection: 'column' }} minHeight='96vh'>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }} minHeight='100vh'>
                 <Box sx={{ position: "sticky", top: 0, zIndex: 1, bgcolor: "background.paper" }}>
                     <Header props={childProps} />
                 </Box>
                 <OrderTake note={note} setNote={setNote} bags={bags} props={childProps} />
-                <Box sx={{ position: "sticky", bottom: 3, zIndex: 1, bgcolor: "background.paper", mt: 'auto' }}>
+                <Box sx={{ position: "sticky", bottom: 5, zIndex: 1, bgcolor: "background.paper", mt: 'auto' }}>
                     {/* <Box sx={{ mt: 'auto', mb: 1 }}> */}
                     <Footer addTogoBag={addTogoBag} changeTable={() => prepareChangeTable(bags)} submitOrder={submitOrder} customerInfo={takeCustomerInfo} openCashier={openCashier} doneOrder={doneOrder} />
                 </Box>

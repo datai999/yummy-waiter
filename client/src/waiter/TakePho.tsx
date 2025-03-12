@@ -70,6 +70,7 @@ const pTakePho = (props: TakePhoProps) => {
             ...(pho.meats.includes('Xi') || pho.combo?.startsWith('#8') ? ['Tái riêng', 'Tái băm', 'Tái cook'] : []),
             pho.combo?.startsWith('#8b') ? 'Ít bánh' : '',
             pho.combo?.startsWith('C') ? 'Không xương' : '',
+            props.bagSize < 2 && !order.id.startsWith('Togo') || ['Mì', 'Cơm'].includes(pho.noodle) ? 'Bánh sống' : '',
             ['BC', 'BT', 'BS', 'BTS', 'Cơm'].includes(pho.noodle) ? 'Măng' : '',
             ['BS', 'BTS', 'Bún', 'Cơm'].includes(pho.noodle) ? 'Khô' : ''
         ];

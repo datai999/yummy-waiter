@@ -96,7 +96,7 @@ export const CheckButton = (props: CheckButtonProps) => {
                                         size='large'
                                         onClick={() => onClick(key)}
                                         selected={options?.includes(key)}
-                                        sx={{ ...disabledStyle, minWidth: 100, maxWidth: 200, minHeight: 50 }}
+                                        sx={{ ...disabledStyle, minWidth: 90, maxWidth: 200, minHeight: 50 }}
                                     >
                                         {key}
                                     </CategoryButton>
